@@ -85,10 +85,10 @@ WSGI_APPLICATION = 'SICAP.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'sicap5',
-        'USER' : 'postgres',
-        'PASSWORD': 'tatan',
-        'HOST' : 'localhost',
+        'NAME': 'd8cnsj15421kvi',
+        'USER' : 'fweztlnxlnkowi',
+        'PASSWORD': '7a6ceac3e93ff369e2d22ec184726c299c76c8c4401c96e62a2cbab5437dbb80',
+        'HOST' : 'ec2-3-222-204-187.compute-1.amazonaws.com',
         'PORT' : 5432,    
     } 
 }
