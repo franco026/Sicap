@@ -1,0 +1,848 @@
+{% extends 'base/base.html' %}
+{% load bootstrap4 %}
+{% block main %}
+
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<div id=divCreate class="container-fluid">
+    <h1 class="mt-4">Lista de informes</h1>
+    <div class="card mb-4">
+        <div class="card-header"><i class="fas fa-table mr-1"></i>Lista de informes</div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <button data-toggle="modal" data-target="#myModalInform" type="button" class="genric-btn primary small">Añadir informe</button>              
+                <table class="table table-bordered dataTable" id="dataTableInform" width="100%" cellspacing="0"
+                      role="grid" aria-describedby="dataTable_info" style="width: 100%;">
+                    
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Categoría</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Categoría</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {% if object_list %}
+                        {% for inform in object_list %}                        
+                              <tr>                          
+                                <td>{{inform.nameI}}</td>                        
+                                <td>{{inform.category}}</td>
+                                <td>
+                        </div>
+                      </div>
+
+                      <a href="#" data-toggle="tooltip"   title="Registrar detalle">
+                        <button data-toggle="modal" data-target="#myModalInformDetall" class="btn btn-primary btn-sm"  onclick="getInform('{{inform.id}}')">
+                        <i class="fa fa-info-circle"></i>
+                        </button>
+                      </a>
+                      <a href="#" data-toggle="tooltip"   title="Eliminar informe">
+                        <button onclick="deleteInform('{{inform.id}}','{{inform.nameI}}')" class="btn btn-primary btn-sm"  >
+                        <i class="fa fa-trash"></i>
+                        </button>
+                      </a>
+                      <a href="#" data-toggle="tooltip" id="updateInform"  title="Actualizar informe">
+                        <button onclick="changeTypeUpdateInforme('{{inform.id}}','{{inform.nameI}}','{{inform.category}}')"data-toggle="modal" data-target="#myModalInformUpdate" class="btn btn-primary btn-sm">
+                        <i class="fa fa-pencil"></i>
+                        </button>
+                      </a> 
+                      <a href="#" data-toggle="tooltip" id="parameterization"  title="Parametrizar">
+                        <button onclick="buttonParameterization('{{inform.id}}')" data-toggle="modal" data-target="#myModalParameterization" class="btn btn-primary btn-sm">
+                        <i class="fa fa-plus-square"></i>
+                        </button>
+                      </a> 
+                      <a href="#" data-toggle="tooltip" id="deleteInformColumns"  title="Eliminar Columnas">
+                        <button onclick="deleteColumnInform('{{inform.id}}')" data-toggle="modal" data-target="#myModalInformDetallColumn" class="btn btn-primary btn-sm">
+                        <i class="fa fa-trash-o"></i>
+                        </button>
+                      </a> 
+                                </td>
+                              </tr>
+                            {% endfor %}
+                            {% else %}
+                            <h1 class="black-color">No hay informes registrados de esta empresa</h1>
+                            {% endif %}  
+                    </tbody>
+                </table>
+        </div>
+</div>
+<div class="modal fade" id="myModalInformDetall" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Registrar detalles del informe</h4>
+            </div>
+                <div class="modal-body">
+                    <div  class="container-fluid">
+                        <form id="addInformDetall" action="">
+                            <div class="form-group">
+                                <label for="id_codeInfD">columna</label>
+                                <input type="text" name="columnInfD" maxlength="100" class="form-control" placeholder="Columna" title="" required="" id="id_columnInfD">
+                            </div>
+                            <div class="form-group">
+                                <label for="id_descriptionInfD">Tipo de dato</label>
+                                <select name="descriptionInfD"  class="form-control" title="" required="" id="id_descriptionInfD">
+                                    <option value=1>Texto</option>
+                                    <option value=2>Numero</option>
+                                    <option value=3>Fecha</option>
+                                </select>
+                            </div>
+                            <div id="divCreateButtonsOrigin"  class="form-group">
+                                <button id="btnCreateDetaillInform" type="submit" class="genric-btn success circle" >Registrar detalle</button>
+                                <button type="button" class="genric-btn default circle" data-dismiss="modal">Cancelar</button>
+                            </div>   
+                    
+                        </form>  
+                    </div>
+                </div>
+            </div>         
+        </div>  
+</div>
+
+
+<div class="modal fade" id="myModalInformDetallColumn" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h4 class="modal-title">Columnas</h4>
+            </div>
+            <div class="modal-body">
+                <div  class="container-fluid col-12" >
+                    <div>
+                        <form id="addInformsDetall">
+                            <br>
+                            <div id="separator_InformsDetall"  class="form-row col-12">
+                                
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>         
+        </div>  
+    </div>
+</div>
+
+<div class="modal fade" id="myModalInform" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Añadir nuevo informe</h4>
+            </div>
+                <div class="modal-body">
+                    <div  class="container-fluid">
+                        <form id="addInform" action="">
+                            <div class="form-group">
+                                <label for="id_nameI">Nombre</label>
+                                <input type="text" name="nameI" maxlength="100" class="form-control" placeholder="Nombre" title="" required="" id="id_nameI">
+                            </div>
+                            <div class="form-group">
+                                <label for="id_category">Categoría</label>
+                                <select name="category"  class="form-control" placeholder="Categoría" title="" required="" id="id_category">
+                                    <option value="INFORME">Informe</option>  
+                                    <option value="REGISTRO">Registro</option>  
+                                </select>
+                            </div>
+                            <div id="divCreateInform"  class="form-group">
+                                <button id="btnCreatenform" type="submit" class="genric-btn success circle" >Registrar informe </button>
+                                <button type="submit" class="genric-btn default circle" data-dismiss="modal">Cancelar</button>
+                            </div>   
+                    
+                        </form>  
+                    </div>
+                </div>
+            </div>         
+        </div>  
+</div>
+<div class="modal fade" id="myModalInformUpdate" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Actualizar informe</h4>
+            </div>
+                <div class="modal-body">
+                    <div  class="container-fluid">
+                        <form id="formAPUpdateInform" action="">
+                            <div class="form-group">
+                                <label for="id_nameI">Nombre</label>
+                                <input type="text" name="nameIUpdate" maxlength="100" class="form-control" placeholder="Nombre" title="" required="" id="id_nameIUpdate">
+                            </div>
+                            <div class="form-group">
+                                <label for="id_category">Categoría</label>
+                                <select name="categoryUpdate"  class="form-control" placeholder="Categoría" title="" required="" id="id_categoryUpdate">
+                                    <option value="INFORME">Informe</option>  
+                                    <option value="REGISTRO">Registro</option>  
+                                </select>
+                            </div>  
+                            <div id="divCreateButtons"  class="form-group">
+                                <button id="btnCreate" type="submit" class="genric-btn success circle" >Actualizar informe</button>
+                                <button type="button" class="genric-btn default circle" data-dismiss="modal">Cancelar</button>
+                            </div> 
+                            
+                        </form>  
+                    </div>
+                </div>
+            </div>         
+        </div>  
+</div>
+
+<div class="modal fade bd-example-modal-lg" id="myModalParameterization" role="dialog">
+    <div  class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Parametrización</h4>
+            </div>
+                <div class="modal-body">
+                    <div  class="container-fluid">
+                        <form id="createAccuont">
+                            <div class="form-row mb-4">
+                                <div class="col-6" >
+                                    <label for="exampleDataList" class="form-label">Categorias:</label>
+                                    <input  autocomplete="off" class="form-control" list="accountSelect" id="DataListaccountSelect" placeholder="Type to search...">
+                                    <datalist style="width: 100%;"id="accountSelect" name="accountSelect">
+                                    </datalist>
+                                </div> 
+                                <div class="col-5">
+                                    <label>Valor</label>				  
+                                    <input autocomplete="off" name="valueCategory" id="valueCategory" class="form-control" >
+                                </div>   
+                                <div class="col-1" style="margin-top: 35px;">
+                                    <button id="plussCategory" type='button' onclick="addValueCategory()"class="btn btn-primary btn-sm">
+                                        <i class="fa fa-plus-square"></i>
+                                    </button>
+                                </div>                                 
+                            </div>
+
+                            <div id="rubroOperationsAgreement"  class="container-fluid col-12 mb-4" style="padding: 0px !important;">
+                                <div class="card">
+                                    <div class="card-header "  id="textOperationsAgreement" ><i class="fas fa-table" ></i>Categoria de informes</div>
+                                        <div class="card-body" >
+                                            <div class="table-responsive">  
+                                            <font size="2" face="Arial" >
+                                                <table  style="width:100%" class="table table-bordered dataTable" id="dataTableRubroOthersAgreement" cellspacing="0" 
+                                                role="grid" aria-describedby="dataTable_info">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Categoria</th>
+                                                            <th>Valor</th>
+                                                            <th>Acciones</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tfoot>
+                                                        <tr>
+                                                            <th>Categoria</th>
+                                                            <th>Valor</th>
+                                                            <th>Acciones</th>
+                                                        </tr>
+                                                    </tfoot>
+                                                </table>
+                                            </font>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="divCreateButtons"   class="form-row col-12 mb-4" style="justify-content: center;">
+                                <button type='button' onclick="cleanFields()" class="genric-btn success circle"  data-dismiss="modal">Cerrar</button>
+                            </div> 
+                        </form>   
+                    </div>
+                </div>
+            </div>         
+        </div>  
+</div>
+<script>
+$('#DataListaccountSelect').on('change', function(){
+    var idCategory = $('#DataListaccountSelect').val();
+	var dataID =  $('#accountSelect [value="' + idCategory + '"]').data('id');
+    if(idCategory != ''){
+        if(dataID != undefined){
+            $.ajax({
+			url: '{% url "getCategoryInformsDetall"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+				'bussinesId': localStorage.getItem('idBussines'),
+				'idAC': localStorage.getItem('idAC'),
+                'idInforms': informId, 
+                'idInformDetall': dataID
+
+			},
+			dataType: 'json',
+			success: function (data) {
+                console.log(data)
+                if(data.Exist == "TRUE"){
+                    
+                    var table = $('#dataTableRubroOthersAgreement').DataTable(); 
+                    var rows = table.rows().remove().draw();
+                    for (var i=0; i<data.LID.length; i++){
+
+                    table.row.add( [
+                        data.LID[i].informDetall__codeInfD,
+                        "<input type='text' value='"+data.LID[i].descriptionInfD+"'  size='10'   id=valueCategory"+data.LID[i].id+" class='form-control' name='valueCategory'>",
+                        "<a data-toggle='tooltip' class='mr-2'title='Editar'><button type='button'  onclick=\'updateParameterization("+JSON.stringify(data.LID[i].id)+','+informId+")\' class='btn btn-primary btn-sm'><i class='fa fa-pencil' aria-hidden='true'></i></button></a>"+
+                        "<a data-toggle='tooltip' title='Editar'><button  type='button'  onclick=\'daleteParameterization("+JSON.stringify(data.LID[i].id)+','+informId+")\' class='btn btn-primary btn-sm'><i class='fa fa-trash' aria-hidden='true'></i></button></a>"														
+                    ])
+                    }
+                    table.draw( false );
+                   
+                    
+                }else{
+                    
+	                $('#DataListaccountSelect').val('');
+                    $('#valueCategory').val('')
+                    $('#accountSelect').val('')
+                    var txt
+                    $('#plussCategory').prop('disabled', 'disabled');
+                    txt = document.getElementById('DataListaccountSelect')
+                    txt.innerText = ''
+                    var table = $('#dataTableRubroOthersAgreement').DataTable(); 
+                    var rows = table.rows().remove().draw();
+                    swal("No posee Campos!","","error");
+                }
+				
+			}       
+		});
+        }else{
+            var table = $('#dataTableRubroOthersAgreement').DataTable(); 
+            var rows = table.rows().remove().draw();
+        }
+
+    }else{
+        var table = $('#dataTableRubroOthersAgreement').DataTable(); 
+        var rows = table.rows().remove().draw();
+    }
+    
+});
+
+
+$(document).ready(function() {
+
+    
+    $('#myModalInformDetallColumn').on('hidden.bs.modal', function () {
+        $('#separator_InformsDetall').empty()
+    })
+    
+    $('#myModalParameterization').on('hidden.bs.modal', function () {
+        $('#valueCategory').val('')
+        $('#DataListaccountSelect').val('')
+        $('#accountSelect').children().remove()
+        var my_list=document.getElementById("accountSelect");
+        var src = ''
+        my_list.innerHTML = src
+
+        txt = document.getElementById('DataListaccountSelect')
+        src2 = ''
+        txt.innerHTML = src2
+
+        var table = $('#dataTableRubroOthersAgreement').DataTable(); 
+        var rows = table.rows().remove().draw();
+        $('#plussCategory').prop('disabled', false);
+    })
+
+
+        $('#dataTableRubroOthersAgreement').DataTable( {
+			
+            "destroy":true,
+            "language": idioma_español,
+            "searching": false,
+            "dom": 'rtip'			
+            }
+        );	
+
+		$('#dataTableInform').DataTable( {
+		  "destroy":true,
+		  "language": idioma_español,
+		  
+			dom: 'Bfrtip',
+			buttons: [
+				'copy', 'csv', 'excel', 'pdf', 'print'
+			]
+			
+		});		 	
+});
+
+var informId;
+var informCurrentName
+
+function getInform(id){
+    informId =  id; 
+ 
+}
+function changeTypeUpdateInforme(id, nameI, category){
+    informId =  id;
+    informCurrentName = nameI;
+    
+    var nameIUpdate = document.getElementById("id_nameIUpdate");
+    nameIUpdate.value = nameI;
+    var categoryUpdate = document.getElementById("id_categoryUpdate");
+    categoryUpdate.value = category;
+}
+$("form#addInformDetall").submit(function() {
+
+    var codeInfD = $('input[name="columnInfD"]').val();
+    var descriptionInfD =  $("#id_descriptionInfD option:selected").val();
+    console.log(codeInfD,descriptionInfD,informId)
+    if (codeInfD,descriptionInfD) {
+        // Create Ajax Call
+        $.ajax({
+            url: '{% url "settingsInfDetall"  0 %}'.replace('0', localStorage.getItem('userID')),
+            data: {
+                'informId': informId,
+                'codeInfD': codeInfD,
+                'descriptionInfD': descriptionInfD,
+
+            },
+            dataType: 'json',
+            success: function (data) {
+                console.log(data);
+                if(data.CREATE == "TRUE"){
+                    swal("Creado exitoso del detalle de informe!", "Continua con tu proceso!", "success");
+                    $('#myModalInformDetall').modal('toggle');
+                }else{
+                    swal("No se puede crear el detalle del informe", "Ya existe un detalle con este código", "error");
+                    $('#myModalInformDetall').modal('toggle');
+                }
+                
+            }
+        });
+    }else{
+        alert("Por favor llene todos los campos");
+    }
+    $('form#addInformDetall').trigger("reset");
+    return false;
+});
+
+$("form#addInform").submit(function() {
+
+    var nameI = $('input[name="nameI"]').val();
+    var category =  $("#id_category option:selected").val();
+    console.log(category)
+    if (nameI,category) {
+        // Create Ajax Call
+        $.ajax({
+            url: '{% url "createInform"  0 %}'.replace('0', localStorage.getItem('userID')),
+            data: {
+                'bussines': localStorage.getItem('idBussines'),
+                'nameI': nameI,
+                'category': category,
+
+            },
+            dataType: 'json',
+            success: function (data) {
+                $("#dataTableInform").load(" #dataTableInform");
+                if(data.CREATE == "TRUE"){
+                    swal("Creado exitoso del nuevo informe!", "Continua con tu proceso!", "success");
+                    $('#myModalInform').modal('toggle');
+                }else{
+                    swal("No se puede crear el informe", "Ya existe un informe con este nombre", "error");
+                    $('#myModalInform').modal('toggle');
+                }
+                
+            }
+        });
+    }else{
+        alert("Por favor llene todos los campos");
+    }
+    $('form#addInform').trigger("reset");
+    return false;
+});
+
+function cleanFields(){
+	$('#DataListaccountSelect').val('');
+    $('#valueCategory').val('')
+    var txt
+    txt = document.getElementById('DataListaccountSelect')
+    txt.innerText = ''
+}
+
+
+$("form#formAPUpdateInform").submit(function() {
+     
+    var nameIUpdate = $('input[name="nameIUpdate"]').val();
+    var categoryUpdate = $("#id_categoryUpdate option:selected").val(); 
+    if (nameIUpdate, categoryUpdate) {
+
+        // Create Ajax Call
+        if(informCurrentName==nameIUpdate){
+            $.ajax({
+
+                url: '{% url "updateInform"  0 %}'.replace('0', localStorage.getItem('userID')),
+                data: {
+                    'bussinesId': localStorage.getItem('idBussines'),
+                    'equalName': 'TRUE',
+                    'id': informId,
+                    'nameI': nameIUpdate,
+                    'category': categoryUpdate,
+                    
+                },
+                dataType: 'json',
+                success: function (data) {                   
+                    if(data.CREATE == "TRUE"){
+                        $("#dataTableInform").load(" #dataTableInform");
+                        swal("Actualización exitosa!", "Continua con tu proceso!", "success");
+                        $('#myModalInformUpdate').modal('toggle');
+                    }else{
+                        swal("No se puede actualizar el informe", "Ya existe un informe con este nombre", "error");
+                        $('#myModalInformUpdate').modal('toggle');
+                    } 
+                }
+                });
+        }else{
+            $.ajax({
+
+            url: '{% url "updateInform"  0 %}'.replace('0', localStorage.getItem('userID')),
+            data: {
+                'bussinesId': localStorage.getItem('idBussines'),
+                'equalName': 'FALSE',
+                'id': informId,
+                'nameI': nameIUpdate,
+                'category': categoryUpdate,
+                
+            },
+            dataType: 'json',
+            success: function (data) {               
+                if(data.CREATE == "TRUE"){
+                    $("#dataTableInform").load(" #dataTableInform");
+                    swal("Actualización exitosa!", "Continua con tu proceso!", "success");
+                    $('#myModalInformUpdate').modal('toggle');
+                }else{
+                    swal("No se puede actualizar el informe", "Ya existe un informe con este nombre", "error");
+                    $('#myModalInformUpdate').modal('toggle');
+                } 
+            }
+            });
+        }
+       
+    }else{
+        swal("No se puede actualizar el informe", "Por favor llenar todos los campos", "error");
+    }
+   
+    return false;
+});
+
+function addValueCategory(){
+    
+	var idCategory = $('#DataListaccountSelect').val();
+	var dataID =  $('#accountSelect [value="' + idCategory + '"]').data('id');
+    var value = $('#valueCategory').val()
+
+    if (dataID,value) {
+        // Create Ajax Call
+        $.ajax({
+            url: '{% url "addCategoryDetall"  0 %}'.replace('0', localStorage.getItem('userID')),
+            data: {
+                'bussines': localStorage.getItem('idBussines'),
+                'idCategory': dataID,
+                'value': value,
+
+            },
+            dataType: 'json',
+            success: function (data) {
+                if(data.CREATE == "TRUE"){
+
+                    swal("Creado exitoso del nuevo informe!", "Continua con tu proceso!", "success");
+                    
+                    getListDetall()
+                    buttonParameterization(data.IF[0]['inform_id'])
+                }else{
+                    swal("No se puede crear el informe", "Ya existe un informe con este nombre", "error");
+                    $('#myModalParameterization').modal('toggle');
+                }
+                
+            }
+        });
+    }else{
+        alert("Por favor llene todos los campos");
+    }
+    
+}
+function buttonParameterization(idInform){
+
+
+    informId = idInform
+
+    $.ajax({
+			url: '{% url "getListInformsDetall"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+				'bussinesId': localStorage.getItem('idBussines'),
+				'idAC': localStorage.getItem('idAC'),
+                'idInforms': idInform
+
+			},
+			dataType: 'json',
+			success: function (data) {
+                console.log(data)
+                if(data.Exist == "TRUE"){
+                    var my_list=document.getElementById("accountSelect");
+                    var src = ''
+                    
+                    for (var i=0; i<data.IF.length; i++){
+                        src +=`<option  data-id="${data.IF[i].id}" value="${data.IF[i].codeInfD}" > </option>`
+                    }	
+                    
+                    my_list.innerHTML = src;
+                   
+                }else{
+                    
+	                $('#DataListaccountSelect').val('');
+                    $('#valueCategory').val('')
+                    $('#accountSelect').val('')
+                    var txt
+                    $('#plussCategory').prop('disabled', 'disabled');
+                    txt = document.getElementById('DataListaccountSelect')
+                    txt.innerText = ''
+                    var table = $('#dataTableRubroOthersAgreement').DataTable(); 
+                    var rows = table.rows().remove().draw();
+                    swal("No posee Campos!","","error");
+                }
+				
+			}       
+		});
+}
+
+
+function daleteParameterization(id,idInform){
+    var digitI = $('#valueCategory'+id).val();
+    $.ajax({
+			url: '{% url "deleteCategoryDetall"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+				'bussinesId': localStorage.getItem('idBussines'),
+				'id': id,
+                'value': digitI
+
+			},
+			dataType: 'json',
+			success: function (data) {
+                if(data.CREATE == "TRUE"){
+                    swal("Eliminación exitoso", "Continua con tu proceso!", "success");
+                    buttonParameterization(idInform)
+                }else{
+                    swal("No se puede eliminar", "", "error");
+                    $('#myModalParameterization').modal('toggle');
+                }
+				
+			}       
+		});
+}
+
+function updateParameterization(id,idInform){
+    var digitI = $('#valueCategory'+id).val();
+    $.ajax({
+			url: '{% url "updateCategoryDetall"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+				'bussinesId': localStorage.getItem('idBussines'),
+				'id': id,
+                'value': digitI
+
+			},
+			dataType: 'json',
+			success: function (data) {
+                if(data.CREATE == "TRUE"){
+                    swal("Modficación exitoso del valor!", "Continua con tu proceso!", "success");
+                    buttonParameterization(idInform)
+
+                }else{
+                    swal("No se puede crear el informe", "Ya existe un informe con este nombre", "error");
+                    $('#myModalParameterization').modal('toggle');
+                }
+				
+			}       
+		});
+}
+
+
+function deleteColumnInform(idInform){
+    informId = idInform
+    $.ajax({
+			url: '{% url "getListInformsDetall"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+				'bussinesId': localStorage.getItem('idBussines'),
+				'idAC': localStorage.getItem('idAC'),
+                'idInforms': idInform
+
+			},
+			dataType: 'json',
+			success: function (data) {
+                if(data.Exist == "TRUE"){
+                    $('#separator_InformsDetall')
+                        .append(`
+                        <div class="col-7 mb-4">
+                            <label>Nombre de Columnas</label>
+                        </div>
+                        <div class="col-5 mb-4">
+                            <label>Borrar</label>
+                        </div>
+                        `)
+                    for(let i=0; i<data.IF.length; i++){
+                        
+                        console.log(data.IF)
+                        
+                        console.log(data.IF[i])
+                        
+                        $('#separator_InformsDetall')
+                        .append(`
+                        <div class="col-7 mb-4">
+							<label>`+data.IF[i]['codeInfD']+`</label>
+						</div>
+                        <div class="col-5 mb-4" >
+                            <div >
+                                <button type="button" onclick="DeleteDetall(`+data.IF[i]['id']+`,`+idInform+`)" class="genric-btn primary small">Eliminar</button>   
+                            </div>
+                        </div>
+                        `)
+                    }
+                    
+                   
+                }else{
+                    
+                    $('#myModalInformDetallColumn').modal('toggle');
+                    swal("No posee Campos!","","error");
+                }
+				
+			}       
+		});
+}
+
+function DeleteDetall(id,idInform){
+    swal({
+    title: "Desea eliminar esta columna ?",
+    text: "Al confirmar esta acción, la columna sera eliminado.",
+    icon: "warning",
+    buttons: true,
+    dangerMode: true,
+    })
+    .then((willDelete) => {
+    if (willDelete) {
+
+        $.ajax({
+            url: '{% url "deleteInformsDetall"  0 %}'.replace('0', localStorage.getItem('userID')),
+            data: {
+                'id': id,
+            },
+            dataType: 'json',
+            success: function (data) {   
+                if(data.ELIMINADO == "TRUE"){
+                    $('#separator_InformsDetall').empty()
+                    deleteColumnInform(idInform)
+                    swal("El informe " + name + "  se ha eliminado con éxito.", {
+                    icon: "success",
+                    });
+                }else{
+                    swal("La columna " + name + " no se ha eliminado con éxito por que posee datos.", {
+                    icon: "error",
+                    });
+                }
+                
+            }
+        });
+    }
+    });
+}
+
+
+function deleteInform(id, name){
+
+    swal({
+    title: "Desea eliminar el informe " + name + "?",
+    text: "Al confirmar esta acción, el informe " + name + " sera eliminado.",
+    icon: "warning",
+    buttons: true,
+    dangerMode: true,
+    })
+    .then((willDelete) => {
+    if (willDelete) {
+
+        $.ajax({
+            url: '{% url "deleteAll"  0 %}'.replace('0', localStorage.getItem('userID')),
+            data: {
+                'id': id,
+                'option': '2'
+            },
+            dataType: 'json',
+            success: function (data) {   
+                $("#dataTableInform").load(" #dataTableInform");
+                swal("El informe " + name + "  se ha eliminado con éxito.", {
+                icon: "success",
+                });
+            }
+        });
+    }
+    });
+}
+
+
+function getListDetall(){
+    var idCategory = $('#DataListaccountSelect').val();
+	var dataID =  $('#accountSelect [value="' + idCategory + '"]').data('id');
+    
+    console.log(idCategory,dataID)
+    if(idCategory != ''){
+        if(dataID != undefined){
+            $.ajax({
+			url: '{% url "getCategoryInformsDetall"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+				'bussinesId': localStorage.getItem('idBussines'),
+				'idAC': localStorage.getItem('idAC'),
+                'idInforms': informId, 
+                'idInformDetall': dataID
+
+			},
+			dataType: 'json',
+			success: function (data) {
+                console.log(data)
+                if(data.Exist == "TRUE"){
+                    
+                    var table = $('#dataTableRubroOthersAgreement').DataTable(); 
+                    var rows = table.rows().remove().draw();
+                    for (var i=0; i<data.LID.length; i++){
+
+                    table.row.add( [
+                        data.LID[i].informDetall__codeInfD,
+                        "<input type='text' value='"+data.LID[i].descriptionInfD+"'  size='10'   id=valueCategory"+data.LID[i].id+" class='form-control' name='valueCategory'>",
+                        "<a data-toggle='tooltip' class='mr-2'title='Editar'><button type='button'  onclick=\'updateParameterization("+JSON.stringify(data.LID[i].id)+','+informId+")\' class='btn btn-primary btn-sm'><i class='fa fa-pencil' aria-hidden='true'></i></button></a>"+
+                        "<a data-toggle='tooltip' title='Editar'><button  type='button'  onclick=\'daleteParameterization("+JSON.stringify(data.LID[i].id)+','+informId+")\' class='btn btn-primary btn-sm'><i class='fa fa-trash' aria-hidden='true'></i></button></a>"														
+                    ])
+                    }
+                    table.draw( false );
+                   
+                    
+                }else{
+                    
+	                $('#DataListaccountSelect').val('');
+                    $('#valueCategory').val('')
+                    $('#accountSelect').val('')
+                    var txt
+                    $('#plussCategory').prop('disabled', 'disabled');
+                    txt = document.getElementById('DataListaccountSelect')
+                    txt.innerText = ''
+                    var table = $('#dataTableRubroOthersAgreement').DataTable(); 
+                    var rows = table.rows().remove().draw();
+                    swal("No posee Campos!","","error");
+                }
+				
+			}       
+		});
+        }else{
+            var table = $('#dataTableRubroOthersAgreement').DataTable(); 
+            var rows = table.rows().remove().draw();
+        }
+
+    }else{
+        var table = $('#dataTableRubroOthersAgreement').DataTable(); 
+        var rows = table.rows().remove().draw();
+    }
+}
+
+
+</script>
+{% endblock %}

@@ -1,0 +1,794 @@
+{% extends base_template_name %}
+{% load bootstrap4 %}
+{% block main %}
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<div id=divCreate class="container-fluid">
+    <h1 class="mt-4">Lista de periodos contables</h1>
+    <div class="card mb-4">
+        <div class="card-header"><i class="fas fa-table mr-1"></i>Lista de períodos contables</div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <button onclick="changeType()" type="button" data-toggle="modal" data-target="#myModalAP" class="genric-btn primary small">Añadir período contable</button>               
+                <br>
+                <br>
+                <table class="table table-bordered dataTable" id="dataTableAccount" width="100%" cellspacing="0"
+                      role="grid" aria-describedby="dataTable_info" style="width: 100%;">
+                    
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Estado</th>
+                            <th>Fecha Inicial</th>
+                            <th>Fecha Final</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Estado</th>
+                            <th>Fecha Inicial</th>
+                            <th>Fecha Final</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {% if object_list %}
+                        {% for accountPeriod in object_list %}                        
+                              <tr>                          
+                                <td>{{accountPeriod.name}}</td>
+                                <td>{{accountPeriod.state}}</td>
+                                <td>{{accountPeriod.initialDate}}</td>
+                                <td>{{accountPeriod.finalDate}}</td>
+                                <td>
+                        </div>
+                      </div>
+
+                      <a href="#" data-toggle="tooltip"   title="Registrar origen">
+                        <button data-toggle="modal" id="test" data-target="#myModalOrigin" class="btn btn-primary btn-sm" type="button" onclick="CreateOrigin('{{accountPeriod.id}}')">
+                        <i class="fa fa-edit"></i>
+                        </button>
+                      </a>
+                      <a href="#" data-toggle="tooltip"   title="Registrar operación">
+                        <button data-toggle="modal" data-target="#myModalOperacion"  onclick="getOrigin('{{accountPeriod.id}}')" class="btn btn-primary btn-sm">
+                        <i class="fa fa-edit"></i>
+                        </button>
+                      </a>
+                      <a href="#" data-toggle="tooltip" id="delete"  title="Eliminar periodo contable">
+                        <button onclick="deleteAccount('{{accountPeriod.id}}', '{{accountPeriod.name}}')" class="btn btn-primary btn-sm">
+                        <i class="fa fa-trash"></i>
+                        </button>
+                      </a>
+                      <a href="#" data-toggle="tooltip" id="update"  title="Actualizar periodo contable">
+                        <button onclick="changeTypeUpdate('{{accountPeriod.id}}','{{accountPeriod.name}}','{{accountPeriod.state}}','{{accountPeriod.initialDate}}','{{accountPeriod.finalDate}}')" class="btn btn-primary btn-sm">
+                        <i class="fa fa-pencil"></i>
+                        </button>
+                      </a>  
+                      <a href="#" data-toggle="tooltip" id="operationsACSelect"  title="Ver operaciones">
+                        <button onclick="getOriginOperation('{{accountPeriod.id}}')" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModalSeleOrigin">
+                        <i class="fa fa-plus"></i>
+                        </button>
+                      </a>
+                      <a href="#" data-toggle="tooltip" id="updateOrg"  title="Modificar Patron">
+                        <button onclick="updateOrigin('{{accountPeriod.id}}')" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModalUpdateOrigin">
+                        <i class="fa fa-pencil"></i>
+                        </button>
+                      </a>
+                      
+                    
+                                </td>
+                              </tr>
+                            {% endfor %}
+                            {% else %}
+                            <h1 class="black-color">No hay períodos contables registrados</h1>
+                            {% endif %}  
+                    </tbody>
+                </table>
+        </div>
+</div>
+
+
+
+
+
+<div class="modal fade" id="myModalUpdateOrigin" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Actualizar Origin</h4>
+            </div>
+            <div class="modal-body">
+                <div  class="container-fluid">
+                    <form id="UpdateOrigin">
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <div class="form-group">
+                                    <label for="id_updateOrigin">Origen</label>
+                                    <select name="updateOriginSelect" class="form-control" title="" id="id_updateOriginSelect" multiple="">
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_updatePattern">Patrón</label>
+                                    <input type="text" name="updatePattern" maxlength="100" class="form-control" placeholder="Patrón" title="" id="id_updatePattern">
+                                </div>
+                                                            
+                                <div id="divUpdateButtonsOrigin"  class="form-group">
+                                    <button id="btnUpdateOrigin" type="submit" class="genric-btn success circle" >Actualizar Origen</button>
+                                    <button type="button" class="genric-btn default circle" data-dismiss="modal">Cancelar</button>
+                                </div>  
+                            </div>                                
+                        </div>                   
+                    </form> 
+                </div>
+            </div>
+        </div>         
+    </div>  
+</div>
+
+<div class="modal fade" id="myModalOrigin" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Registrar Origen</h4>
+            </div>
+                <div class="modal-body-row">
+                    <div  class="container-fluid">
+                            <form id="addOrigin" action="">
+                                <div class="form-row">
+                                    <div class="form-group col-md-8">
+                                        {% csrf_token %}
+                                        {% bootstrap_form OriginformS %}
+                                        <div id="divCreateButtonsOrigin"  class="form-group">
+                                            <button id="btnCreateOrigin" type="submit" class="genric-btn success circle" >Registrar Origen</button>
+                                            <button type="button" class="genric-btn default circle" data-dismiss="modal">Cancelar</button>
+                                        </div>  
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                       <h1> Origenes</h1>
+                                       <br>
+                                       <br>
+                                       <ul class="list-group" id="listOriginByAC">
+                                      </ul>
+                                    </div>
+                                                                    
+                                </div>
+                                 
+                            </form> 
+                    </div>
+                    
+                </div>
+            </div>         
+        </div>  
+</div>
+<div class="modal fade" id="myModalOperacion" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Registrar Operación</h4>
+            </div>
+                <div class="modal-body">
+                    <div  class="container-fluid">
+
+                        <form id="addOperacion" action="">
+                            <div class="form-row">
+                                <div class="form-group col-md-8">
+                                    {% csrf_token %}
+                                    {% bootstrap_form Operationform %}
+                                    <div id="divCreateButtonsOrigin"  class="form-group">
+                                        <button id="btnCreateOperation" type="submit" class="genric-btn success circle" >Registrar Operación</button>
+                                        <button type="button" class="genric-btn default circle" data-dismiss="modal">Cancelar</button>
+                                    </div>  
+                                </div>
+                                <div class="form-group col-md-4">
+                                   <h1> Operaciones</h1>
+                                   <br>
+                                   <br>
+                                   <ul class="list-group" id="listOperationByOrigin">
+                                  </ul>
+                                </div>                                                              
+                            </div>                        
+                        </form> 
+                    </div>
+                </div>
+            </div>         
+        </div>  
+</div>
+<div class="modal fade" id="myModalSeleOrigin" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Seleccione el origen</h4>
+            </div>
+                <div class="modal-body">
+                    <div  class="container-fluid">
+                        <form id="addSeleOriginToOperation" action="">
+                            {% csrf_token %}
+                            {% bootstrap_form ByBudgetOriginform %}
+                            <div id="divCreateButtonSeleOrigin"  class="form-group">
+                                <button id="btnCreateVerOperation" type="submit" class="genric-btn success circle">Ver Operaciones</button>
+                                <button type="button" class="genric-btn default circle" data-dismiss="modal">Cancelar</button>
+                            </div>   
+                    
+                        </form>  
+                    </div>
+                </div>
+            </div>         
+        </div>  
+</div>
+<div class="modal fade" id="myModalAP" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Registrar período contable</h4>
+            </div>
+                <div class="modal-body">
+                    <div  class="container-fluid">
+                        <form id="addAP" action="">
+                            {% csrf_token %}
+                            {% bootstrap_form ACform %}
+                            <div id="divCreateButtons"  class="form-group">
+                                <button id="btnCreate" type="button"  onclick="addAccout()"  class="genric-btn success circle" >Registrar  Período contable</button>
+                                <button type="button" class="genric-btn default circle" data-dismiss="modal">Cancelar</button>
+                            </div> 
+                            
+                        </form>  
+                    </div>
+                </div>
+            </div>         
+        </div>  
+</div>
+<div class="modal fade" id="myModalAPUpdate" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Actualizar período contable</h4>
+            </div>
+                <div class="modal-body">
+                    <div  class="container-fluid">
+                        <form id="formAPUpdate" action="">
+                            {% csrf_token %}
+                            {% bootstrap_form ByAccountUpdate %}
+                            <div id="divCreateButtons"  class="form-group">
+                                <button id="btnCreate" type="button"  onclick="updateAccout()" class="genric-btn success circle" >Actualizar periodo contable</button>
+                                <button type="button" class="genric-btn default circle" data-dismiss="modal">Cancelar</button>
+                            </div> 
+                            
+                        </form>  
+                    </div>
+                </div>
+            </div>         
+        </div>  
+</div>
+
+<script>
+
+var accountPeriodId;
+var index;
+var acccountPeriodId;
+var nameAccountPeriod;
+var idUpdateOrigin;
+
+function CreateOrigin(id){
+    
+    accountPeriodId =  id;
+    $.ajax({
+        url: '{% url "settingsOP2" 0 %}'.replace('0', localStorage.getItem('userID')),
+        data: {
+            'accountPeriod': accountPeriodId,
+        },
+        dataType: 'json',
+        success: function (data) {
+            $("#listOriginByAC").empty()
+
+            for (var i=0; i<data.OR.length; i++){
+                $("#listOriginByAC").append("<li class='list-group-item'>"+ data.OR[i].nameOrigin +"</li>")
+            }						
+        }
+    });
+}
+
+
+function updateOrigin(id){
+    accountPeriodId =  id;
+    $.ajax({
+        url: '{% url "settingsOP2" 0 %}'.replace('0', localStorage.getItem('userID')),
+        data: {
+            'accountPeriod': accountPeriodId,
+        },
+        dataType: 'json',
+        success: function (data) {
+            console.log(data)
+            const $select = document.querySelector("#id_updateOriginSelect");
+       
+            for (let i = $select.options.length; i >= 0; i--) {
+                    $select.remove(i);
+            }
+
+            for (var i=0; i<data.OR.length; i++){
+                $('#id_updateOriginSelect').append(`<option value="${data.OR[i].id}">${data.OR[i].nameOrigin} </option>`);
+                }						
+            }			
+    });
+}
+
+
+$(document).on('change', '#id_updateOriginSelect', function(event) {
+    var originId = parseInt($('#id_updateOriginSelect').val())
+    $.ajax({
+        url: '{% url "getInfoOrigin"  0 %}'.replace('0', localStorage.getItem('userID')),
+        data: {
+            'originID': originId
+        },
+        dataType: 'json',
+        success: function (data) {
+            idUpdateOrigin = originId
+            $('#id_updatePattern').val(data.OR[0]['pattern']);
+            console.log(data.OR[0]['codeOrigin'])
+        }   
+    });
+});
+ 
+
+$("form#UpdateOrigin").submit(function() {
+    $.ajax({
+        url: '{% url "updatePattern"  0 %}'.replace('0', localStorage.getItem('userID')),
+        data: {
+            'originID': idUpdateOrigin,
+            'pattern': $('#id_updatePattern').val()
+        },
+        dataType: 'json',
+        success: function (data) {
+           if(data.UD == "TRUE"){
+            $('#myModalUpdateOrigin').modal('toggle');
+            swal("Modificación exitoso del patron!", "Continua con tu proceso!", "success");
+           }
+            
+        }   
+    });
+
+    $('form#addOrigin').trigger("reset");
+    return false;
+})
+function changeType(){
+    
+    document.getElementById('id_initialDate').type = 'date';
+    document.getElementById('id_finalDate').type = 'date';
+
+}
+/////////////////falta implementar lo de pasar un string a date  para lo de la actualizar fecha
+function changeTypeUpdate(id, name, state, initialDate, finalDate){
+    var meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+    accountPeriodId =  id;
+    Value = initialDate.split(" ")
+    ValueF = finalDate.split(" ")
+    nameAccountPeriod = name;
+    if(accountPeriodId ==  localStorage.getItem('idAC')){
+        swal("No se puede actualizar el período contable en uso", "Intente con otro periodo!", "error");
+    }else{
+        var nameUpdate = document.getElementById("id_nameUpdate");
+        nameUpdate.value = name;
+        var stateUpdate = document.getElementById("id_stateUpdate");
+        stateUpdate.value = state;
+        var initialDateUAC = document.getElementById("id_initialDateUAC").type = 'date';
+
+        $('#id_initialDateUAC').attr("value",inputDates((meses.indexOf(Value[2])+1), parseInt(Value[0]), Value[4]));
+
+        var finalDatenUAC = document.getElementById("id_finalDatenUAC").type = 'date';
+
+        $('#id_finalDatenUAC').attr("value",inputDates((meses.indexOf(ValueF[2])+1), parseInt(ValueF[0]), ValueF[4]));
+
+        $("#myModalAPUpdate").modal("show");
+
+    }
+
+
+}
+
+function inputDates(mes,dia,ano){
+
+    if(mes<10){
+        if(dia<10){
+            return  ano+"-0"+mes+"-0"+dia
+        }else{
+            return  ano+"-0"+mes+"-"+dia
+        }
+    }else{
+        if(dia<10){
+            return  ano+"-"+mes+"-0"+dia
+        }else{
+            return  ano+"-"+mes+"-"+dia
+        }
+    }
+}
+
+$(document).ready(function() {
+		$('#dataTableAccount').DataTable( {
+		  "destroy":true,
+		  "language": idioma_español,
+		  
+			dom: 'Bfrtip',
+			buttons: [
+				'copy', 'csv', 'excel', 'pdf', 'print'
+			]
+			
+		  } );
+		 
+	
+} );
+
+$("form#addOrigin").submit(function() {
+
+    var codeOrigin = $('input[name="codeOrigin"]').val();
+    var nameOrigin = $('input[name="nameOrigin"]').val();
+    var descriptionOrigin = $('textarea[name="descriptionOrigin"]').val();
+    var orderOrigin = $('input[name="orderOrigin"]').val();
+    var pattern = $('input[name="pattern"]').val();
+
+
+
+
+    if (codeOrigin,nameOrigin,descriptionOrigin,orderOrigin) {
+        // Create Ajax Call
+        $.ajax({
+            url: '{% url "settingsOG" 0 %}'.replace('0', localStorage.getItem('userID')),
+            data: {
+                'accountPeriod': accountPeriodId,
+                'codeOrigin': codeOrigin,
+                'nameOrigin': nameOrigin,
+                'descriptionOrigin': descriptionOrigin,
+                'orderOrigin':  orderOrigin,
+                'pattern': pattern
+            },
+            dataType: 'json',
+            success: function (data) {
+                if(data.CREATE == "TRUE"){
+                    swal("Creado exitoso del origen!", "Continua con tu proceso!", "success");
+                    $('#myModalOrigin').modal('toggle');
+                    $("#listOriginByAC").empty()
+                }else{
+                    swal("No se puede crear un origen con el mismo nombre para este origen", "Verifique sus datos!", "error");
+                    $('#myModalOrigin').modal('toggle');
+                }
+            }
+        });
+    } else {
+        swal("No se puede crear un origen por favor llenar todos los campos", "Verifique sus datos!", "error");
+    }
+    $('form#addOrigin').trigger("reset");
+    return false;
+});
+////////////////////////////// JS relacionadas con operaciones ///////////////////////////////
+function getOriginOperation(id){
+    accountPeriodId =  id; 
+    $.ajax({
+
+        url: '{% url "getOriginOperation" 0 %}'.replace('0', localStorage.getItem('userID')),
+        data: {
+            
+            'accountPeriod': accountPeriodId,
+            
+        },
+        dataType: 'json',
+        success: function (data) {
+            console.log(data)
+        const $select = document.querySelector("#id_originSelectO");
+       
+        for (let i = $select.options.length; i >= 0; i--) {
+		        $select.remove(i);
+		}
+
+		for (var i=0; i<data.OR.length; i++){
+			$('#id_originSelectO').append(`<option value="${data.OR[i].nameOrigin}">${data.OR[i].nameOrigin} </option>`);
+			}						
+		}
+    });
+    
+}
+function getOrigin(id){
+    accountPeriodId =  id; 
+    $.ajax({
+        url: '{% url "settingsOP2" 0 %}'.replace('0', localStorage.getItem('userID')),
+        data: {
+            'accountPeriod': accountPeriodId,
+        },
+        dataType: 'json',
+        success: function (data) {
+            
+        console.log(id,"g",data)
+        const $select = document.querySelector("#id_origin");
+       
+        for (let i = $select.options.length; i >= 0; i--) {
+		        $select.remove(i);
+		}
+
+		for (var i=0; i<data.OR.length; i++){
+			$('#id_origin').append(`<option value="${data.OR[i].nameOrigin}">${data.OR[i].nameOrigin} </option>`);
+			}						
+		}
+    });
+}
+
+$("form#addOperacion").submit(function() {
+    var codeOp = $('input[name="codeOp"]').val();
+    var nameOp = $('input[name="nameOp"]').val();
+    var descriptionOp = $('textarea[name="descriptionOp"]').val();
+    var operation = $("#id_operation option:selected").text();
+    var orderOp =  $('input[name="orderOp"]').val();
+    var origin = $('#id_origin').val();
+
+    if (codeOp,nameOp,descriptionOp,operation,orderOp,origin) {
+        // Create Ajax Call
+        $.ajax({
+            url: '{% url "settingsCreateOP" 0 %}'.replace('0', localStorage.getItem('userID')),
+            data: {
+                'accountPeriod': accountPeriodId,
+                'codeOp': codeOp,
+                'nameOp': nameOp,
+                'descriptionOp': descriptionOp,
+                'operation': operation,
+                'orderOp':  orderOp,
+                'origin': JSON.stringify(origin),
+            },
+            dataType: 'json',
+            success: function (data) {
+                if(data.CREATE == "TRUE"){
+                    swal("Creado exitoso de la operación!", "Continua con tu proceso!", "success");
+                    $('#myModalOperacion').modal('toggle');
+                    $("#listOperationByOrigin").empty()
+                }else{
+                    swal("No se puede crear una operación con el mismo nombre para este origen", "Verifique sus datos!", "error");
+                    $('#myModalOperacion').modal('toggle');
+                }
+            }
+        });
+    } else {
+        swal("Error", "Porfavor llene todos los campos o selecciona un origen!", "error");
+    }
+    $('form#addOperacion').trigger("reset");
+    return false;
+});
+
+
+function monthDiff(dateFrom, dateTo) {
+ return dateTo.getMonth() - dateFrom.getMonth() + 
+   (12 * (dateTo.getFullYear() - dateFrom.getFullYear()))
+}
+
+function addAccout() {
+    var nameInput = $('input[name="name"]').val();
+    var stateInput = $("#id_state option:selected").text();
+    var initialDateInput = $('input[name="initialDate"]').val().split('-');
+    var finalDateInput = $('input[name="finalDate"]').val().split('-');
+    var amount =  monthDiff(new Date(initialDateInput[0], initialDateInput[1] - 1, initialDateInput[2]), new Date(finalDateInput[0], finalDateInput[1] - 1, finalDateInput[2])) + 1
+    var formatDateInitial = new Date(initialDateInput[0], initialDateInput[1] - 1, initialDateInput[2])
+
+    var listDates = []
+    for (var i=0; i< amount; i++){
+        if(i == 0){
+            listDates.push({
+                "mount": formatDateInitial.getMonth() + 1, 
+                "year": formatDateInitial.getFullYear(),
+                "activate": true
+            }) 
+        }else{
+            var f = new Date(formatDateInitial.setMonth(formatDateInitial.getMonth() + 1))
+            listDates.push({
+                "mount": f.getMonth()+1,
+                "year": formatDateInitial.getFullYear(),
+                "activate":  true
+            })
+        }
+    }
+    if (nameInput) {
+        // Create Ajax Call
+        $.ajax({
+            url: '{% url "createAccountPeriod" 0 %}'.replace('0', localStorage.getItem('userID')),
+            data: {
+                'bussines': localStorage.getItem('idBussines'),
+                'name': nameInput,
+                'state': stateInput,
+                'initialDate': initialDateInput[0] +"-"+ initialDateInput[1] +"-" +initialDateInput[2],
+                'finalDate': finalDateInput[0] +"-"+ finalDateInput[1] +"-" +finalDateInput[2],
+                'listDate':  JSON.stringify(listDates)
+            },
+            dataType: 'json',
+            success: function (data) {
+                $("#dataTableAccount").load(" #dataTableAccount");
+                if(data.CREATE == "TRUE"){
+                    swal("Creado exitoso del período contable!", "Continua con tu proceso!", "success");
+                    $('#myModalAP').modal('toggle');
+                }else{
+                    swal("No se puede crear el período contable", "Ya existe un período con este nombre", "error");
+                    $('#myModalAP').modal('toggle');
+                }
+            }
+        });
+      } else {
+        alert("All fields must have a valid value.");
+    }
+    $('form#addAP').trigger("reset");
+    return false;
+};
+
+function updateAccout() {
+    var nameUpdate = $('input[name="nameUpdate"]').val();
+    var stateUpdate = $("#id_stateUpdate option:selected").text();
+    var initialDateInput = $('input[name="initialDateUAC"]').val().split('-');
+    var finalDateInput = $('input[name="finalDatenUAC"]').val().split('-');
+    var amount =  monthDiff(new Date(initialDateInput[0], initialDateInput[1] - 1, initialDateInput[2]), new Date(finalDateInput[0], finalDateInput[1] - 1, finalDateInput[2])) + 1
+    var formatDateInitial = new Date(initialDateInput[0], initialDateInput[1] - 1, initialDateInput[2])
+    var listDates = []
+    
+    console.log("entro")
+    for (var i=0; i< amount; i++){
+        if(i == 0){
+            listDates.push({
+                "mount": formatDateInitial.getMonth() + 1, 
+                "year": formatDateInitial.getFullYear(),
+                "activate": true
+            }) 
+        }else{
+            var f = new Date(formatDateInitial.setMonth(formatDateInitial.getMonth() + 1))
+            listDates.push({
+                "mount": f.getMonth()+1,
+                "year": formatDateInitial.getFullYear(),
+                "activate":  true
+            })
+        }
+    }
+    if (nameUpdate, stateUpdate, initialDateInput, finalDateInput) {
+        // Create Ajax Call
+        if(nameAccountPeriod==nameUpdate){
+            $.ajax({
+            url: '{% url "updateAccountPeriod" 0 %}'.replace('0', localStorage.getItem('userID')),
+            data: {
+                'equalName': 'TRUE',
+                'bussinesId': localStorage.getItem('idBussines'),
+                'id': accountPeriodId,
+                'name': nameUpdate,
+                'state': stateUpdate,
+                'initialDate': initialDateInput[0] +"-"+ initialDateInput[1] +"-" +initialDateInput[2],
+                'finalDate': finalDateInput[0] +"-"+ finalDateInput[1] +"-" +finalDateInput[2],
+                'listDate':  JSON.stringify(listDates)
+            },
+            dataType: 'json',
+            success: function (data) {
+                console.log(data)
+                if(data.CREATE == "TRUE"){
+                    $("#dataTableAccount").load(" #dataTableAccount");
+                    swal("Actualización exitosa!", "Continua con tu proceso!", "success");
+                    $('#myModalAPUpdate').modal('toggle');
+                }else{
+                    swal("No se puede actualizar el periodo contable", "Ya existe un periodo contable con este nombre", "error");
+                    $('#myModalAPUpdate').modal('toggle');
+                }
+
+                if(data.USED == "FALSE"){
+                    swal("No se puede actualizar el periodo contable", "Ya cuenta con un mes cerrado", "error");
+                    $('#myModalAPUpdate').modal('toggle');
+                }
+
+            }
+        });
+        }else{
+            $.ajax({
+            url: '{% url "updateAccountPeriod" 0 %}'.replace('0', localStorage.getItem('userID')),
+            data: {
+                'equalName': 'FALSE',
+                'bussinesId': localStorage.getItem('idBussines'),
+                'id': accountPeriodId,
+                'name': nameUpdate,
+                'state': stateUpdate,
+                'initialDate': initialDateInput[0] +"-"+ initialDateInput[1] +"-" +initialDateInput[2],
+                'finalDate': finalDateInput[0] +"-"+ finalDateInput[1] +"-" +finalDateInput[2],
+                'listDate':  JSON.stringify(listDates)
+            },
+            dataType: 'json',
+            success: function (data) {
+                if(data.CREATE == "TRUE"){
+                    $("#dataTableAccount").load(" #dataTableAccount");
+                    swal("Actualización exitosa!", "Continua con tu proceso!", "success");
+                    $('#myModalAPUpdate').modal('toggle');
+                }else{
+                    swal("No se puede actualizar el periodo contable", "Ya existe un periodo contable con este nombre", "error");
+                    $('#myModalAPUpdate').modal('toggle');
+                } 
+
+            }
+        });
+        }
+        
+      } else {
+        alert("All fields must have a valid value.");
+    }
+    return false;
+};
+
+function deleteAccount(id, name){
+
+    if(id ==  localStorage.getItem('idAC')){
+        swal("No se puede elimianar el período contable en uso", "Intente con otro periodo!", "error");
+    }else{
+        swal({
+        title: "Desea eliminar el período contable " + name + "?",
+        text: "Al confirmar esta acción, el período  contable " + name + " sera eliminado.",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+        })
+        .then((willDelete) => {
+        if (willDelete) {
+
+            $.ajax({
+                url: '{% url "deleteAll" 0 %}'.replace('0', localStorage.getItem('userID')),
+                data: {
+                    'option': '1',
+                    'id': id,
+                },
+                dataType: 'json',
+                success: function (data) {   
+                    if(data.ELIMINADO == "TRUE"){
+                        $("#dataTableAccount").load(" #dataTableAccount");
+                        swal("El período contable " + name + "  se ha eliminado con éxito.", {
+                        icon: "success",
+                        });
+                    }
+
+                    if(data.USED == "FALSE"){
+                        swal("El período contable " + name + "  no se podra borrar ya cuenta con un o más meses  cerrado", {
+                        icon: "error",
+                        });
+                    }
+                }
+            });
+        }
+        });
+    }
+
+}
+function sendAClocalstore(id){
+    localStorage.setItem('idAC', id);
+}
+
+$("form#addSeleOriginToOperation").submit(function() {
+    $.ajax({
+            url: '{% url "changeWindowsOperation" 0 %}'.replace('0', localStorage.getItem('userID')),
+            data: {
+                'accountPeriod': accountPeriodId,
+                'origin': $("#id_originSelectO option:selected").text()
+            },
+            dataType: 'json',
+            success: function (data) {
+				window.location.href = "http://localhost:8000/settings/listOperations/"+data.OR+"/"+localStorage.getItem('userID');	
+
+            }
+        });
+});
+
+$(document).on('change', '#id_origin', function(event) {
+    var originName = $('#id_origin').val()
+		$.ajax({
+			url: '{% url "getOperationsByOrigin"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+                'accountPeriod': accountPeriodId,
+				'originID': originName[0]
+			},
+			dataType: 'json',
+			success: function (data) {
+                $("#listOperationByOrigin").empty()
+
+                for (var i=0; i<data.OP.length; i++){
+                    $("#listOperationByOrigin").append("<li class='list-group-item'>"+data.OP[i].nameOp+"</li>")
+                }	
+	        }   
+        });
+});
+////////////////////////////////////////////////////////////////////////////////////////////////////
+</script>
+{% endblock %}

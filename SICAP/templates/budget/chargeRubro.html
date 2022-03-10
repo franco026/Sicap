@@ -1,0 +1,71 @@
+{% extends 'base/base.html' %}
+
+
+{% block main %}
+<br>
+<br>
+<br>
+<br>
+<br>
+	
+{% load bootstrap4 %}
+<div class="container">
+    <form method="POST" id="formImportRubro" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="exampleFormControlFile1">Por favor seleccione el archivo a importar</label>
+            <input type="file" name="myfile" class="form-control-file" id="myfile">
+            <button type="submit" class="primary-btn">Importar Rubros</button>
+          </div>   
+    </form>
+</div>
+
+<div  class="container-fluid col-12" >
+    <div class="card mb-4" >
+        <div class="card-header " ><i class="fas fa-table mr-1" ></i>Información de rubros para agregar</div>
+        <div class="card-body" >
+        <div class="table-responsive">
+            <table class="table table-bordered dataTable col-12" id="dataTableRubroTem" cellspacing="0" 
+                role="grid" aria-describedby="dataTable_info">
+                
+                <thead>
+                    <tr>
+                        <th>Tipo cuenta</th>
+                        <th>Rubro</th>
+                        <th>Descripción</th>
+                        <th>Presupuesto inicial</th>
+
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Tipo cuenta</th>
+                        <th>Rubro</th>
+                        <th>Descripción</th>
+                        <th>Presupuesto inicial</th>
+                    </tr>
+                </tfoot>
+                    <tbody>
+                        <h1 id="rubroTable"></h1>
+                    </tbody>
+                </table>
+                
+        </div>	
+        </div>
+    </div>
+</div> 
+<script>
+    
+$(document).ready(function() {///______________se modifico la cumna posicion 0
+		$('#dataTableRubroTem').DataTable( {
+
+		  "destroy":true,
+		  "language": idioma_español,
+		  
+			dom: 'Bfrtip',			
+		  });		 	
+});		
+
+
+</script>
+{% endblock %}

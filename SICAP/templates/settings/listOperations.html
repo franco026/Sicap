@@ -1,0 +1,327 @@
+{% extends 'base/base.html' %}
+{% load bootstrap4 %}
+{% block main %}
+
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<div id=divCreate class="container-fluid">
+    <h1 class="mt-4">Lista de operaciones</h1>
+    <div class="card mb-4">
+        <div class="card-header"><i class="fas fa-table mr-1"></i>Lista de operaciones</div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered dataTable" id="dataTableOperation" width="100%" cellspacing="0"
+                      role="grid" aria-describedby="dataTable_operation" style="width: 100%;">
+                    
+                    <thead>
+                        <tr>
+                            <th>Codigo</th>
+                            <th>Nombre</th>
+                            <th>Contraoperacion</th>
+                            <th>Operación</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Codigo</th>
+                            <th>Nombre</th>
+                            <th>Contraoperacion</th>
+                            <th>Operación</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {% if object_list %}
+                        {% for operation in object_list %}                        
+                              <tr>                          
+                                <td>{{operation.codeOp}}</td>
+                                <td>{{operation.nameOp}}</td>
+                                {% if operation.contraOperarName == None %}
+                                <td>No hay contraoperacion</td>
+                                {% else %}
+                                <td>{{operation.contraOperarName}}</td>
+                                {% endif %}  
+                                <td>{{operation.operation}}</td>
+                                <td>
+
+                        </div>
+                      </div>
+
+                      <a href="#" data-toggle="tooltip" id="updateContraOperation"  title="Registrar contraoperación">
+                        <button onclick=" getOrigins('{{operation.origin}}','{{operation.id}}')" data-toggle="modal" data-target="#myModalContraOperation" class="btn btn-primary btn-sm">
+                        <i class="fa fa-edit"></i> 
+                        </button> 
+                      </a>
+                      <a href="#" data-toggle="tooltip"   title="Eliminar Operación">
+                        <button onclick="deleteOperation('{{operation.id}}','{{inform.nameOp}}')" class="btn btn-primary btn-sm"  >
+                        <i class="fa fa-trash"></i>
+                        </button>
+                      </a> 
+                      <a href="#" data-toggle="tooltip" id="updateOperation"  title="Actualizar Operación">
+                        <button onclick="changeTypeUpdateOperation('{{operation.id}}','{{operation.codeOp}}','{{operation.nameOp}}','{{operation.operation}}','{{operation.orderOp}}','{{operation.origin}}')"data-toggle="modal" data-target="#myModalOperationUpdate" class="btn btn-primary btn-sm">
+                        <i class="fa fa-pencil"></i>
+                        </button>
+                      </a>
+                                </td>
+                              </tr>
+                            {% endfor %}
+                            {% else %}
+                            <h1 class="black-color">No hay operaciones en este período contable</h1>
+                            {% endif %}  
+                    </tbody>
+                </table>
+        </div>
+</div>
+
+<div class="modal fade" id="myModalContraOperation" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Registrar Origen</h4>
+          </div>
+              <div class="modal-body">
+                  <div  class="container-fluid">
+                      <form id="addContraOperation" action="">
+                          {% csrf_token %}
+                          {% bootstrap_form ContraOperationForm %}
+                          <div id="divCreateButtonsOrigin"  class="form-group">
+                              <button id="btnAddContraOperation" type="submit" class="genric-btn success circle" >Agregar contraoperación</button>
+                              <button type="button" class="genric-btn default circle" data-dismiss="modal">Cancelar</button>
+                          </div>   
+                  
+                      </form>  
+                  </div>
+              </div>
+          </div>         
+      </div>  
+</div>
+<div class="modal fade" id="myModalOperationUpdate" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Actualizar operación</h4>
+          </div>
+              <div class="modal-body">
+                  <div  class="container-fluid">
+                      <form id="formAPUpdateOperation" action="">
+                          {% csrf_token %}
+                          {% bootstrap_form OperationUpdateForm %}
+                          <div id="divCreateButtons"  class="form-group">
+                              <button id="btnCreate" type="submit" class="genric-btn success circle" >Actualizar operación</button>
+                              <button type="button" class="genric-btn default circle" data-dismiss="modal">Cancelar</button>
+                          </div> 
+                          
+                      </form>  
+                  </div>
+              </div>
+          </div>         
+      </div>  
+</div>
+
+<script>
+
+var operationId;
+var operationCurrentName;
+
+function getOrigins(idOrigin, idOperation){
+  operationId = idOperation;
+  $.ajax({
+      url: '{% url "settingsOP"  0 %}'.replace('0', localStorage.getItem('userID')),
+      data: {
+           'origin': idOrigin,
+      },
+      dataType: 'json',
+      success: function (data) {
+
+        const $select = document.querySelector("#id_origen");
+       
+        for (let i = $select.options.length; i >= 0; i--) {
+            $select.remove(i);
+        }
+        $('#id_origen').append(`<option  hidden  selected"> Selecciona una opción</option>`);
+        for (var i=0; i<data.OR.length; i++){
+          $('#id_origen').append(`<option value="${data.OR[i].id}">${data.OR[i].nameOrigin}</option>`);
+        }						
+    }       
+  });
+}
+
+function changeTypeUpdateOperation(id, codeOp, nameOp, operation, orderOp, origin){
+
+  operationId =  id;
+  operationCurrentName = nameOp;
+
+  var codeOpUpdate = document.getElementById("id_codeOpUpdate");
+  codeOpUpdate.value = codeOp;
+  var nameOpUpdate = document.getElementById("id_nameOpUpdate");
+  nameOpUpdate.value = nameOp;
+  var operationOpUpdate = document.getElementById("id_operationOpUpdate");
+  operationOpUpdate.value = operation;
+  var orderOpUpdate = document.getElementById("id_orderOpUpdate");
+  orderOpUpdate.value = orderOp;
+  
+}
+
+$(document).on('change', '#id_origen', function(event) {
+			nameOrigin = $("#id_origen option:selected").val();
+			$.ajax({
+					url: '{% url "getOperationsContra" 0 %}'.replace('0', localStorage.getItem('userID')),
+					data: {
+            'accountID': localStorage.getItem('idAC'),
+						'nameOrigin': nameOrigin,
+					},
+					dataType: 'json',
+					success: function (data) {
+						const $select = document.querySelector("#id_contraoperation");
+						for (let i = $select.options.length; i >= 0; i--) {
+								$select.remove(i);
+						}
+						$('#id_contraoperation').append(`<option  hidden  selected"> Selecciona una opción</option>`);
+						for (var i=0; i<data.OP.length; i++){
+							$('#id_contraoperation').append(`<option value="${data.OP[i].nameOp}">${data.OP[i].nameOp}</option>`);
+						}
+												
+					}
+				});
+});
+
+$("form#formAPUpdateOperation").submit(function() {
+   
+    var codeOpUpdate = $('input[name="codeOpUpdate"]').val();
+    var nameOpUpdate = $('input[name="nameOpUpdate"]').val();
+    var operationOpUpdate = $("#id_operationOpUpdate option:selected").text();
+    var orderOpUpdate = $('input[name="orderOpUpdate"]').val();
+    
+    
+    if (codeOpUpdate, nameOpUpdate, operationOpUpdate, orderOpUpdate) {
+ 
+        // Create Ajax Call
+        if(operationCurrentName==nameOpUpdate){
+            
+            $.ajax({
+ 
+                url: '{% url "updateOperation"  0 %}'.replace('0', localStorage.getItem('userID')),
+                data: {
+                    'bussinesId': localStorage.getItem('idBussines'),
+                    'equalName': 'TRUE',
+                    'id': operationId,
+                    'codeOp': codeOpUpdate,
+                    'nameOp': nameOpUpdate,
+                    'operation': operationOpUpdate,
+                    'orderOp': orderOpUpdate,                                    
+                },
+                dataType: 'json',
+                success: function (data) { 
+                    console.log(data)                  
+                    if(data.CREATE == "TRUE"){
+
+                      $("#dataTableOperation").load(" #dataTableOperation");
+                      swal("Actualización exitosa!", "Continua con tu proceso!", "success");
+                      $('#myModalOperationUpdate').modal('toggle');
+                    }else{
+                        swal("No se puede actualizar la operación", "Ya existe una operación con este nombre", "error");
+                        $('#myModalOperationUpdate').modal('toggle');
+                    } 
+                }
+            });
+        }else{
+            $.ajax({
+ 
+            url: '{% url "updateOperation"  0 %}'.replace('0', localStorage.getItem('userID')),
+            ata: {
+                'bussinesId': localStorage.getItem('idBussines'),
+                'equalName': 'FALSE',
+                'id': operationId,
+                'codeOp': codeOpUpdate,
+                'nameOp': nameOpUpdate,
+                'operation': operationOpUpdate,
+                'orderOp': orderOpUpdate,
+                 
+            },
+            dataType: 'json',
+            success: function (data) {               
+                if(data.CREATE == "TRUE"){
+                  $("#dataTableOperation").load(" #dataTableOperation");
+                  swal("Actualización exitosa!", "Continua con tu proceso!", "success");
+                  $('#myModalOperationUpdate').modal('toggle');
+                }else{
+                    swal("No se puede actualizar la operación", "Ya existe una operación con este nombre", "error");
+                    $('#myModalOperationUpdate').modal('toggle');
+                } 
+            }
+            });
+        }    
+    }else {
+      alert("All fields must have a valid value.");
+    }
+    return false;
+});
+  
+$("form#addContraOperation").submit(function() {
+
+  var nameOrigin = $("#id_origen option:selected").val();
+  var nameOp = $("#id_contraoperation option:selected").text();
+
+  if (nameOrigin,nameOp) {
+      // Create Ajax Call
+      $.ajax({
+          url: '{% url "updateContraOperation" 0 %}'.replace('0', localStorage.getItem('userID')),
+          data: {
+            'operation' : operationId,
+            'accountID': localStorage.getItem('idAC'),
+            'nameOp': nameOp,
+            'nameOrigin': nameOrigin,
+          },
+          dataType: 'json',
+          success: function (data) {
+              swal("Agregado exitoso de la contraoperación","Continua con tu proceso", "success");
+              $("#dataTableOperation").load(" #dataTableOperation");
+              $('#myModalContraOperation').modal('toggle');
+          }
+      });
+  } else {
+      alert("All fields must have a valid value.");
+  }
+$('form#addContraOperation').trigger("reset");
+return false;
+});
+
+function deleteOperation(id, nameOp){
+
+  swal({
+  title: "Desea eliminar la operación " + nameOp + "?",
+  text: "Al confirmar esta acción, la operación " + nameOp + " sera eliminado.",
+  icon: "warning",
+  buttons: true,
+  dangerMode: true,
+  })
+  .then((willDelete) => {
+  if (willDelete) {
+
+      $.ajax({
+          url: '{% url "deleteAll"  0 %}'.replace('0', localStorage.getItem('userID')),
+          data: {
+              'id': id,
+              'option': '7'
+          },
+          dataType: 'json',
+          success: function (data) {   
+              $("#dataTableOperation").load(" #dataTableOperation");
+              swal("La operación " + nameOp + "  se ha eliminado con éxito.", {
+              icon: "success",
+              });
+          }
+      });
+  }
+  });
+}
+</script>
+
+{% endblock %}

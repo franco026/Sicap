@@ -1,0 +1,296 @@
+{% extends 'base/base.html' %}
+{% load bootstrap4 %}
+{% block main %}
+
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<div id=divCreate class="container-fluid">
+    <h1 class="mt-4">Lista de tipo de acuerdos</h1>
+    <div class="card mb-4">
+        <div class="card-header"><i class="fas fa-table mr-1"></i>Lista de tipo de acuerdos</div>
+        <div class="card-body">
+            <div class="table-responsive">
+              <button data-toggle="modal" data-target="#myModalTypeAgreement" type="button" class="genric-btn primary small">Añadir tipo de acuerdo</button>
+                <table class="table table-bordered dataTable" id="dataTableAgreement" width="100%" cellspacing="0"
+                      role="grid" aria-describedby="dataTable_info" style="width: 100%;">
+                    
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Orden</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Código</th>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Orden</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {% if object_list %}
+                        {% for typeAgreement in object_list %}                        
+                              <tr>                          
+                                <td>{{typeAgreement.codeTA}}</td>
+                                <td>{{typeAgreement.nameTA}}</td>
+                                <td>{{typeAgreement.descriptionTA}}</td>
+                                <td>{{typeAgreement.ordenTA}}</td>
+                                <td>
+
+                        </div>
+                      </div>
+
+                      <a href="#" data-toggle="tooltip"   title="Eliminar acuerdo">
+                        <button onclick="deleteTypeAgreement('{{typeAgreement.id}}','{{typeAgreement.nameTA}}')" class="btn btn-primary btn-sm"  >
+                        <i class="fa fa-trash"></i>
+                        </button>
+                      </a>  
+
+                      <a href="#" data-toggle="tooltip" id="updateTypeAgreement"  title="Actualizar acuerdo">
+                        <button onclick="changeUpdateTypeAgreement('{{typeAgreement.id}}','{{typeAgreement.codeTA}}','{{typeAgreement.nameTA}}','{{typeAgreement.descriptionTA}}','{{typeAgreement.ordenTA}}')" data-toggle="modal" data-target="#myModalTypeAgreementUpdate" class="btn btn-primary btn-sm">
+                        <i class="fa fa-pencil"></i> 
+                        </button> 
+                      </a> 
+                                
+                                </td>
+                              </tr>
+                            {% endfor %}
+                            {% else %}
+                            <h1 class="black-color">No hay tipos de acuerdos registrados de esta empresa</h1>
+                            {% endif %}  
+                    </tbody>
+                </table>
+        </div>
+</div>
+<div class="modal fade" id="myModalTypeAgreement" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Añadir nuevo tipo de acuerdo</h4>
+          </div>
+              <div class="modal-body">
+                  <div  class="container-fluid">
+                      <form id="addTypeAgreement" action="">
+                          {% csrf_token %}
+                          {% bootstrap_form TypeAgreementForm %}
+
+                          <div id="divCreateTypeAgreement"  class="form-group">
+                              <button id="btnCreatenformTypeAgreement" type="submit" class="genric-btn success circle" >Registrar Informe</button>
+                              <button type="submit" class="genric-btn default circle" data-dismiss="modal">Cancelar</button>
+                          </div>   
+                  
+                      </form>  
+                  </div>
+              </div>
+          </div>         
+      </div>  
+</div>
+
+<div class="modal fade" id="myModalTypeAgreementUpdate" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Actualizar tipo de acuredo</h4>
+          </div>
+              <div class="modal-body">
+                  <div  class="container-fluid">
+                      <form id="formAPUpdateTypeAgreement" action="">
+                          {% csrf_token %}
+                          {% bootstrap_form ByTypeAgreementUpdate %}
+                          <div id="divCreateButtonsTypeAgreement"  class="form-group">
+                              <button id="btnCreateTypeAgreement" type="submit" class="genric-btn success circle" >Actualizar tipo de acuredo</button>
+                              <button type="button" class="genric-btn default circle" data-dismiss="modal">Cancelar</button>
+                          </div> 
+                          
+                      </form>  
+                  </div>
+              </div>
+          </div>         
+      </div>  
+</div>
+<script>
+    
+$(document).ready(function() {
+		$('#dataTableAgreement').DataTable( {
+		  "destroy":true,
+		  "language": idioma_español,
+		  
+			dom: 'Bfrtip',
+			buttons: [
+				'copy', 'csv', 'excel', 'pdf', 'print'
+			]
+			
+	} );	 	
+} );
+
+var typeAgreementId;
+var codeTypeAgreement;
+function changeUpdateTypeAgreement(id, codeTA, nameTA, descriptionTA, ordenTA){
+    typeAgreementId = id;
+    codeTypeAgreement = codeTA;
+    var codeTAUpdate = document.getElementById("id_codeTAUpdate");
+    codeTAUpdate.value = codeTA;
+    var nameTAUpdate = document.getElementById("id_nameTAUpdate");
+    nameTAUpdate.value = nameTA;
+    var descriptionTAUpdate = document.getElementById("id_descriptionTAUpdate");
+    descriptionTAUpdate.value = descriptionTA;
+    var ordenTAUpdate = document.getElementById("id_ordenTAUpdate");
+    ordenTAUpdate.value = ordenTA;
+} 
+
+$("form#addTypeAgreement").submit(function() {
+
+    var codeTA = $('input[name="codeTA"]').val();
+    var nameTA = $('input[name="nameTA"]').val();
+    var descriptionTA = $('textarea[name="descriptionTA"]').val();
+    var ordenTA = $('input[name="ordenTA"]').val();
+    
+    if (codeTA,nameTA,descriptionTA,ordenTA) {
+        // Create Ajax Call
+        $.ajax({
+            url: '{% url "createTypeAgreement"  0 %}'.replace('0', localStorage.getItem('userID')),
+            data: {
+                'bussines': localStorage.getItem('idBussines'),
+                'codeTA': codeTA,
+                'nameTA': nameTA,
+                'descriptionTA': descriptionTA,               
+                'ordenTA': ordenTA,    
+
+            },
+            dataType: 'json',
+            success: function (data) {
+                console.log(data);
+                if(data.CREATE == "TRUE"){
+                    $("#dataTableAgreement").load(" #dataTableAgreement");
+                    swal("Creado el nuevo tipo de acuerdo!", "Continua con tu proceso!", "success");
+                    $('#myModalTypeAgreement').modal('toggle');
+                }else{
+                    swal("No se puede crear el tipo de acuerdo", "Ya existe un tipo de acuerdo con este nombre", "error");
+                    $('#myModalTypeAgreement').modal('toggle');
+                }
+                
+            }
+        });
+    } else {
+        alert("Por favor llene todos los campos");
+    }
+    $('form#addTypeAgreement').trigger("reset");
+    return false;
+});
+
+$("form#formAPUpdateTypeAgreement").submit(function() {
+
+     
+    var codeTAUpdate = $('input[name="codeTAUpdate"]').val();
+    var nameTAUpdate = $('input[name="nameTAUpdate"]').val();
+    var descriptionTAUpdate = $('input[name="descriptionTAUpdate"]').val();
+    var ordenTAUpdate = $('input[name="ordenTAUpdate"]').val();
+  
+    if (codeTAUpdate, nameTAUpdate, descriptionTAUpdate, ordenTAUpdate) {
+        // Create Ajax Call
+        if(codeTypeAgreement==codeTAUpdate){
+                $.ajax({
+                url: '{% url "updateTypeAgreement"  0 %}'.replace('0', localStorage.getItem('userID')),
+                data: {
+                    'equalCode': 'TRUE',
+                    'bussinesId': localStorage.getItem('idBussines'),
+                    'id': typeAgreementId,
+                    'codeTA': codeTAUpdate,
+                    'nameTA': nameTAUpdate,
+                    'descriptionTA': descriptionTAUpdate,
+                    'ordenTA': ordenTAUpdate,
+                    
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if(data.CREATE == "TRUE"){
+                        $("#dataTableAgreement").load(" #dataTableAgreement");
+                        swal("Actualización exitosa!", "Continua con tu proceso!", "success");
+                        $('#myModalTypeAgreementUpdate').modal('toggle');
+                    }else{
+
+                        swal("No se puede actualizar el tipo de acuerdo", "Ya existe un tipo de acuerdo con este nombre", "error");
+                        $('#myModalTypeAgreementUpdate').modal('toggle');
+                    }
+                    
+                }
+            });
+        }else{
+            $.ajax({
+            url: '{% url "updateTypeAgreement" 0 %}'.replace('0', localStorage.getItem('userID')),
+            data: {
+                'equalCode': 'FALSE',
+                'bussinesId': localStorage.getItem('idBussines'),
+                'id': typeAgreementId,
+                'codeTA': codeTAUpdate,
+                'nameTA': nameTAUpdate,
+                'descriptionTA': descriptionTAUpdate,
+                'ordenTA': ordenTAUpdate,
+                  
+            },
+            dataType: 'json',
+            success: function (data) {
+                if(data.CREATE == "TRUE"){
+                    $("#dataTableAgreement").load(" #dataTableAgreement");
+                    swal("Actualización exitosa!", "Continua con tu proceso!", "success");
+                    $('#myModalTypeAgreementUpdate').modal('toggle');
+                }else{
+
+                    swal("No se puede actualizar el acuerdo", "Ya existe un acuerdo con este nombre", "error");
+                    $('#myModalTypeAgreementUpdate').modal('toggle');
+                }
+                  
+            }
+        });
+        }
+       
+    } else {
+        alert("All fields must have a valid value.");
+    }
+    return false;
+  });
+
+function deleteTypeAgreement(id, nameTA){
+
+    swal({
+    title: "Desea eliminar el tipo de acuerdo " + nameTA + "?",
+    text: "Al confirmar esta acción, el tipo de acuerdo " + nameTA + " sera eliminado.",
+    icon: "warning",
+    buttons: true,
+    dangerMode: true,
+    })
+    .then((willDelete) => {
+    if (willDelete) {
+
+        $.ajax({
+            url: '{% url "deleteAll" 0 %}'.replace('0', localStorage.getItem('userID')),
+            data: {
+                'id': id,
+                'option': '3'
+            },
+            dataType: 'json',
+            success: function (data) {   
+                $("#dataTableAgreement").load(" #dataTableAgreement");
+                swal("El tipo de acuerdo " + nameTA + "  se ha eliminado con exito.", {
+                icon: "success",
+                });
+            }
+        });
+    }
+    });
+}
+ 
+</script>
+
+{% endblock %}

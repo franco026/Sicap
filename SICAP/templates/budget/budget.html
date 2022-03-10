@@ -1,0 +1,4923 @@
+{% extends 'base/base.html' %}
+
+
+{% block main %}
+
+
+
+<body onload="loadTest()">
+<br>
+<br>
+<br>
+<br>
+<br>
+	
+{% load bootstrap4 %}
+
+<div class="col-lg-8 posts-list" >
+	<form id="addOptions">
+		<h2>Seleccione el origen </h2>
+		<br>
+		<div id="separator">
+
+		</div>
+		<br>
+		<h2>Seleccione la operación </h2>
+		<br>
+		
+		<div id="separatorOP">
+			
+		</div>
+	</form>
+</div>
+
+<div   style="display:none" id="divAgreement" class="container-fluid">
+	<br>
+	<br>
+	<div class="card mb-4">
+		<div class="card-header"><i class="fas fa-table mr-1"></i>Cabecera de movimiento</div>
+		<div class="card-body">
+			<form id="createAG">
+				<div class="form-row">
+					<div class="col-4">
+						<label>Tipo</label>
+						<select class="form-control" id="typeAgreement" required>
+						</select>
+					</div>
+				<div class="col-2">
+					<label>#</label>				  
+					<input autocomplete="off" name="numberAgreement" id="numberAgreement" type="text" class="form-control" >
+				</div>
+				<div class="col-2">
+					<label>Fecha</label>				  
+					<input  name="dateAgreement" id="dateAgreement" type="date" class="form-control" >
+				</div>
+				</div>
+				<br>
+				<div class="form-row">
+					
+					<div class="col-6">
+						<label>Concepto</label>				  
+						<textarea name="concept" id="concept" type="text" class="form-control" ></textarea>
+					</div>
+				</div>
+				<br>
+				<button id="saveAgreement" type="button"  onclick="createAG()" class="btn btn-primary">Continuar</button>
+				<button type="button" onclick="cancels(2)" class="btn btn-secondary">Cancelar</button>
+			</form>
+		</div>
+	</div>
+		<div id="rubroOperations"  class="container-fluid col-6" style="float:left"  style="display:none">
+			<div class="card mb" >
+			<div class="card-header "  id="textOperations" ><i class="fas fa-table mr-1" ></i>Rubros de </div>
+			<div class="card-body" >
+				<div class="table-responsive">
+					<button onclick="getRubrosByOrigin()" id="bAddRubroOperation" data-toggle="modal" data-target="#myModalRubroOrigin"  class="genric-btn primary small">Agregar rubro</button>               
+					<button onclick="finishOperation()" id="fOperation" class="genric-btn primary small">Terminar operación</button>               
+					<font size="2" face="Arial" >
+					<table  style="width:100%" class="table table-bordered dataTable" id="dataTableRubroOthers" cellspacing="0" 
+						role="grid" aria-describedby="dataTable_info">
+						
+						<thead>
+							<tr>
+								<th>Rubro</th>
+								<th>Descripción</th>
+								<th>Valor</th>
+								<th>Presupuesto real</th>
+								<th>Presupuesto por ejecutar</th>
+								<th>Acciones</th>
+	
+							</tr>
+						</thead>
+						<tfoot>
+							<tr>
+								<th>Rubro</th>
+								<th>Descripción</th>
+								<th>Valor</th>
+								<th>Presupuesto real</th>
+								<th>Presupuesto por ejecutar</th>
+								<th>Acciones</th>
+	
+							</tr>
+						</tfoot>
+							<tbody>
+								<h1 id="rubroTable"></h1>
+							</tbody>
+						</table>
+					</font>
+					<div class="form-row col-12 mb-2">
+						
+						<div class="col-5" >
+							<h6  id="totalValorOp" for="totalValorOp">VALOR: 0</h6>					
+						</div>
+						<div class="col-7" >
+							<h6  id="totalPresupuestoOp" for="totalPresupuestoOp">PRESUPUESTO POR EJECUTAR: 0</h6>										
+						</div>
+					</div>
+					</div>
+				</div>
+			</div>
+		</div> 
+		<div  id="rubroContraOperations" class="container-fluid col-6" style="float:right" style="display:none">
+			<div class="card mb">
+			<div class="card-header " style="float:right" id="textContraperations"><i class="fas fa-table mr-1" ></i>Rubros contraoperacion</div>
+			<div class="card-body">
+				<div style="width:100%" class="table-responsive">
+					<button onclick="getContraOperation()" id="bAddRubroContraOperation" data-toggle="modal" data-target="#myModalRubroContraOrigin"  class="genric-btn primary small">Agregar rubro</button>               
+					<button onclick="finishContraoperation()" id="fContraOperation"  class="genric-btn primary small">Terminar contraoperación</button>               
+					<font size="2" face="Arial" >
+					<table class="table table-bordered dataTable" id="dataTableContraRubros" cellspacing="0" 
+						role="grid" aria-describedby="dataTable_info">
+						
+						<thead>
+							<tr>
+								<th>Rubro</th>
+								<th>Descripción</th>
+								<th >Valor</th>
+								<th>Presupuesto real</th>
+								<th>Presupuesto por ejecutar</th>
+								<th>Acciones</th>
+	
+							</tr>
+						</thead>
+						<tfoot>
+							<tr>
+								<th>Rubro</th>
+								<th>Descripción</th>
+								<th>Valor</th>
+								<th>Presupuesto real</th>
+								<th>Presupuesto por ejecutar</th>
+								<th>Acciones</th>
+							</tr>
+						</tfoot>
+							<tbody>
+								<h1 id="rubroTable"></h1>
+							</tbody>
+						</table>
+						</font>
+						<div class="form-row col-12 mb-2">
+						
+							<div class="col-5" >
+								<h6  id="totalValorContraOp" for="totalValorContraOp">VALOR: 0</h6>					
+							</div>
+							<div class="col-7" >
+								<h6  id="totalPresupuestoContraOp" for="totalPresupuestoContraOp">FALTA POR CONTRA OPERAR: 0</h6>										
+							</div>
+						</div>
+
+				</div>		
+				</div>   
+			</div>
+		</div> 
+	</div>
+
+<div class="modal fade bd-example-modal-lg" id="myModalRubroOrigin" role="dialog" style="z-index:1080">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Lista de rubros para seleccionar</h4>
+            </div>
+                <div class="modal-body">
+					<div  class="container-fluid col-12" >
+						<div class="card mb-12" >
+						<div class="card-header " ><i class="fas fa-table mr-1" ></i>Rubros</div>
+						<div class="card-body" >
+							<div class="table-responsive">
+								<font size="2" face="Arial" >
+								<table class="table table-bordered dataTable " id="dataTableSelectRubro" cellspacing="0" 
+									role="grid" aria-describedby="dataTable_info">	
+									<thead>
+										<tr>
+											<th>Rubro</th>
+											<th>Descripción</th>
+											<th>Presupuesto real</th>
+											<th>Presupuesto por ejecutar</th>
+											<th>Seleccionar</th>
+										</tr>
+									</thead>
+									<tfoot>
+										<tr>
+											<th>Rubro</th>
+											<th>Descripción</th>
+											<th>Presupuesto real</th>
+											<th>Presupuesto por ejecutar</th>
+											<th>Seleccionar</th>
+										</tr>
+									</tfoot>
+										<tbody>
+											<h1></h1>
+										</tbody>
+									</table>
+								</font>
+							</div>	
+							</div>
+						</div>
+					</div> 
+                </div>
+            </div>         
+        </div>  
+</div>
+<div class="modal fade bd-example-modal-lg" id="myModalRubroContraOrigin" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Lista de rubros para seleccionar</h4>
+            </div>
+                <div class="modal-body">
+					<div  class="container-fluid col-12" >
+						<div class="card mb-12" >
+						<div class="card-header " ><i class="fas fa-table mr-1" ></i>Rubros</div>
+						<div class="card-body" >
+							<div class="table-responsive">
+								<font size="2" face="Arial" >
+								<table class="table table-bordered dataTable " id="dataTableSelectContraRubro" cellspacing="0" 
+									role="grid" aria-describedby="dataTable_info">	
+									<thead>
+										<tr>
+											<th>Rubro</th>
+											<th>Descripción</th>
+											<th>Presupuesto real</th>
+											<th>Presupuesto por ejecutar</th>
+											<th>Seleccionar</th>
+										</tr>
+									</thead>
+									<tfoot>
+										<tr>
+											<th>Rubro</th>
+											<th>Descripción</th>
+											<th>Presupuesto real</th>
+											<th>Presupuesto por ejecutar</th>
+											<th>Seleccionar</th>
+										</tr>
+									</tfoot>
+										<tbody>
+											<h1></h1>
+										</tbody>
+									</table>
+								</font>
+							</div>	
+							</div>
+						</div>
+					</div> 
+                </div>
+            </div>         
+        </div>  
+</div>
+
+<div>
+	<div class="modal fade bd-example-modal-lx" id="MyModalInform" role="dialog">
+		<div class="modal-dialog modal-lx"  style=" width: 50%;max-width:1800px;">
+		  <div class="modal-content">
+			<div class="modal-header">
+			  <h4 class="modal-title">Informes</h4>
+				</div>
+					<div class="modal-body">
+						<div  class="container-fluid col-12" >
+							<div>
+								<form id="addInforms">
+									<h2>Seleccione el tipo de informe </h2>
+									<br>
+									<div id="separator_informs">
+									</div>
+								</form>
+							<div  style="display: none" id="visualinform"  class="card mb-12" >
+							<div class="card-header " ><i class="fas fa-table mr-1" ></i>Rubros</div>
+							<div class="card-body" >
+								<div class="table-responsive">
+									<font size="2" face="Arial" >
+									<table class="table table-bordered dataTable " id="dataTableInforms" cellspacing="0" 
+										role="grid" aria-describedby="dataTable_info">	
+									</table>
+									</font>
+								</div>	
+							</div>
+							
+							<div style="display: flex; justify-content: center;">
+								<button  onclick="closedInform()" class="genric-btn primary e-large">Cerrar</button>
+							</div>
+						</div>
+							</div>
+						</div>
+					</div> 
+				 </div>
+			</div>         
+		</div>  
+</div>
+<div id="divRubro"  style="display:none" >
+
+	<br>
+	<br>
+	<div id="divCreate" class="container-fluid">
+			<div class="card mb-4">
+				<div class="card-header"><i class="fas fa-table mr-1"></i>Agregar rubro</div>
+				<div class="card-body">
+					<form id="createRubro">
+						<div class="form-row">
+						<div class="col-4">
+							<label id="coreRubroPattern">Código rubro</label>
+							<input min="1" type="number" name="rubro" id="id_rubro" class="form-control" placeholder="Código Rubro" required>
+						</div>
+						<div class="col">
+							<label>Rubro padre</label>				  
+							<input readonly="readonly" name="rubroFather" id="rubroFather" class="form-control" >
+						</div>
+						<div class="col">
+							<label>Nivel</label>				  
+							<input readonly="readonly" name="nivel" id="nivel" type="number" class="form-control" >
+						</div>
+						<div class="col">
+							<label>Último rubro</label>				  
+							<input readonly="readonly" id="lastRubro" class="form-control" >
+						</div>
+						</div>
+						<br>
+						<div  class="form-row" >
+							<div class="col-4">
+							<label>Descripción</label>
+							<input type="text" class="form-control" name="description" placeholder="Descripción" required>
+							</div>
+						</div>
+						<br>
+
+						<div class="form-row">
+							<div class="custom-control custom-radio custom-control-inline">
+								<input onclick="getRadioButonType()" value="AUXILIAR" type="radio" class="custom-control-input" id="AUXILIAR" name="typeAccount">
+								<label class="custom-control-label" for="AUXILIAR">Auxiliar</label>
+							</div>
+							<div class="custom-control custom-radio custom-control-inline">
+								<input onclick="getRadioButonType()" value="MAYOR" type="radio" class="custom-control-input" id="MAYOR" name="typeAccount">
+								<label class="custom-control-label" for="MAYOR">Mayor</label>
+							</div>
+
+							<div id="divInitialBudget" style="display:none" class="col-4">
+								<input style="display:block" name="initialBudget"  min="0"  pattern="^[0-9]+"  oninput="validity.valid||(value='');" id="initialBudget" type="number" class="form-control" placeholder="Valor inicial" >
+								<button type="submit" class="btn btn-primary">Guardar rubro</button>
+								<button type="button" onclick="cancels(1)" class="btn btn-secondary">Cancelar</button>
+							</div>
+						</div>	  
+					</form>
+				</div>
+				<div id="tablesInformDiv" style="display:none" class="container-fluid col-6" style="float:center">
+					<div class="card mb-4" style="float:center">
+					<div class="card-header " style="float:center"><i class="fas fa-table mr-1" style="float:center"></i>Lista de informes</div>
+					<div class="card-body" style="float:center">
+						<div class="table-responsive" style="float:center">
+							<font size="2" face="Arial" >
+							<table class="table table-bordered dataTable " id="dataTableInformTem" cellspacing="0" 
+								role="grid" aria-describedby="dataTable_info"  style="float:center">
+								
+								<thead>
+									<tr>
+										<th>Nombre</th>
+										<th>Código</th>
+										<th>Eliminar</th>
+									</tr>
+								</thead>
+								<tfoot>
+									<tr>
+										<th>Nombre</th>
+										<th>Código</th>
+										<th>Eliminar</th>
+									</tr>
+								</tfoot>
+									<tbody>
+									
+									</tbody>
+								</table>
+								</font>
+						</div>	
+						</div>
+					</div>
+				</div> 
+			</div>
+		
+	</div>
+	<div id="visualityTables">
+		<div  class="container-fluid col-7" style="float:left">
+			<div class="card mb" >
+			<div class="card-header " id="textTable"><i class="fas fa-table mr-1" ></i>Lista de rubros por presupuesto de</div>
+			<div class="card-body" >
+				<div class="table-responsive">
+					<button class="genric-btn primary small" data-toggle='modal' data-target='#MyModalImport'>Importar Rubros</button>  
+					<!-- <button onclick="getInforms()" class="genric-btn primary small" >Mayorización</button>   -->
+					<font size="2" face="Arial" >         
+					<input type="text" class="form-control" placeholder="Buscar por codigo" title="" required="" id="id_search">             
+					<table class="table table-bordered dataTable" id="dataTableRubroTem" cellspacing="0" 
+						role="grid" aria-describedby="dataTable_info">
+						
+						<thead>
+							<tr>
+								<th >ID</th>
+								<th>Rubro</th>
+								<th>Tipo</th>
+								<th>Descripción</th>
+								<th>Presupuesto inicial</th>
+								<th>Presupuesto Real</th>
+								<th>Presupuesto por ejecutar</th>
+								<th>Acciones</th>
+							</tr>
+						</thead>
+						<tfoot>
+							<tr>
+								<th>ID</th>
+								<th>Rubro</th>
+								<th>Tipo </th>
+								<th>Descripción</th>
+								<th>Presupuesto inicial</th>
+								<th>Presupuesto Real</th>
+								<th>Presupuesto por ejecutar</th>
+								<th>Acciones</th>
+							</tr>
+						</tfoot>
+							<tbody>
+								<h1 id="rubroTable"></h1>
+							</tbody>
+						</table>
+					</font>   
+				</div>	
+				</div>
+			</div>
+		</div> 
+		<div  class="container-fluid col-5" style="float:right">
+			<div class="card mb" >
+			<div class="card-header " ><i class="fas fa-table mr-1" style="float:left"></i>Lista de Acuerdos</div>
+			<div class="card-body" >
+				<div class="table-responsive">
+					<font size="2" face="Arial" >
+					<table class="table table-bordered dataTable " id="dataTableMovTem" cellspacing="0" 
+						role="grid" aria-describedby="dataTable_info">
+						
+						<thead>
+							<tr>
+								<th>Descripción</th>
+								<th>Número</th>
+								<th>Tipo de acuerdo</th>
+								<th>Tipo de acuerdo</th>
+								<th>Acciones</th>
+							</tr>
+						</thead>
+						<tfoot>
+							<tr>
+								<th>Descripción</th>
+								<th>Número</th>
+								<th>Tipo de acuerdo</th>
+								<th>Tipo de acuerdo</th>
+								<th>Acciones</th>
+							</tr>
+						</tfoot>
+							<tbody>
+							
+							</tbody>
+						</table>
+					</font>
+				</div>	
+				</div>
+			</div>
+		</div> 
+	</div>
+		
+</div> 
+
+<!--inicio del html  tatan-->
+<div class="modal fade bd-example-modal-lg" id="myModalRubroUpdate" role="dialog">
+	<div class="modal-dialog modal-lg">
+	  <div class="modal-content">
+		<div class="modal-header ">
+		  <h4 class="modal-title">Actualizar Rubro</h4>
+			</div>
+				<div class="modal-body">
+					<div  class="container-fluid col-12 mb-8">
+						<form id="updateRubro">
+							<div class="form-row">
+							<div class="col-4">
+								<label>Código rubro</label>
+								<input readonly="readonly" type="text" name="rubroUpdate" id="id_rubroUpdate" class="form-control" placeholder="Código Rubro" required>
+							</div>
+							<div class="col">
+								<label>Rubro padre</label>				  
+								<input readonly="readonly" name="rubroFatherUpdate" id="id_rubroFatherUpdate" type="text" class="form-control" >
+							</div>
+							<div class="col">
+								<label>Nivel</label>				  
+								<input readonly="readonly" name="nivelUpdate" id="id_nivelUpdate" type="number" class="form-control" >
+							</div>
+							</div>
+							<br>
+							<div  class="form-row" >
+								<div class="col-4">
+								<label>Descripción</label>
+								<input type="text" class="form-control" id="id_descriptionUpdate" name="descriptionUpdate" placeholder="Descripción" required>
+								</div><!-- 
+								<div id="divUpdateChangeInform" class="col-4" >
+									<label>Informe</label>
+									<select class="form-control" id="chargeInforUpdatem" >
+									</select>
+								</div>
+								<div  id="divUpdateChangeDetallInform" class="col-4" >
+									<label>Detalles del informe</label>
+									<select class="form-control" id="detallInformUpdate" >
+									</select>
+								</div> -->
+							</div>
+							<br>
+	
+							<div class="form-row">
+								<div class="custom-control custom-radio custom-control-inline">
+									<input onclick="getRadioButonTypeUpdate('A')" value="A" type="radio" class="custom-control-input" id="AUXILIARUP" name="typeAccountUP">
+									<label class="custom-control-label" for="AUXILIARUP">Auxiliar</label>
+								</div>
+								<div class="custom-control custom-radio custom-control-inline">
+									<input  onclick="getRadioButonTypeUpdate('M')" value="M" type="radio" class="custom-control-input" id="MAYORUP" name="typeAccountUP">
+									<label class="custom-control-label" for="MAYORUP">Mayor</label>
+								</div>
+	
+								<div class="col-4">
+									<input  type="number"  min="1"  pattern="^[0-9]+"  oninput="validity.valid||(value='');" name="valueInitialUpdate" id="id_valueInitialUpdate" class="form-control" placeholder="Valor inicial" >
+									<button type="submit" class="btn btn-primary">Actualizar rubro</button>
+									<button type="button" onclick="cancels(3)" class="btn btn-secondary">Cancelar</button>
+								</div>
+							</div>	  
+						</form>
+						<br>
+						<br>
+						<div id="tablesInformDivUpdate" style="display:none" class="container-fluid " style="float:center">
+								<div class="card mb" style="float:center">
+								<div class="card-header " style="float:center"><i class="fas fa-table mr-1" style="float:center"></i>Lista de informes</div>
+								<div class="card-body" style="float:center">
+									<div class="table-responsive" style="float:center">
+										<font size="2" face="Arial" >
+										<table class="table table-bordered dataTable " id="dataTableInformUpdateT" cellspacing="0" 
+											role="grid" aria-describedby="dataTable_info"  style="float:center">
+											
+											<thead>
+												<tr>
+													<th>Nombre</th>
+													<th>Código</th>
+													<th>Valor</th>
+												</tr>
+											</thead>
+											<tfoot>
+												<tr>
+													<th>Nombre</th>
+													<th>Código</th>
+													<th>Valor</th>
+												</tr>
+											</tfoot>
+												<tbody>
+												
+												</tbody>
+											</table>
+										</font>
+									</div>	
+									</div>
+								</div>
+							</div> 
+					</div>
+				</div>
+			</div>         
+		</div>  
+  </div>
+  
+<div class="modal fade bd-example-modal-lg" id="myModalDetailInformRubro" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Detalles de Informe Rubro</h4>
+            </div>
+                <div class="modal-body">
+					<div  class="container-fluid col-12" >
+						<div class="card mb-12" >
+						<div class="card-header " ><i class="fas fa-table mr-1" ></i>Rubros</div>
+						<div class="card-body" >
+							<div class="table-responsive">
+								<font size="2" face="Arial" >
+								<table class="table table-bordered dataTable" id="dataTableDetailInformRubro" cellspacing="0" 
+									role="grid" aria-describedby="dataTable_informDetailRubro">	
+									<thead>
+										<tr>
+											<th>Empresa</th>
+											<th>Origen</th>
+											<th>Rubro</th>
+											<th>Rubro padre</th>
+											<th>Tipo de rubro</th>
+											<th>Nivel</th>
+											<th>Descripción</th>
+											<th>Fecha de creación</th>																					
+											<th>Presupuesto inicial</th>
+											<th>Presupuesto real</th>
+											
+											
+										</tr>
+									</thead>
+									<tfoot>
+										<tr>
+											<th>Empresa</th>
+											<th>Origen</th>
+											<th>Rubro</th>
+											<th>Rubro padre</th>
+											<th>Tipo de rubro</th>
+											<th>Nivel</th>
+											<th>Descripción</th>
+											<th>Fecha de creación</th>																					
+											<th>Presupuesto inicial</th>
+											<th>Presupuesto real</th>
+											
+										</tr>
+									</tfoot>
+										<tbody>
+											<h1></h1>
+										</tbody>
+									</table>
+								</font>
+							</div>	
+							</div>
+						</div>
+					</div> 
+                </div>
+            </div>         
+        </div>  
+</div>
+<div class="modal fade bd-example-modal-xl" id="myModalAgreeementOperation" role="dialog">
+    <div class="modal-dialog modal-lx" style=" width: 90%;max-width:1200px;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Operaciones realizadas</h4>
+            </div>
+                <div class="modal-body">
+					<div  class="container-fluid col-12" >
+						<div class="card mb-12" >
+						<div class="card-header " ><i class="fas fa-table mr-1" ></i>Operaciones realizadas</div>
+						<div class="card-body" >
+							<div class="table-responsive">
+								<font size="2" face="Arial" >
+								<input type="text" name="searchViewAgreeOpe" class="form-control" placeholder="Buscar por codigo" title="" required="" id="id_searchViewAgreeOpe" >
+								<table class="table table-bordered dataTable" id="dataTableAgreeementOperation" cellspacing="0" 
+									role="grid" aria-describedby="dataTable_informDetailRubro">	
+									<thead>
+										<tr>
+											<th>Fecha realización</th>																				
+											<th>Rubro</th>															
+											<th>Descripción</th>				
+											<th>Operación</th>
+											<th>Valor</th>
+											<th>Presupuesto Inicial</th>
+											<th>Presupuesto Real</th>
+											<th>Presupuesto por ejecutar</th>																						
+										</tr>
+									</thead>
+									<tfoot>
+										<tr>
+											<th>Fecha realización</th>																				
+											<th>Rubro</th>															
+											<th>Descripción</th>				
+											<th>Operación</th>
+											<th>Valor</th>
+											<th>Presupuesto Inicial</th>
+											<th>Presupuesto Real</th>
+											<th>Presupuesto por ejecutar</th>	
+										</tr>
+									</tfoot>
+										<tbody>
+											<h1></h1>
+										</tbody>
+									</table>
+									</font>
+							</div>	
+							</div>
+						</div>
+					</div> 
+                </div>
+            </div>         
+        </div>  
+</div>
+<div class="modal fade bd-example-modal-lg" id="myModalRubroOperation" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Movimientos Presupuestales</h4>
+            </div>
+                <div class="modal-body">
+					<div  class="container-fluid col-12" >
+						<div class="card mb-12" >
+						<div class="card-header" id="movementByRubro"><i class="fas fa-table mr-1" ></i>Movimientos Presupuestales</div>
+						<div class="card-body" >
+							<div class="table-responsive">
+								<font size="2" face="Arial" >
+								<table class="table table-bordered dataTable" id="dataTableRubroOperation" cellspacing="0" 
+									role="grid" aria-describedby="dataTable_RubroOperation">	
+									<thead>
+										<tr>
+											<th>Operación</th>
+											<th>Valor</th>
+											<th>Saldo</th>																				
+											<th>Fecha realización</th>																					
+										</tr>
+									</thead>
+									<tfoot>
+										<tr>
+											<th>Operación</th>
+											<th>Valor</th>
+											<th>Saldo</th>																				
+											<th>Fecha realización</th>
+										</tr>
+									</tfoot>
+										<tbody>
+											<h1></h1>
+										</tbody>
+									</table>
+								</font>
+							</div>	
+							</div>
+						</div>
+					</div> 
+                </div>
+            </div>         
+        </div>  
+</div>
+<div class="modal fade bd-example-modal-lg" id="MyModalImport" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Importar Rubro</h4>
+            </div>
+                <div class="modal-body">
+					
+						<form enctype="multipart/form-data">
+							<input id="upload" type=file  name="files[]">
+						</form>
+
+						<div  class="container-fluid col-12" >
+							<div class="card mb-12" >
+							<div class="card-header " ><i class="fas fa-table mr-1" ></i>Importar rubros</div>
+							<div class="card-body" >
+								<div class="table-responsive">
+									<button onclick="validateDataImport()" class="genric-btn primary small">Validar</button>  
+									<button onclick="sendDataToBD();" class="genric-btn primary small" >Importar</button>  
+									<button onclick="cancels(4)" class="genric-btn primary small">Cancelar</button>  
+									<font size="2" face="Arial" >
+									<table class="table table-bordered dataTable" id="dataTableImports" cellspacing="0" 
+										role="grid" aria-describedby="dataTable_informDetailRubro">	
+										<thead>
+											<tr>
+												<th>Tipo cuenta</th>
+												<th>Rubro</th>
+												<th>Descripcion</th>																				
+												<th>Presupuesto</th>
+												<th>Observaciones</th>																																										
+											</tr>
+										</thead>
+										<tfoot>
+											<tr>
+												<th>Tipo cuenta</th>
+												<th>Rubro</th>
+												<th>Descripcion</th>																				
+												<th>Presupuesto</th>
+												<th>Observaciones</th>
+											</tr>
+										</tfoot>
+											<tbody>
+												<h1></h1>
+											</tbody>
+										</table>
+									</font>
+								</div>	
+								</div>
+							</div>
+						</div> 
+                </div>
+            </div>         
+        </div>  
+</div>
+
+
+<div class="modal fade bd-example-modal-lg" id="myModalDatesDispoinibility" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Ver disponibilidades</h4>
+            </div>
+                <div class="modal-body">
+					<div class="form-row">
+						<div class="col-6">
+							<label>Fecha inicial</label>				  
+							<input  name="initialDate" id="initialDate" type="date" class="form-control" >
+						</div>
+						<div class="col-6">
+							<label>Fecha final</label>				  
+							<input  name="finalDate" id="finalDate" type="date" class="form-control" >
+						</div>
+						<br>
+						<br>
+					</div>
+						<br>
+						<br>
+						<div  class="container-fluid col-12" >
+							<div class="card mb-12" >
+							<div class="card-header " id="idTextDisponibilityByRubro" ><i class="fas fa-table mr-1" ></i>Disponibilidades del rubro </div>
+							<div class="card-body" >
+								<div class="table-responsive">
+									 
+									<font size="2" face="Arial" >
+									<table class="table table-bordered dataTable" id="dataTableDisponiblityRubros" cellspacing="0" 
+										role="grid" aria-describedby="dataTable_informDetailRubro">	
+										<thead>
+											<tr>
+												<th>Numero</th>
+												<th>Fecha</th>
+												<th>Valor</th>																				
+												<th>Saldo</th>
+											</tr>
+										</thead>
+										<tfoot>
+											<tr>									
+												<th>Numero</th>
+												<th>Fecha</th>
+												<th>Valor</th>																				
+												<th>Saldo</th>
+											</tr>
+										</tfoot>
+											<tbody>
+												<h1></h1>
+											</tbody>
+										</table>
+									</font>
+								</div>	
+								</div>
+							</div>
+						</div> 
+                </div>
+            </div>         
+        </div>  
+</div>
+<div class="modal fade bd-example-modal-lx" id="myModalAgreementUpdate" role="dialog" style="overflow-y: scroll;">
+	<div class="modal-dialog modal-lx"  style=" width: 90%;max-width:1800px;">
+	  	<div class="modal-content">
+			<div class="modal-header ">
+		  	<h4 class="modal-title">Actualizar Tipo de Acuerdo</h4>
+			</div>
+			<div class="modal-body modal-lx">
+				<div class="container-fluid">
+					<div class="card mb-12">
+						<div class="card-body">
+							<form id="updateAG">
+									<div class="form-row">
+										<div id="divUpdateChangeAgreement" class="col-12">
+											<label>Tipo de acuerdo</label>
+											<select class="form-control" id="typeAgreementUpdate" required>
+											</select>
+										</div>
+									<div class="col-3">
+										<label>#</label>				  
+										<input autocomplete="off" name="numberAgreementUpdate" id="numberAgreementUpdate" type="number" class="form-control" >
+									</div>
+									<div class="col-4">
+										<label>Fecha</label>				  
+										<input  name="dateAgreementUpdate" id="dateAgreementUpdate" type="date" class="form-control" >
+									</div>
+									</div>
+								
+									<div class="form-row mb-4">
+										
+										<div class="col-10">
+											<label>Concepto</label>				  
+											<textarea name="conceptUpdate" id="conceptUpdate" type="text" class="form-control" ></textarea>
+										</div>
+									</div>
+								</form>
+						</div>
+					</div>
+					<div id="rubroOperationsAgreement"  class="container-fluid col-6" style="float:left"  style="display:none">
+						<div class="card mb">
+							<div class="card-header "  id="textOperationsAgreement" ><i class="fas fa-table mr-1" ></i>Contraoperacions</div>
+								<div class="card-body" >
+									<div class="table-responsive">  
+									<font size="2" face="Arial" >
+										<button onclick="getNewRubrosUpdateByOrigin()" id="bAddRubroOperation" data-toggle="modal" data-target="#myModalRubroOrigin"  class="genric-btn primary small">Agregar rubro</button>    
+										<table  style="width:100%" class="table table-bordered dataTable" id="dataTableRubroOthersAgreement" cellspacing="0" 
+										role="grid" aria-describedby="dataTable_info">
+											<thead>
+												<tr>
+													<th>Rubro</th>
+													<th>Descripción</th>
+													<th>Valor</th>
+													<th>Presupuesto real</th>
+													<th>Presupuesto por ejecutar</th>
+													<th>Acciones</th>
+												</tr>
+											</thead>
+											<tfoot>
+												<tr>
+													<th>Rubro</th>
+													<th>Descripción</th>
+													<th>Valor</th>
+													<th>Presupuesto real</th>
+													<th>Presupuesto por ejecutar</th>
+													<th>Acciones</th>
+												</tr>
+											</tfoot>
+											<tbody>
+												<h1 id="rubroTable"></h1>
+											</tbody>
+										</table>
+									</font>
+									<div class="form-row col-12 mb-2">
+										<div class="col-5" >
+											<h6  id="totalValorOpAgreement" for="totalValorOpAgreement">VALOR: 0</h6>					
+										</div>
+										<div class="col-7" >
+											<h6  id="totalPresupuestoOpAgreement" for="totalPresupuestoOpAgreement">PRESUPUESTO POR EJECUTAR: 0</h6>										
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div  id="rubroContraOperationsAgreement" class="container-fluid col-6" style="float:right"  style="display:none">
+						<div class="card mb" >
+							<div class="card-header " id="textContraperationsAgreement"><i class="fas fa-table mr-1">Operacion</i></div>
+								<div class="card-body">
+									<div class="table-responsive">              
+									<font size="2" face="Arial" >
+										<button onclick="getNewRubrosUpdateContraByOrigin()" id="bAddRubroOperation" data-toggle="modal" data-target="#myModalRubroOrigin"  class="genric-btn primary small">Agregar rubro</button>    
+										<table class="table table-bordered dataTable" id="dataTableContraRubrosAgreement" cellspacing="0" 
+										role="grid" aria-describedby="dataTable_info">
+											<thead>
+												<tr>
+													<th>Rubro</th>
+													<th>Descripción</th>
+													<th>Valor</th>
+													<th>Presupuesto real</th>
+													<th>Presupuesto por ejecutar</th>
+													<th>Acciones</th>
+												</tr>
+											</thead>
+											<tfoot>
+												<tr>
+													<th>Rubro</th>
+													<th>Descripción</th>
+													<th>Valor</th>
+													<th>Presupuesto real</th>
+													<th>Presupuesto por ejecutar</th>
+													<th>Acciones</th>
+												</tr>
+											</tfoot>
+											<tbody>
+												<h1 id="rubroTable"></h1>
+											</tbody>
+										</table>
+									</font>
+									<div class="form-row col-12 mb-2">
+										<div class="col-5" >
+											<h6  id="totalValorContraOpAgreement" for="totalValorContraOpAgreement">VALOR: 0</h6>					
+										</div>
+										<div class="col-7" >
+											<h6  id="totalPresupuestoContraOpAgreement" for="totalPresupuestoContraOpAgreement">FALTA POR CONTRA OPERAR: 0</h6>										
+										</div>
+									</div>
+								</div>		
+							</div>   
+						</div>
+					</div> 
+				</div>	
+			</div>
+			<div style="display: flex; justify-content: center;">
+				<button onclick="finishEditOperation()" class="genric-btn primary e-large">Guardar Cambios</button>
+				<button onclick="cancels(5)" class="genric-btn primary e-large">Cancelar</button>       
+			</div>		
+		</div>         
+	</div>  
+</div>
+<div class="modal fade" id="myModalTypeAgreement" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Añadir nuevo tipo de acuerdo</h4>
+          </div>
+              <div class="modal-body">
+                  <div  class="container-fluid">
+                      <form id="addTypeAgreement" action="">
+					  		{% csrf_token %}
+                          	{% bootstrap_form typeAgreement %}
+
+                          <div id="divCreateTypeAgreement"  class="form-group">
+                              <button id="btnCreatenformTypeAgreement" type="submit" class="genric-btn success circle" >Registrar Informe</button>
+                              <button type="submit" class="genric-btn default circle" data-dismiss="modal">Cancelar</button>
+                          </div>   
+                  
+                      </form>  
+                  </div>
+              </div>
+          </div>         
+      </div>  
+</div>
+
+<style>
+
+	.swal-content__textarea{
+		height: 300px;
+	}
+    #MyModalCarga {
+        width: 300px;
+        height: 300px;
+        position: absolute;
+        left: 50%;
+        top: 50%; 
+        margin-left: -150px;
+        margin-top: -150px;
+    }
+    *,*:after,*:before{
+	margin: 0;
+	padding: 0;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+#contenedor_carga{
+    display:none;  
+	width: 100%;
+	position: fixed;
+	-webkit-transition: all  1s ease;
+	-o-transition: all  1s ease;
+	transition: all  1s ease;
+	z-index: 10000;
+    background-color: rgb(0 0 0 / 50%);
+    height: 100%;
+    top: -1px;
+    left: -1px;
+}
+#carga{
+	border: 15px solid #ccc;
+	border-top-color: #46dbf9;
+	border-top-style: groove;
+	height: 100px;
+	width:  100px;
+	border-radius: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	margin: auto;
+	-webkit-animation: girar 1.5s linear infinite;
+	-o-animation: girar 1.5s linear infinite;
+	animation: girar 1.5s linear infinite;
+}
+@keyframes girar{
+	from{transform: rotate(0deg);}
+	to {transform: rotate(360deg);}
+}
+</style>
+<div id="contenedor_carga">
+    <div id="carga">
+    </div>
+</div>  
+
+<!-- fil del html-->
+
+<div style="display:none" id="finalButton" class="container">
+	<div class="row">
+	  <div class="col">
+	  </div>
+	  <div class="col">
+	</div>
+	<div class="col">
+	</div>
+	  <div class="col">
+	</div>
+	  <div class="col-6">
+		<button onclick="finishProcessOperation()" class="genric-btn primary e-large">Terminar operación</button>               
+	</div>
+	  <div class="col-sm">
+	  </div>
+	</div>
+</div>
+<script>
+
+
+//Variables Globales
+
+var updateOperation=[];
+var totalUpdateOperateArray=[];
+var totalUpdateValor=0;
+var totalUpdateOperate=0;
+
+var updateContraOperation=[];
+var totalUpdateContraOperateArray=[];
+var totalUpdateContraValor=0;
+var totalUpdatContraeOperate=0;
+
+var dateAgreement=[];
+
+var conceptNewUpdate;
+var conceptNewContraUpdate;
+
+var rubrosToUpdateOperation=[];
+var rubrosToUpdateContraOperation=[];
+
+
+var idDeleteOperations = []
+var idDeleteContraOperations = []
+
+
+
+
+var mensajeValidateError = '';
+var titleeupdateoperation
+var oTable;
+var indexTable;
+var arrayInforms=[];
+var arrayInformsUpdate=[];
+var jsonImport=[];
+var arrayCode=[];
+var arrayCodeUpdate=[];
+var rubrosToOperation=[];
+var rubrosToContraOperation=[];
+var addOperation=[];
+var addContraperation=[];
+var totalOperate=0;
+var totalOperateArray=[];//--tatan
+var totalValor=0;//----	
+var totalcontraOperate=0;
+var totalContraOpArray=[];//--tatan
+var totalValorContraOp=0;//---
+var simbolContraoperation;
+var nameContraoperation;
+var tableDetailInformRubro;//____tatan______
+var originID;
+var searchRubro;
+var clik=0;
+var typeRubroGlobalUpdate;
+var nextImport=false;
+var newTypeRubroUp;
+var typeRubroCreate;
+var idRubroDisponibilityDate;
+var initialDate;
+var finalDate;
+var optionchecked = 0;
+var datesPeriod = []
+
+var patternOrigin = []
+var acumulatorImport = 0;
+var arrayImport = [];
+//Parametros Tablas
+$(document).ready(function() {
+
+		$('#MyModalInform').on('hidden.bs.modal', function () {
+			var esVisible = $("#visualinform").is(":hidden");
+
+			$('#separator_informs').empty()
+			console.log(optionchecked)
+			if(esVisible && optionchecked!=0){
+				var tablaDatos =  $('#dataTableInforms').DataTable()
+				tablaDatos.destroy()
+				$('#dataTableInforms').empty()
+				var rows = tablaDatos.rows().remove().draw();
+				$("#visualinform").css('display', 'none');
+				optionchecked = 0
+			}	
+		})
+		$('#myModalAgreementUpdate').on('hidden.bs.modal', function () {
+				if ($('.modal:visible').length) {
+				$('body').addClass('modal-open');
+				}
+
+				idDeleteOperations = [];
+				
+				updateOperation=[];
+				totalUpdateOperateArray=[];
+				totalUpdateValor=0;
+				totalUpdateOperate=0;
+
+				updateContraOperation=[];
+				totalUpdateContraOperateArray=[];
+				totalUpdateContraValor=0;
+				totalUpdatContraeOperate=0;
+
+				rubrosToUpdateOperation=[];
+				rubrosToUpdateContraOperation=[];
+
+
+				
+ 				conceptNewUpdate = '';
+				conceptNewContraUpdate = '';
+
+
+				dateAgreement=[];
+
+				
+		})
+		$('#dataTableInformRubro').DataTable( {
+		  "destroy":true,
+		  "language": idioma_español,
+		  
+			dom: 'Bfrtip',			
+		  } );		 	
+		$('#dataTableRubroTem').DataTable( {
+			"columns": [
+				null,
+				{ "type": "string" },
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+			],
+			"bFilter": false,
+        	"searching": true,
+			"columnDefs": [
+            {
+                "targets": [ 0 ],
+                "visible": false
+            }
+        	],
+		  	"language": idioma_español,
+			dom: 'Brtip',			
+		  }
+		  );		 	
+		$('#dataTableSelectRubro').DataTable( {
+		  "destroy":true,
+		  "ordering": false,
+		  "language": idioma_español,
+		  
+			dom: 'Bfrtip',			
+		  }
+		  );
+		$('#dataTableSelectContraRubro').DataTable( {
+		  "destroy":true,
+		  "ordering": false,
+		  "language": idioma_español,
+		  
+			dom: 'Bfrtip',			
+		  }
+		);		 	
+		$('#dataTableImports').DataTable( {
+		  "destroy":true,
+		  "ordering":false,
+		  "paging":  true,
+		  "language": idioma_español,
+		  
+			dom: 'Bfrtip',			
+		  } );		 	
+		$('#dataTableMovTem').DataTable( {
+		  "destroy":true,
+		  "language": idioma_español,
+		  "columnDefs": [
+			{
+                "targets": [ 2 ],
+                "visible": false
+            }],
+		  
+			dom: 'Bfrtip',			
+		  } );		 	
+		$('#dataTableContraRubros').DataTable( {
+			
+		  	"destroy":true,
+		  	"language": idioma_español,
+		  
+			dom: 'Bfrtip',			
+		  } );		 
+			
+		$('#dataTableRubroOthers').DataTable( {
+		  	"language": idioma_español,
+			  
+		  	"destroy":true,
+		  
+			dom: 'Bfrtip',			
+		  }
+		  );		 	
+		$('#dataTableAgreeementOperation').DataTable( {
+
+			"bFilter": false,
+			"searching": true,
+			"ordering":false,
+			"columns": [
+					{ "type": "string" },
+					{ "type": "string" },
+					{ "type": "string" },
+					{ "type": "string" },
+					null,
+					null,
+					null,
+					null,
+				],
+        	"language": idioma_español,
+        
+        	dom: 'tp',	
+
+		  	"destroy":true,	
+		  }
+		  );		 	
+		$('#dataTableDetailInformRubro').DataTable( {
+		  "destroy":true,
+		  "language": idioma_español,
+		  
+			dom: 'Bfrtip',			
+		  } );		 	
+		$('#dataTableRubroOperation').DataTable( {
+
+		  "destroy":true,
+		  "language": idioma_español,
+		  
+			dom: 'Bfrtip',			
+		  });
+		$('#dataTableRubroOthersAgreement').DataTable( {
+
+			"destroy":true,
+			"language": idioma_español,
+
+			dom: 'Bfrtip',			
+		});
+		$('#dataTableContraRubrosAgreement').DataTable( {
+
+			"destroy":true,
+			"language": idioma_español,
+
+			dom: 'Bfrtip',			
+		});
+
+
+
+		$.ajax({
+				url: '{% url "getDatePeriod"  0 %}'.replace('0', localStorage.getItem('userID')),
+				data: {
+					'id':localStorage.getItem('idAC'),
+				},
+				dataType: 'json',
+				success: function (data) {
+					datesPeriod = data.LCP
+					console.log(datesPeriod)
+					var dateMin = new Date()
+					dateMin.setDate(1)
+					dateMin.setMonth(data.LCP[0]['month'])
+					dateMin.setFullYear(data.LCP[0]['year'])
+					var monthDatePM = dateMin.getMonth()
+					if(monthDatePM.toString().length==1){
+
+						monthDatePM = "0"+dateMin.getMonth()
+					}else{
+						 monthDatePM = dateMin.getMonth()
+					}
+
+					var dateMax = new Date(parseInt(data.LCP[data.LCP.length-1]['year']),parseInt(data.LCP[data.LCP.length-1]['month']),0)
+					dateMax.setMonth(parseInt(data.LCP[data.LCP.length-1]['month']))
+					var monthDatePX = dateMax.getMonth()
+					if(monthDatePX.toString().length==1){
+						monthDatePX = "0"+dateMax.getMonth()
+					}else{
+						monthDatePX = dateMax.getMonth()
+					}
+					
+				}
+			}) 
+
+		   		 	
+} );
+
+$('#id_searchViewAgreeOpe').on('input', function() { 
+    console.log( $(this).val())
+    var table = $("#dataTableAgreeementOperation").DataTable();
+    table.column(1).search("^" + $(this).val(), true, false, true).draw();
+});
+
+$(document).on('change', '#dateAgreement', function() {
+	var selectDateString = $(this).val()
+	var selectDateArray = selectDateString.split('-')
+	const found = datesPeriod.filter(function(element) {
+		if(element['month'].toString().length==1){
+			var monthDB = "0"+element['month']
+			return monthDB === selectDateArray[1]
+		}else{
+			var monthDB = element['month']
+			return monthDB === selectDateArray[1]
+		}
+		
+	})
+
+	if(!found[0]['activate']){
+		swal("Error", "Este mes se encuentra cerrado", "error");
+		$(this).val("")
+	}
+})
+
+$('#id_search').on('input', function() { 
+    var table = $("#dataTableRubroTem").DataTable();
+    table.column(1).search("^" + $(this).val(), true, false, true).draw();
+});
+
+/////////////funcion para gcargar los datos de la actualizacion de rubro_________tatan const found = datesPeriod.find(element => element['month'] === selectDateArray[1]);
+var rubroId;
+var agreementId;
+
+function changeUpdateRubro(id, rubro, typeRubro, description, initialBudget, inform, detallTypeInfor){
+	console.log(id, rubro, typeRubro, description, initialBudget, inform, detallTypeInfor)
+	rubroId = id;
+	var rubroRubUpdate = document.getElementById("id_rubroUpdate");
+	rubroRubUpdate.value = rubro;
+
+
+	$.ajax({
+			url: '{% url "getDetailRubro"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+				'id':id,
+				'bussines':localStorage.getItem('idBussines'),
+				'origin': $('input[name=origins]:checked', '#addOptions').val(),
+			},
+			dataType: 'json',
+			success: function (data) {
+				$('#id_descriptionUpdate').val(data.RUBRO[0].description);
+				$('#id_valueInitialUpdate').val(initialBudget);	
+				$('#id_rubroFatherUpdate').val(data.RUBRO[0].rubroFather);
+				$('#id_nivelUpdate').val(data.RUBRO[0].nivel);	
+				if(typeof data.RUBROFATHER[0] === 'undefined'){
+					$('#id_rubroFatherUpdate').val();
+				}else{
+					$('#id_rubroFatherUpdate').val(data.RUBROFATHER[0].rubro);
+				}
+				$('#id_nivelUpdate').val(data.RUBRO[0].nivel);
+				if(data.RUBRO[0].typeRubro=='A'){
+					$('#AUXILIARUP').prop("checked", true);
+				}else{
+					$('#MAYORUP').prop("checked", true);
+
+				}
+						
+			}
+	}) 
+
+
+	if(typeRubro=='M'){
+		newTypeRubroUp='M'
+		typeRubroGlobalUpdate = 'M'
+		$("#id_valueInitialUpdate").css("display", "none");
+		$('#id_valueInitialUpdate').val(0);
+		$("#divUpdateChangeDetallInform").css('display', 'none ');
+		$("#divUpdateChangeInform").css('display', 'none ');
+		$("#tablesInformDivUpdate").css('display', 'none ');
+
+	}else{
+		newTypeRubroUp = 'A'
+		typeRubroGlobalUpdate = 'A'
+
+		$("#tablesInformDivUpdate").css('display', 'block ');
+		$("#id_valueInitialUpdate").css("display", "block");
+
+		
+		$.ajax({
+				url: '{% url "getInformtUpdateRubro"  0 %}'.replace('0', localStorage.getItem('userID')),
+				data: {
+					'id':id,
+				},
+				dataType: 'json',
+				success: function (data) {
+						arrayInformsUpdate.splice(0, arrayInformsUpdate.length);
+						arrayCodeUpdate.splice(0, arrayCodeUpdate.length);
+						var table = $('#dataTableInformUpdateT').DataTable(); 
+						var rows = table.rows().remove().draw();
+
+						for (var i=0; i<data.RUBRO.length; i++){
+							arrayInformsUpdate.push(data.RUBRO[i].informdetall__inform__nameI);
+							arrayCodeUpdate.push(data.RUBRO[i].informdetall__codeInfD);
+							if(arrayCodeUpdate!=0){
+								table.row.add( [data.RUBRO[i].informdetall__inform__nameI,data.RUBRO[i].informdetall__codeInfD,data.RUBRO[i].valor]).draw( false );//Agrega las filas a la tabla
+								//"<a data-toggle='tooltip' id='delete' onclick='deleteInformUpdate()'  title='Eliminar informe'><button  class='btn btn-primary btn-sm'><i class='fa fa-trash'></i></button></a>"
+							}
+						}
+												
+					}
+			}) 
+		}
+	
+	
+}
+
+
+function loadTest() {	
+	$.ajax({
+		url: '{% url "getOriginBudget"  0 %}'.replace('0', localStorage.getItem('userID')),
+		data: {
+			'option': '1',
+			'nameAC': localStorage.getItem('nameAC'),
+			'idBussines': localStorage.getItem('idBussines'),
+
+		},
+		dataType: 'json',
+		success: function (data) {
+			
+		for (var i=0; i<data.OR.length; i++){
+			$('#separator')
+			.append(`<div class="custom-control custom-radio custom-control-inline">
+			<input onclick="getRadioButon()" type="radio" class="custom-control-input" value="`+data.OR[i].nameOrigin+`" id="`+data.OR[i].nameOrigin+`"name="origins">
+			<label class="custom-control-label" for="`+data.OR[i].nameOrigin+`">`+data.OR[i].nameOrigin+`</label>
+			</div>`)
+			}
+		}			
+	});		
+}
+
+function getInforms() {	
+	
+	var token = '{{csrf_token}}';
+	$.ajax({
+		headers: { "X-CSRFToken": token },
+		url: '{% url "mayorizacion"  0 %}'.replace('0', localStorage.getItem('userID')),
+		data: {
+			'idBussines': localStorage.getItem('idBussines')
+		},
+		type: 'POST',
+		dataType: 'json',
+		success: function (data) {
+			
+		}	
+	});		
+}
+
+function getRadioButonInform(){
+	optionchecked = 1
+	$.ajax({
+		url: '{% url "getInformsDetall"  0 %}'.replace('0', localStorage.getItem('userID')),
+		data: {
+			'idInforms': $('input[name=listInform]:checked', '#addInforms').val(),
+			'nameOrigin': $('input[name=origins]:checked', '#addOptions').val(),
+		},
+		dataType: 'json',
+		success: function (data) {
+			//var table = $('#dataTableInforms').DataTable();
+			if(data.RB.length!=0){
+				if(data.IF.length>0){
+					var count = 2
+					var campos = []
+					$("#visualinform").css('display', 'block');	
+					var titulos = [
+						{ "title": "Rubro", "targets": 0 },
+
+						{ "title": "Descripción", "targets": 1 }
+					];
+					for( i  = 0; i<data.IF.length; i++){
+						titulos.push({
+							"title": data.IF[i]["codeInfD"], "targets": 2+i
+						})
+						campos.push(data.IF[i]["descriptionInfD"])
+						count++
+					}
+
+					titulos.push({
+							"title": "Acciones", "targets": count
+						})
+
+					var datos = []
+					var input = [];
+					for( i  = 0; i<data.RB.length; i++){
+						datos.push([data.RB[i]["rubro"],data.RB[i]["description"]])
+						for(k =0; k<data.IF.length; k++){
+							
+							const found = data.RD.filter(element => element["rubro"] == data.RB[i]["rubro"]);
+
+							datos[i].push('<input type="text" autocomplete="off" id='+data.RB[i]["id"]+data.IF[k]["id"]+'  style="width:100px" value="'+ found[k]["rubroinformdetall__valor"]+'">')
+							input.push([data.RB[i]["id"],data.IF[k]["id"],data.IF[k]["codeInfD"]])
+						}
+						datos[i].push('<button style="" onclick=\'saveDataInformDetall('+JSON.stringify(input)+')\'class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i></button>')
+						input=[]
+					}
+					
+					console.log(datos)
+					var tablaDatos =  $('#dataTableInforms').DataTable({
+						"language": idioma_español,
+						"destroy":true,
+						dom: 'Bfrtip',	
+						"responsive": true,
+						"columnDefs": titulos,
+						data: datos,
+						"columns": [
+							{ "type": "string" }
+						],
+					});
+
+				}else{
+					swal("Error", "No posee campos", "error");
+					$('input[name=listInform]:checked', '#addInforms').prop("checked", false);
+					$("#visualinform").css('display', 'none');	
+					optionchecked = 0
+				}
+
+			}else{
+				swal("Error", "No posee rubros", "error");
+				$('input[name=listInform]:checked', '#addInforms').prop("checked", false);
+				$("#visualinform").css('display', 'none');	
+				$('#MyModalInform').modal('toggle');
+				optionchecked = 0	
+			}
+			
+			
+			
+		}
+	})
+}
+
+function closedInform(){	
+	$('input[name=listInform]:checked', '#addInforms').prop("checked", false);
+	$("#visualinform").css('display', 'none');	
+	$('#MyModalInform').modal('toggle');
+	optionchecked = 0
+
+
+}
+function saveDataInformDetall(input){
+	var createid = []
+	var newData = []
+	var truedata = false
+	for(k =0; k<input.length; k++){
+		createid.push('#'+input[k][0]+input[k][1])
+		if($(createid[k]).val()==""){
+			swal("Error", "Le falta datos al campo de "+input[k][2], "error");
+			truedata = true
+			break
+		}else{
+			newData.push([$(createid[k]).val(),input[k][0],input[k][1]])
+		}
+	}
+	if(!truedata){
+		console.log(newData)
+	/* 	$.ajax({
+				url: '{% url "saveInformsDetall"  0 %}'.replace('0', localStorage.getItem('userID')),
+				data: {				
+					'newData':  JSON.stringify(newData)
+			},
+			dataType: 'json',
+			success: function (data) {
+				if(data.TRUE == "TRUE"){
+					swal("Regristo Existoso", "Continua con tu proceso!", "success");
+				}					
+			}
+		}) */
+	}
+
+	
+
+	
+	console.log(newData)
+}
+
+function getRadioButon(){
+
+	$('#saveAgreement').attr("disabled", false);
+	$("#divRubro").css('display', 'none ');
+	$("#divAgreement").css('display', 'none ');
+	$("#visualityTables").css('display', 'block ');		
+
+
+	$.ajax({
+		url: '{% url "getOperationBudget"  0 %}'.replace('0', localStorage.getItem('userID')),
+		data: {
+			'nameOrigin': $('input[name=origins]:checked', '#addOptions').val(),
+			'nameAC': localStorage.getItem('nameAC'),
+			'idBussines': localStorage.getItem('idBussines'),
+		},
+		dataType: 'json',
+		success: function (data) {
+			$("#separatorOP").empty()
+			var table = $('#dataTableRubroTem').DataTable(); 
+			var tableMov = $('#dataTableMovTem').DataTable(); 	
+ 			var rows = table.rows().remove().draw();
+			var rowsMov = tableMov.rows().remove().draw();
+			originID = data.ID;
+			var regex = /(\d+)/g;
+			for (var i = 0; i < (data.Pattern.match(regex)).length; i++) {
+				acumulatorImport = acumulatorImport + parseInt(data.Pattern.match(regex)[i]);
+				arrayImport.push(acumulatorImport)
+			}
+
+
+			$('#separatorOP')
+				.append(`<div class="custom-control custom-radio custom-control-inline">
+				<input onclick="generateRubro()" type="radio" class="custom-control-input" value="CREAR RUBRO" id="CREAR RUBRO" name="operations">
+				<label class="custom-control-label" for="CREAR RUBRO">CREAR RUBRO</label>
+				</div>`)
+			for (var i=0; i<data.OP.length; i++){
+				$('#separatorOP')
+				.append(`<div class="custom-control custom-radio custom-control-inline">
+				<input onclick="generateRubro()" type="radio" class="custom-control-input" value="`+data.OP[i].nameOp+`" id="`+data.OP[i].nameOp+`"name="operations">
+				<label class="custom-control-label" for="`+data.OP[i].nameOp+`">`+data.OP[i].nameOp+`</label>
+				</div>`)
+			}
+			for (var i=0; i<data.RUBRO.length; i++){
+				table.row.add( [
+				data.RUBRO[i].id,
+				data.RUBRO[i].rubro,
+				data.RUBRO[i].typeRubro,
+				data.RUBRO[i].description,
+				data.RUBRO[i].initialBudget,
+				data.RUBRO[i].realBudget,
+				data.RUBRO[i].budgetEject,
+				"<a data-toggle='tooltip' href='#' id='deleteRubro'title='Eliminar Rubro'><button onclick=\'deleteRubro("+JSON.stringify(data.RUBRO[i].id)+','+JSON.stringify(data.RUBRO[i].rubro)+")\' class='btn btn-primary btn-sm'><i class='fa fa-trash'></i></button></a>"+ 
+				"<a data-toggle='tooltip' href='#' id='updateRubro' title='Actualizar Rubro'><button  onclick=\'changeUpdateRubro("+JSON.stringify(data.RUBRO[i].id)+','+JSON.stringify(data.RUBRO[i].rubro)+','+JSON.stringify(data.RUBRO[i].typeRubro)+','+JSON.stringify(data.RUBRO[i].description)+','+JSON.stringify(data.RUBRO[i].initialBudget)+','+JSON.stringify(data.RUBRO[i].inform)+','+JSON.stringify(data.RUBRO[i].detallTypeInfor)+")\' data-toggle='modal' data-target='#myModalRubroUpdate' class='btn btn-primary btn-sm'><i class='fa fa-pencil'></i></button></a>"+ //agregue button
+				"<a data-toggle='tooltip' href='#' id='detailRubroOperation' title='Ver Movimientos Presupuestales'><button onclick=\'getDetailRubroOperation("+JSON.stringify(data.RUBRO[i].id)+','+JSON.stringify(data.RUBRO[i].description)+")\' data-toggle='modal' data-target='#myModalRubroOperation' class='btn btn-primary btn-sm'><i class='fa fa-info-circle'></i></button></a>"+
+				"<a data-toggle='tooltip' href='#' id='detaillDisponibilitys' title='Ver Disponibilidades'><button onclick=\'getDispoinibilityByRubro("+JSON.stringify(data.RUBRO[i].id)+")\' data-toggle='modal' data-target='#myModalDatesDispoinibility' class='btn btn-primary btn-sm'><i class='fa fa-info-circle'></i></button></a>"
+				])
+			}
+			for (var i=0; i<data.AG.length; i++){
+				tableMov.row.add( [
+				data.AG[i].descriptionAg,
+				data.AG[i].numberAg,
+				data.AG[i].typeAgreement,
+				data.NTA[i].nameTA,
+				"<a data-toggle='tooltip' href='#' id='updateAgreement' title='Actualizar Tipo de Acuerdo '><button  onclick=\'changeUpdateAgreement("+JSON.stringify(data.AG[i].id)+','+JSON.stringify(data.AG[i].typeAgreement)+','+JSON.stringify(data.AG[i].numberAg)+','+JSON.stringify(data.AG[i].dateAg)+','+JSON.stringify(data.AG[i].descriptionAg)+")\' data-toggle='modal' data-target='#myModalAgreementUpdate' class='btn btn-primary btn-sm'><i class='fa fa-pencil'></i></button></a>"+ //agregue button
+				"<a data-toggle='tooltip' href='#' id='detalleAR' title='Detalles del Acuerdo'><button onclick=\'getDetallAgreement("+JSON.stringify(data.AG[i].id)+")\' data-toggle='modal' data-target='#myModalAgreeementOperation' class='btn btn-primary btn-sm'><i class='fa fa-search'></i></button></a>"
+				])
+			}
+			table
+			.order( [ 1, 'asc' ] )
+			.draw();
+			table.draw(false);
+			tableMov.draw( false );
+		}
+	});
+
+}
+
+///////////////// inicio de funciones botones_________tatan
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////Operaciones de tipo de acuerdo/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function changeUpdateAgreement(id, typeAgreement, numberAg, dateAg, descriptionAg,  nameRubro,value,balance,budgetEject){
+	agreementId = id;
+	var numberAgUpdate = document.getElementById("numberAgreementUpdate");
+	numberAgUpdate.value = numberAg;
+	var descriptionAgUpdate = document.getElementById("conceptUpdate");
+	descriptionAgUpdate.value = descriptionAg;
+
+	var totalDetallV=0;
+	var totalDetallByEjecute=0;
+	var totalContraDetallByEjecute=0;
+	var totalContraDetallV=0;
+	$.ajax({
+			url: '{% url "getOriginBudget"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {				
+				'option': '4',
+				'id': agreementId,
+				'idBussines': localStorage.getItem('idBussines'),
+					
+
+		},
+		dataType: 'json',
+		success: function (data) {
+				$('#typeAgreementUpdate').append(`<option  hidden  selected"> Selecciona una opción</option>`);
+				for (var i=0; i<data.TA.length; i++){	
+					if(data.TA[i].id == typeAgreement){
+						$('#typeAgreementUpdate').append(`<option value="`+data.TA[i].id+`" selected>`+data.TA[i].nameTA+`</option>`)
+					}else{
+						$('#typeAgreementUpdate').append(`<option value="`+data.TA[i].id+`">`+data.TA[i].nameTA+`</option>`)
+					}
+					
+				}
+				
+				$('#dateAgreementUpdate').val(data.DT[0].dateAg)
+												
+			}
+	})
+
+	$.ajax({
+			url: '{% url "getOriginBudget"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {				
+				'option': '5',
+				'id':agreementId,
+				'nameRubro': nameRubro,
+				'value': value,
+				'balance':balance,				
+				'budgetEject': budgetEject,		
+
+		},              
+		dataType: 'json',
+		success: function (data) {
+				var tableOperations = $('#dataTableRubroOthersAgreement').DataTable(); 
+ 				var rows = tableOperations.rows().remove().draw();
+				console.log(data,"fff")
+				var tableContraOp = $('#dataTableContraRubrosAgreement').DataTable(); 
+ 				var rowsCop = tableContraOp.rows().remove().draw();
+
+				 for (var i=0; i<data.AMO.length; i++){
+					if(data.AMO[i].concept == data.AMO[0].concept){
+						$('#textOperationsAgreement').text(data.AMO[0].concept)
+						conceptNewUpdate = data.AMO[0].concept
+						tableOperations.row.add([
+						data.AMO[i].rubro,
+						data.AMO[i].description,
+						"<input type='text' autocomplete='off' onkeypress='return validaNumericos(event)'/   size='10' min='1'  pattern='^[0-9]+'  oninput='validity.valid||(value='');'  style='width:100px;font-family: Arial; font-size: 10pt;'  id=UpdateOperation1"+data.AMO[i].rubroID+" class='form-control' name='inputUpdateOperations' value="+data.AMO[i].value+"> ",
+						"<label type='number'   id=updateRealbalance1"+data.AMO[i].rubroID+"  >"+ data.AMO[i].balance+"</label>",
+						"<label type='number'   id=updateBalance1"+data.AMO[i].rubroID+"  >"+data.AMO[i].budgetEject+"</label>",
+						//"<a data-toggle='tooltip'  id='delete' title='Eliminar rubro implicado'><button onclick=\'deleteRID("+JSON.stringify(data.AMO[i].id)+")\' class='btn btn-primary btn-sm'><i class='fa fa-trash'></i></button></a>"+
+						"<a data-toggle='tooltip' ' title='Validar operación'><button  id='buttonUpdateOperationValidate' onclick=\'updateOperateBalance("+data.AMO[i].id+','+JSON.stringify(data.AMO[i].rubro)+','+data.AMO[i].balance+','+data.AMO[i].budgetEject+','+JSON.stringify(data.AMO[i].description)+','+data.AMO[i].concept+','+data.AMO[i].value+','+data.AMO[i].value+','+data.AMO[i].rubroID+")\' class='btn btn-primary btn-sm'><i class='fa fa-check' aria-hidden='true'></i></button></a>"+
+						"<a data-toggle='tooltip' href='#' id='deleteRubro'title='Eliminar Rubro'><button onclick=\'deleteUpdateRubroSelected("+data.AMO[i].id+', this,'+data.AMO[i].balance+','+data.AMO[i].budgetEject+','+data.AMO[i].value+','+JSON.stringify(data.AMO[i].rubro)+','+data.AMO[i].concept+','+data.AMO[i].rubroID+")\' class='btn btn-primary btn-sm'><i class='fa fa-trash'></i></button></a>"
+				
+						])
+						rubrosToUpdateOperation.push("#balance"+data.AMO[i].rubroID);
+						updateOperation.push({
+								"id": data.AMO[i].id,
+								"rubro": data.AMO[i].rubro,
+								"idrubro":data.AMO[i].rubroID,
+								"description": JSON.stringify(data.AMO[i].description),
+								"concept":data.AMO[i].concept,
+								"value":data.AMO[i].value,
+								"balance":data.AMO[i].balance,
+								"byEject":data.AMO[i].budgetEject,
+								"new": false,
+								"Valuelast": data.AMO[i].value
+						})
+						totalUpdateOperateArray.push({
+								"id": data.AMO[i].id,
+								"subtotalOp": data.AMO[i].budgetEject,
+								"valorOp":  data.AMO[i].value
+						})
+						totalUpdateValor = totalUpdateValor + data.AMO[i].value
+						totalUpdateOperate = totalUpdateOperate + data.AMO[i].budgetEject
+					}else{
+						conceptNewContraUpdate = data.AMO[i].concept
+						$('#textContraperationsAgreement').text(data.AMO[i].concept)
+						tableContraOp.row.add([
+						data.AMO[i].rubro,
+						data.AMO[i].description,
+						"<input type='text' autocomplete='off' onkeypress='return validaNumericos(event)'/   size='10' min='1'  pattern='^[0-9]+'  oninput='validity.valid||(value='');'  style='width:100px;font-family: Arial; font-size: 10pt;' id=UpdateContraOperation1"+data.AMO[i].rubroID+"  class='form-control' name='inputOperations' value="+data.AMO[i].value+"> " ,
+						"<label type='number'   id=updateContraRealbalance1"+data.AMO[i].rubroID+"  >"+ data.AMO[i].balance+"</label>",
+						"<label type='number'   id=updateContraBalance1"+data.AMO[i].rubroID+"  >"+data.AMO[i].budgetEject+"</label>",
+						"<a data-toggle='tooltip' ' title='Validar operación'><button  id='buttonUpdateContraOperationValidate' onclick=\'updateContraOperateBalance("+data.AMO[i].id+','+JSON.stringify(data.AMO[i].rubro)+','+data.AMO[i].balance+','+JSON.stringify(data.AMO[i].description)+','+data.AMO[i].concept+','+data.AMO[i].value+','+data.AMO[i].value+','+data.AMO[i].rubroID+")\' class='btn btn-primary btn-sm'><i class='fa fa-check' aria-hidden='true'></i></button></a>"+
+						"<a data-toggle='tooltip' href='#' id='deleteRubro'title='Eliminar Rubro'><button onclick=\'deleteUpdateContraRubroSelected("+data.AMO[i].id+', this,'+data.AMO[i].balance+','+data.AMO[i].budgetEject+','+data.AMO[i].value+','+JSON.stringify(data.AMO[i].rubro)+','+data.AMO[i].concept+','+data.AMO[i].rubroID+")\' class='btn btn-primary btn-sm'><i class='fa fa-trash'></i></button></a>"
+						])
+						rubrosToUpdateContraOperation.push("#balance"+data.AMO[i].rubroID);
+						updateContraOperation.push({
+									"id": data.AMO[i].id,
+									"rubro": data.AMO[i].rubro,
+									"idrubro":data.AMO[i].rubroID,
+									"description": JSON.stringify(data.AMO[i].description),
+									"concept":data.AMO[i].concept,
+									"value":data.AMO[i].value,
+									"balance":data.AMO[i].balance,
+									"byEject":data.AMO[i].budgetEject,
+									"new": false,
+									"Valuelast": data.AMO[i].value
+						})
+						totalUpdateContraOperateArray.push({
+								"id": data.AMO[i].id,
+								"subtotalOp": data.AMO[i].budgetEject,
+								"valorOp":  data.AMO[i].value
+						})
+						totalUpdateContraValor = totalUpdateContraValor + data.AMO[i].value
+						totalUpdatContraeOperate = 0
+										
+					}
+					tableOperations.draw( false );
+					tableContraOp.draw( false );									
+				}
+				
+				
+				console.log(updateOperation)
+				$("#totalValorOpAgreement").text("VALOR: "+ totalUpdateValor);	
+				$("#totalPresupuestoOpAgreement").text("PRESUPUESTO POR EJECUTAR: "+ totalUpdateOperate);	
+				
+				$("#totalValorContraOpAgreement").text("VALOR: "+ totalUpdateContraValor);	
+				$("#totalPresupuestoContraOpAgreement").text("FALTA POR CONTRA OPERAR: "+ totalUpdatContraeOperate);
+
+				$.ajax({
+						url: '{% url "getOperationByOperate"  0 %}'.replace('0', localStorage.getItem('userID')),
+						data: {
+							'origin': originID,
+							'operation': $('#textContraperationsAgreement').text(),
+						},
+						dataType: 'json',
+						success: function (data) {
+						$('#textOperationsAgreement').text($('#textOperationsAgreement').text() +' de ' +data.NCO)
+						$('#textContraperationsAgreement').text($('#textContraperationsAgreement').text()+ ' de '+ data.NOP)
+						console.log(data)
+					}
+				})	
+			}
+
+		})
+}
+
+function createAG(){
+	
+	var typeAgreement =  $("#typeAgreement option:selected").text();
+	var conceptAgre = $('textarea[name="concept"]').val();
+	var numberAgre = $('input[name="numberAgreement"]').val();
+	var dateAgre = $('input[name="dateAgreement"]').val();
+	if (!$("#typeAgreement option:selected").prop("hidden") && conceptAgre && numberAgre && dateAgre) {			
+		$.ajax({
+			url: '{% url "getAgreement"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+				'typeAgreement':typeAgreement,
+				'bussines':localStorage.getItem('idBussines'),
+				'number': numberAgre.trim(),
+				'origin': originID,
+			},
+			dataType: 'json',
+			success: function (data) {
+				if(data.Exist){
+					swal("Error", "Ya existe un acuerdo con ese #", "error");
+				}else{
+					$("#rubroOperations").css('display', 'block');
+					$('#saveAgreement').attr("disabled", true);
+					$('#typeAgreement').prop('disabled', 'disabled');
+					$("#textOperations").text("Rubros de "+$('input[name=operations]:checked', '#addOptions').val())
+				}
+			}
+		})														
+	} else  {
+		swal("Error", "Todos los campos deben ser llenado", "error");
+	}
+	return false;
+};
+
+
+function updateOperateBalance(id,rubro,realBudget,byEject,description,operation,value,lastvalue,idrubro){
+ 	$.ajax({
+			url: '{% url "getDisponibilityByRubros"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+				'id':id,
+				'bussines':localStorage.getItem('idBussines')
+			},
+			dataType: 'json',
+			success: function (response) {
+				var disponibilityByRubro = response.DP
+				var validator;
+				var createId = "#UpdateOperation1"+idrubro
+				var result= "#updateBalance1"+idrubro;
+				var resultReal= "#updateRealbalance1"+idrubro;
+				var operate=0;
+				var intBudget = parseInt(realBudget);
+
+				
+				console.log($(createId).val())
+				if(parseInt($(createId).val())==0){
+				swal("No se puede generar una operación de valor 0", " " , "error");
+				}else{
+				const found = updateOperation.findIndex(element => element['rubro'] == rubro);
+				console.log(found)
+				if(found<0){
+					$.ajax({
+						url: '{% url "getUpdateOperationByOperate"  0 %}'.replace('0', localStorage.getItem('userID')),
+						data: {
+							'origin': originID,
+							'operation':  operation.value,
+						},
+						dataType: 'json',
+						success: function (data) {
+							if(data.OP == '+'){
+								
+								newOperate = realBudget +  parseInt($(createId).val())
+								newOperateEject=  realBudget +  parseInt($(createId).val())-parseInt(disponibilityByRubro);
+								console.log(realBudget, parseInt($(createId).val()),newOperate,id)
+								$(result).text(newOperateEject);
+								$(resultReal).text(newOperate);
+								updateOperation.push({
+									"id": id,
+									"rubro": rubro,
+									"idrubro":idrubro,
+									"description": description,
+									"concept":operation.value,
+									"value": parseInt($(createId).val()),
+									"balance":newOperate,
+									"byEject":newOperateEject,
+									"new": true,
+								})
+								console.log(updateOperation)
+								validator="True";
+							}else if(data.OP == '-'){
+								newOperate = realBudget - parseInt($(createId).val())
+								newOperateEject=  realBudget - parseInt($(createId).val())-parseInt(disponibilityByRubro);
+								if(newOperate<0)
+								{
+									swal("Esta intentando sacar mas de lo posible", "No se puede realizar la operación", "error");
+									validator="False"
+								}else{
+									$(result).text(newOperateEject);
+									$(resultReal).text(newOperate);
+									updateOperation.push({
+										"id": id,
+										"rubro": rubro,
+										"idrubro":idrubro,
+										"description": description,
+										"concept":operation.value,
+										"value": parseInt($(createId).val()),
+										"balance":newOperate,
+										"byEject":newOperateEject,
+										"new": true,
+									})
+									validator="True";	
+
+								}
+								
+							}else{
+								console.log(data)
+							}
+							if (validator=="True"){
+								totalUpdateOperateArray.push({
+									"id": id,
+									"subtotalOp": newOperateEject,
+									"valorOp":  parseInt($(createId).val())
+								})
+
+								totalUpdateOperate = totalUpdateOperate + newOperateEject;
+								totalUpdateValor = totalUpdateValor +  parseInt($(createId).val());
+								$("#totalValorOpAgreement").text("VALOR: "+ totalUpdateValor);
+								$("#totalPresupuestoOpAgreement").text("PRESUPUESTO POR EJECUTAR: "+ totalUpdateOperate);
+								totalUpdatContraeOperate  = totalUpdatContraeOperate + parseInt($(createId).val());
+								$("#totalPresupuestoContraOpAgreement").text("FALTA POR CONTRA OPERAR: "+ totalUpdatContraeOperate);
+								console.log(updateOperation)
+
+							}
+						}
+					});
+				}
+				else
+				{
+					$.ajax({
+						url: '{% url "getUpdateOperationByOperate"  0 %}'.replace('0', localStorage.getItem('userID')),
+						data: {
+							'origin': originID,
+							'operation':  operation.value,
+						},
+						dataType: 'json',
+						success: function (data) {
+							if(data.OP == '+'){
+								if(value == 0){
+									operate = realBudget +  parseInt($(createId).val())
+									operateEject=  realBudget  +  parseInt($(createId).val())-parseInt(disponibilityByRubro);
+
+								}else{
+								operate = realBudget - value +  parseInt($(createId).val())
+								operateEject=  realBudget - value +  parseInt($(createId).val())-parseInt(disponibilityByRubro);
+								}
+								$(result).text(operateEject);
+								$(resultReal).text(operate);
+								updateOperation[found] ={
+									"id": id,
+									"rubro": rubro,
+									"idrubro":idrubro,
+									"description": description,
+									"concept": operation.value,
+									"value": parseInt($(createId).val()),
+									"balance":operate,
+									"byEject":operateEject,
+									"new": false,
+									"Valuelast": lastvalue
+								}
+								validator="True";
+							}
+							else if(data.OP == '-')
+							{
+								if(value == 0){
+									operate = realBudget -  parseInt($(createId).val())
+									operateEject=  realBudget  -  parseInt($(createId).val())-parseInt(disponibilityByRubro);
+
+								}else{
+								operate = realBudget + value - parseInt($(createId).val())
+								operateEject=  realBudget + value - parseInt($(createId).val())-parseInt(disponibilityByRubro);
+								}
+								if(operate<0)
+								{
+									swal("Esta intentando sacar mas de lo posible", "No se puede realizar la operación", "error");
+									validator="False"
+								}
+								else
+								{
+									$(result).text(operateEject);
+									$(resultReal).text(operate);
+									updateOperation[found] = {
+										"id": id,
+										"rubro": rubro,
+										"idrubro":idrubro,
+										"description": description,
+										"concept": operation.value,
+										"value": parseInt($(createId).val()),
+										"balance":operate,
+										"byEject":operateEject,
+										"new": false,
+										"Valuelast": lastvalue
+									}
+									validator="True";				
+								}	
+								}
+								else
+								{
+									console.log(data)
+								}			
+								if (validator=="True"){
+
+									totalUpdateOperate = totalUpdateOperate - totalUpdateOperateArray[found]['subtotalOp'];	
+									totalUpdateValor = totalUpdateValor - totalUpdateOperateArray[found]['valorOp'];
+
+									totalUpdateOperateArray[found] ={
+										"id": id,
+										"subtotalOp": operateEject,
+										"valorOp":  parseInt($(createId).val())
+									}
+
+					
+									totalUpdateOperate = totalUpdateOperate + totalUpdateOperateArray[found]['subtotalOp'];
+									totalUpdateValor = totalUpdateValor + totalUpdateOperateArray[found]['valorOp'];
+									$("#totalValorOpAgreement").text("VALOR: "+ totalUpdateValor);
+									$("#totalPresupuestoOpAgreement").text("PRESUPUESTO POR EJECUTAR: "+ totalUpdateOperate);
+									
+									totalUpdatContraeOperate  = totalUpdateValor-totalUpdateContraValor;
+									$("#totalPresupuestoContraOpAgreement").text("FALTA POR CONTRA OPERAR: "+ totalUpdatContraeOperate);
+
+								}
+
+						}
+								
+					});
+
+				}
+			}
+		}
+	});
+	
+}
+
+
+function updateContraOperateBalance(id,rubro,realBudget,description,operation,value,lastvalue,idrubro){
+ 	$.ajax({
+			url: '{% url "getDisponibilityByRubros"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+				'id':id,
+				'bussines':localStorage.getItem('idBussines')
+			},
+			dataType: 'json',
+			success: function (response) {
+		
+				var disponibilityByRubro = response.DP
+				var validator;
+				var createId = "#UpdateContraOperation1"+idrubro
+				var result= "#updateContraBalance1"+idrubro;
+				var resultReal= "#updateContraRealbalance1"+idrubro;
+				var contraoperate=0;
+				var intBudget = parseInt(realBudget);
+				console.log(parseInt($(createId).val()))
+				if(parseInt($(createId).val())==0){
+					swal("No se puede generar una operación de valor 0", " " , "error");
+				}else{
+					const found =  updateContraOperation.findIndex(element => element['rubro'] == rubro);
+					if(found<0){
+						$.ajax({
+							url: '{% url "getUpdateOperationByOperate"  0 %}'.replace('0', localStorage.getItem('userID')),
+							data: {
+								'origin': originID,
+								'operation':  operation.value,
+							},
+							dataType: 'json',
+							success: function (data) {
+								if(data.OP == '+'){
+									contraoperate = realBudget +  parseInt($(createId).val())
+									contraoperateEject=  realBudget +  parseInt($(createId).val())-parseInt(disponibilityByRubro);
+									$(result).text(contraoperateEject);
+									$(resultReal).text(contraoperate);
+									updateContraOperation.push({
+										"id": id,
+										"rubro": rubro,
+										"idrubro":idrubro,
+										"description": description,
+										"concept":operation.value,
+										"value": parseInt($(createId).val()),
+										"balance":contraoperate,
+										"byEject":contraoperateEject,
+										"new": true,
+									})
+									
+									validator="True";
+								}else 
+									if(data.OP == '-'){
+										contraoperate = realBudget - parseInt($(createId).val())
+										contraoperateEject=  realBudget -parseInt($(createId).val())-parseInt(disponibilityByRubro);
+										if(contraoperate<0){
+											swal("Esta intentando sacar mas de lo posible", "No se puede realizar la operación", "error");
+											validator="False"
+										}else{
+											$(result).text(contraoperateEject);
+											$(resultReal).text(contraoperate);
+											updateContraOperation.push({
+												"id": id,
+												"rubro": rubro,
+												"idrubro":idrubro,
+												"description": description,
+												"concept":operation.value,
+												"value": parseInt($(createId).val()),
+												"balance":contraoperate,
+												"byEject":contraoperateEject,
+												"new": true,
+											})
+											validator="True";				
+										}	
+									}else
+									{
+										console.log(data)
+									}			
+								if (validator=="True"){
+
+									totalUpdateContraOperateArray.push({
+									"id": id,
+									"subtotalOp": contraoperateEject,
+									"valorOp":  parseInt($(createId).val())
+									})
+
+									totalUpdatContraeOperate = totalUpdatContraeOperate - parseInt($(createId).val());	
+									totalValorContraOp = totalValorContraOp + parseInt($(createId).val());
+
+									totalUpdateContraValor = totalUpdateContraValor + parseInt($(createId).val())
+
+									
+									$("#totalPresupuestoContraOpAgreement").text("FALTA POR CONTRA OPERAR: "+ totalUpdatContraeOperate );														
+									$("#totalValorContraOpAgreement").text("VALOR: "+ totalUpdateContraValor);
+										
+										
+								}
+
+							}
+							
+						});
+					}else{
+						$.ajax({
+						url: '{% url "getUpdateOperationByOperate"  0 %}'.replace('0', localStorage.getItem('userID')),
+						data: {
+							'origin': originID,
+							'operation':  operation.value,
+						},
+						dataType: 'json',
+						success: function (data) {
+							if(data.OP == '+'){
+								if(value==0){
+									contraoperate = realBudget  +  parseInt($(createId).val())
+									contraoperateEject=  realBudget +  parseInt($(createId).val())-parseInt(disponibilityByRubro);
+								}else{
+									contraoperate = realBudget - value +  parseInt($(createId).val())
+									contraoperateEject=  realBudget - value +  parseInt($(createId).val())-parseInt(disponibilityByRubro);
+								}
+								
+								$(result).text(contraoperateEject);
+								$(resultReal).text(contraoperate);
+								updateContraOperation[found] ={
+									"id": id,
+									"rubro": rubro,
+									"idrubro":idrubro,
+									"description": description,
+									"concept":operation.value,
+									"value": parseInt($(createId).val()),
+									"balance":contraoperate,
+									"byEject":contraoperateEject,
+									"new": false,
+									"Valuelast": lastvalue
+								}
+								validator="True";
+							}
+							else if(data.OP == '-')
+							{
+								
+								console.log(value,realBudget)
+								if(value==0){
+									contraoperate = realBudget  -  parseInt($(createId).val())
+									contraoperateEject=  realBudget -  parseInt($(createId).val())-parseInt(disponibilityByRubro);
+								}else{
+								contraoperate = realBudget + value - parseInt($(createId).val())
+								contraoperateEject=  realBudget + value - parseInt($(createId).val())-parseInt(disponibilityByRubro);
+								}
+								if(contraoperate<0)
+								{
+									swal("Esta intentando sacar mas de lo posible", "No se puede realizar la operación", "error");
+									validator="False"
+								}
+								else
+								{	
+									console.log(contraoperate,contraoperateEject)
+									console.log($(result).text())
+									$(result).text(contraoperateEject);
+									$(resultReal).text(contraoperate);
+									updateContraOperation[found] = {
+										"id": id,
+										"rubro": rubro,
+										"idrubro":idrubro,
+										"description": description,
+										"concept":operation.value,
+										"value": parseInt($(createId).val()),
+										"balance":contraoperate,
+										"byEject":contraoperateEject,
+										"new": false,
+										"Valuelast": lastvalue
+									}
+									validator="True";				
+								}	
+								}
+								else
+								{
+									console.log(data)
+								}			
+								if (validator=="True"){
+									console.log(totalUpdateContraOperateArray)
+									totalUpdatContraeOperate = totalUpdatContraeOperate + totalUpdateContraOperateArray[found]['valorOp'];	
+									totalUpdateContraValor = totalUpdateContraValor - totalUpdateContraOperateArray[found]['valorOp'];
+
+									totalUpdateContraOperateArray[found] ={
+										"id": id,
+										"subtotalOp": contraoperateEject,
+										"valorOp":  parseInt($(createId).val())
+									}
+
+					
+									totalUpdatContraeOperate = totalUpdatContraeOperate - totalUpdateContraOperateArray[found]['valorOp'];
+									totalUpdateContraValor = totalUpdateContraValor + totalUpdateContraOperateArray[found]['valorOp'];
+									
+									$("#totalPresupuestoContraOpAgreement").text("FALTA POR CONTRA OPERAR: "+ totalUpdatContraeOperate );														
+									$("#totalValorContraOpAgreement").text("VALOR: "+ totalUpdateContraValor);
+										
+
+								}
+
+						}
+								
+					});
+
+					}
+				}
+			}
+	});
+
+}
+
+function deleteNewRubroSelected(id,rubro,row){
+	var table = $('#dataTableRubroOthersAgreement').DataTable()
+	updateOperation.splice(updateOperation.findIndex(el=> el.id ==id), 1);
+	var index = totalUpdateOperateArray.findIndex(el=> el.id ==id)
+	console.log(totalUpdateOperateArray,index)
+	if($("#UpdateOperation1"+rubro).val()!='' && index!=-1){
+		
+		totalUpdateOperate = totalUpdateOperate - totalUpdateOperateArray[index].subtotalOp;
+		totalUpdateValor = totalUpdateValor - totalUpdateOperateArray[index].valorOp;	
+	}
+	$("#totalValorOpAgreement").text("VALOR: "+ totalUpdateValor);	
+	$("#totalPresupuestoOpAgreement").text("PRESUPUESTO POR EJECUTAR: "+ totalUpdateOperate);	
+
+	totalUpdatContraeOperate  = totalUpdateValor-totalUpdateContraValor;
+	$("#totalPresupuestoContraOpAgreement").text("FALTA POR CONTRA OPERAR: "+ totalUpdatContraeOperate);
+				
+	$("#totalValorContraOpAgreement").text("VALOR: "+ totalUpdateContraValor);	
+	$("#totalPresupuestoContraOpAgreement").text("FALTA POR CONTRA OPERAR: "+ totalUpdatContraeOperate);
+	totalUpdateOperateArray.splice(totalUpdateOperateArray.findIndex(el=> el.id ==id), 1);
+	rubrosToUpdateOperation.splice(rubrosToUpdateOperation.indexOf("#balance"+rubro), 1);
+	table.row(row.closest('tr')).remove().draw(false);
+}
+
+function deleteNewContraRubroSelected(id,rubro,row){
+	var table = $('#dataTableContraRubrosAgreement').DataTable()
+	updateContraOperation.splice(updateContraOperation.findIndex(el=> el.id ==id), 1);
+	var index = totalUpdateContraOperateArray.findIndex(el=> el.id ==id)
+	if($("#UpdateContraOperation1"+rubro).val()!='' && index!=-1){
+		
+		totalUpdatContraeOperate = totalUpdatContraeOperate + totalUpdateContraOperateArray[index].valorOp;
+		totalUpdateContraValor = totalUpdateContraValor - totalUpdateContraOperateArray[index].valorOp;		
+	}
+	$("#totalValorContraOpAgreement").text("VALOR: "+ totalUpdateContraValor);	
+	$("#totalPresupuestoContraOpAgreement").text("FALTA POR CONTRA OPERAR: "+ totalUpdatContraeOperate);												
+	totalUpdateContraOperateArray.splice(totalUpdateContraOperateArray.findIndex(el=> el.id ==id), 1);
+	rubrosToUpdateContraOperation.splice(rubrosToUpdateContraOperation.indexOf("#balance"+rubro), 1);
+	table.row(row.closest('tr')).remove().draw(false);
+
+}
+
+
+
+
+function deleteUpdateRubroSelected(id,row,realbudgetdelete,budgetEject,deletevalue,rubro,operation){
+	$.ajax({
+			url: '{% url "getDisponibilityByRubros"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+				'id':id,
+				'bussines':localStorage.getItem('idBussines')
+			},
+			dataType: 'json',
+			success: function (response) {
+				var disponibilityByRubro = response.DP
+
+				$.ajax({
+						url: '{% url "getUpdateOperationByOperate"  0 %}'.replace('0', localStorage.getItem('userID')),
+						data: {
+							'origin': originID,
+							'operation':  operation.value,
+						},
+						dataType: 'json',
+						success: function (data) {
+							if(data.OP == '+'){
+								
+								idDeleteOperations.push({
+									'id':id,
+									'rubro':rubro,
+									'budgetEject': budgetEject - deletevalue - parseInt(disponibilityByRubro),
+									'balance': realbudgetdelete - deletevalue,
+									'value':  deletevalue
+								})
+							}else{
+								idDeleteOperations.push({
+									'id':id,
+									'rubro':rubro,
+									'budgetEject': budgetEject + deletevalue - parseInt(disponibilityByRubro),
+									'balance': realbudgetdelete + deletevalue,
+									'value':  deletevalue
+								})
+							}
+						}
+				})	
+				var table = $('#dataTableRubroOthersAgreement').DataTable()
+				updateOperation.splice(updateOperation.findIndex(el=> el.id ==id), 1);
+				var index = totalUpdateOperateArray.findIndex(el=> el.id ==id)
+				if($("#"+id+"").val()!='' && index!=-1){
+					
+					totalUpdateOperate = totalUpdateOperate - totalUpdateOperateArray[index].subtotalOp;
+					totalUpdateValor = totalUpdateValor - totalUpdateOperateArray[index].valorOp;	
+				}
+				$("#totalValorOpAgreement").text("VALOR: "+ totalUpdateValor);	
+				$("#totalPresupuestoOpAgreement").text("PRESUPUESTO POR EJECUTAR: "+ totalUpdateOperate);	
+
+				totalUpdatContraeOperate  = totalUpdateValor-totalUpdateContraValor;
+				$("#totalPresupuestoContraOpAgreement").text("FALTA POR CONTRA OPERAR: "+ totalUpdatContraeOperate);
+				
+				$("#totalValorContraOpAgreement").text("VALOR: "+ totalUpdateContraValor);	
+				$("#totalPresupuestoContraOpAgreement").text("FALTA POR CONTRA OPERAR: "+ totalUpdatContraeOperate);
+				totalUpdateOperateArray.splice(totalUpdateOperateArray.findIndex(el=> el.id ==id), 1);
+				rubrosToUpdateOperation.splice(rubrosToUpdateOperation.indexOf("#balance"+rubro), 1);
+				table.row(row.closest('tr')).remove().draw(false);
+				console.log(idDeleteOperations)
+		}
+	})
+
+}
+
+function deleteUpdateContraRubroSelected(id,row,realbudgetdelete,budgetEject,deletevalue,rubro,operation){
+	$.ajax({
+			url: '{% url "getDisponibilityByRubros"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+				'id':id,
+				'bussines':localStorage.getItem('idBussines')
+			},
+			dataType: 'json',
+			success: function (response) {
+				var disponibilityByRubro = response.DP
+				$.ajax({
+						url: '{% url "getUpdateOperationByOperate"  0 %}'.replace('0', localStorage.getItem('userID')),
+						data: {
+							'origin': originID,
+							'operation':  operation.value,
+						},
+						dataType: 'json',
+						success: function (data) {
+							if(data.OP == '+'){
+								
+								idDeleteOperations.push({
+									'id':id,
+									'rubro':rubro,
+									'budgetEject': budgetEject - deletevalue - parseInt(disponibilityByRubro),
+									'balance': realbudgetdelete - deletevalue,
+									'value':  deletevalue
+									
+								})
+							}else{
+								idDeleteOperations.push({
+									'id':id,
+									'rubro':rubro,
+									'budgetEject': budgetEject + deletevalue - parseInt(disponibilityByRubro),
+									'balance': realbudgetdelete + deletevalue,
+									'value':  deletevalue
+								})
+							}
+						}
+				})	
+				var table = $('#dataTableContraRubrosAgreement').DataTable()
+				updateContraOperation.splice(updateContraOperation.findIndex(el=> el.id ==id), 1);
+				var index = totalUpdateContraOperateArray.findIndex(el=> el.id ==id)
+				if($("#"+id+"").val()!='' || index!=-1){
+					
+					totalUpdatContraeOperate = totalUpdatContraeOperate + totalUpdateContraOperateArray[index].valorOp;
+					totalUpdateContraValor = totalUpdateContraValor - totalUpdateContraOperateArray[index].valorOp;	
+				}
+				$("#totalValorContraOpAgreement").text("VALOR: "+ totalUpdateContraValor);	
+				$("#totalPresupuestoContraOpAgreement").text("FALTA POR CONTRA OPERAR: "+ totalUpdatContraeOperate);												
+				totalUpdateContraOperateArray.splice(totalUpdateContraOperateArray.findIndex(el=> el.id ==id), 1);
+				rubrosToUpdateContraOperation.splice(rubrosToUpdateContraOperation.indexOf("#balancecontra"+rubro), 1);
+				table.row(row.closest('tr')).remove().draw(false);
+				console.log(idDeleteOperations)
+			}
+	})
+
+}
+
+
+
+function finishEditOperation(){
+
+	var typeAgreement_id =  $("#typeAgreementUpdate option:selected").val();
+	var typeAgreement =  $("#typeAgreementUpdate option:selected").text();
+	var numberUpdate = $('input[name="numberAgreementUpdate"]').val();
+	var dateUpdate = $('input[name="dateAgreementUpdate"]').val();
+	var descriptionUpdate = $('textarea[name="conceptUpdate"]').val();	   
+	var idtypeagreement = $("#typeAgreementUpdate option:selected").val()
+
+
+	var table = $('#dataTableContraRubrosAgreement').DataTable(); 
+	var table2 = $('#dataTableRubroOthersAgreement').DataTable(); 
+	var count1 = table.rows().count();
+	var count2 = table2.rows().count();
+
+	
+
+	dateAgreement.push({
+		"id":agreementId,
+		"typeAgreement_id": typeAgreement_id,
+		"typeAgreement": typeAgreement,
+		"numberAg":numberUpdate,
+		"description":descriptionUpdate,
+		"dateAg": dateUpdate,
+	})
+
+
+	console.log(updateOperation,updateContraOperation,"este es")
+	if(count1!=0 && count2!=0){
+		if(totalUpdateContraValor==totalUpdateValor){
+		var token = '{{csrf_token}}';
+		$.ajax({
+			headers: { "X-CSRFToken": token },
+			url: '{% url "updateOperations"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+				'agreement': JSON.stringify(dateAgreement),
+				'updateOperation': JSON.stringify(updateOperation),
+				'updateContraOperation': JSON.stringify(updateContraOperation),
+				'bussines': localStorage.getItem('idBussines'),
+				'origin': originID,
+			},
+			type: 'POST',
+			dataType: 'json',
+				success: function (data) {
+				if(idDeleteOperations.length>0){
+					
+					console.log(idDeleteOperations)
+					$.ajax({
+						headers: { "X-CSRFToken": token },
+						url: '{% url "deleteOperations"  0 %}'.replace('0', localStorage.getItem('userID')),
+						data: {
+							'Operation': JSON.stringify(idDeleteOperations),
+							'agreement': JSON.stringify(dateAgreement),
+						},
+						type: 'POST',
+						dataType: 'json',
+						success: function (data) {
+							getRadioButon()
+							$('#myModalAgreementUpdate').modal('toggle');
+							idDeleteOperations = [];
+							idDeleteContraOperations = [];
+
+							updateoperation = ''
+							updatecontraoperation = ''
+
+							rubrosToUpdateOperation=[];
+							rubrosToUpdateContraOperation=[];
+
+							updateOperation=[];
+							totalUpdateOperateArray=[];
+							totalUpdateValor=0;
+							totalUpdateOperate=0;
+
+							updateContraOperation=[];
+							totalUpdateContraOperateArray=[];
+							totalUpdateContraValor=0;
+							totalUpdatContraeOperate=0;
+
+							dateAgreement=[];
+											}
+						})
+					}else{
+						
+					getRadioButon()
+					
+					$('#myModalAgreementUpdate').modal('toggle');
+					
+					idDeleteOperations = [];
+					idDeleteContraOperations = [];
+
+					updateoperation = ''
+					updatecontraoperation = ''
+
+					rubrosToUpdateOperation=[];
+					rubrosToUpdateContraOperation=[];
+
+
+					updateOperation=[];
+					totalUpdateOperateArray=[];
+					totalUpdateValor=0;
+					totalUpdateOperate=0;
+
+					updateContraOperation=[];
+					totalUpdateContraOperateArray=[];
+					totalUpdateContraValor=0;
+					totalUpdatContraeOperate=0;
+
+					dateAgreement=[];
+
+				}
+			}
+		})
+	}else{
+		swal({
+			title: "Error",
+			text: "El valor movido en ambos origenes debe ser igual",
+			icon: "warning"
+			})
+	}
+	}else if(count1 == 0 && count2 ==0){
+		swal({
+			title: "Desea eliminar este acuerdo?",
+			text: "Se eliminara de la base de datos",
+			icon: "warning",
+			buttons: true,
+			dangerMode: true,
+			})
+			.then((willDelete) => {
+			if (willDelete) {
+				var token = '{{csrf_token}}';
+				console.log(idDeleteOperations)
+						$.ajax({
+							headers: { "X-CSRFToken": token },
+							url: '{% url "deleteOperations"  0 %}'.replace('0', localStorage.getItem('userID')),
+							data: {
+								'Operation': JSON.stringify(idDeleteOperations),
+								'agreement': JSON.stringify(dateAgreement),
+							},
+							type: 'POST',
+							dataType: 'json',
+							success: function (data) {
+								getRadioButon()
+								$('#myModalAgreementUpdate').modal('toggle');
+								idDeleteOperations = [];
+								idDeleteContraOperations = [];
+
+								updateoperation = ''
+								updatecontraoperation = ''
+
+								rubrosToUpdateOperation=[];
+								rubrosToUpdateContraOperation=[];
+
+
+								updateOperation=[];
+								totalUpdateOperateArray=[];
+								totalUpdateValor=0;
+								totalUpdateOperate=0;
+
+								updateContraOperation=[];
+								totalUpdateContraOperateArray=[];
+								totalUpdateContraValor=0;
+								totalUpdatContraeOperate=0;
+
+								dateAgreement=[];
+												}
+							})
+				$.ajax({
+					headers: { "X-CSRFToken": token },
+					url: '{% url "deleteAgreementsOperations"  0 %}'.replace('0', localStorage.getItem('userID')),
+					data: {
+						'agreement': JSON.stringify(dateAgreement),
+					},
+					type: 'POST',	
+					dataType: 'json',
+					success: function (data) {
+					}
+				})
+				
+			}
+		})
+	}else{
+		swal({
+			title: "Anuncio",
+			text: "No se puede dejar una tabla vacía, eliminar todos los datos o agregue nuevo rubro",
+			icon: "warning",
+			buttons: true,
+			dangerMode: true,
+			})
+	}
+}
+
+function getNewRubrosUpdateByOrigin(){
+	$.ajax({
+			url: '{% url "getRubrosOrigin"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+				'bussines':localStorage.getItem('idBussines'),
+				'origin': originID
+			},
+			dataType: 'json',
+			success: function (data) {
+
+				var table = $('#dataTableSelectRubro').DataTable(); 
+ 				var rows = table.rows().remove().draw();
+				for (var i=0; i<data.RUBRO.length; i++){
+
+				table.row.add( [
+				data.RUBRO[i].rubro,
+				data.RUBRO[i].description,
+				data.RUBRO[i].realBudget,
+				data.RUBRO[i].budgetEject,
+				"<a data-toggle='tooltip' title='Seleccionar rubro'><button  id="+JSON.stringify(data.RUBRO[i].id)+" onclick=\'getNewRubroByUpdateOperation("+JSON.stringify(data.RUBRO[i].id)+','+ JSON.stringify(data.RUBRO[i].rubro)+','+JSON.stringify(data.RUBRO[i].description)+','+JSON.stringify(data.RUBRO[i].realBudget)+','+JSON.stringify(data.RUBRO[i].typeRubro)+")\' class='btn btn-primary btn-sm'><i class='fa fa-check' aria-hidden='true'></i></button></a>"			
+				])
+			}
+			table.draw( false );
+			}
+		});
+}
+
+function getNewRubroByUpdateOperation(id,rubro,description,realBudget,typeRubro){
+	if(rubrosToUpdateOperation.includes("#balance"+rubro)){
+		swal("Este rubro ya fue añadido", "No se puede añadir el mismo rubro", "error");
+	}
+	else{
+		if(typeRubro=='A'){
+			console.log(id,rubro,description,realBudget,typeRubro)
+			rubrosToUpdateOperation.push("#balance"+rubro);
+			$('#myModalRubroOrigin').modal('toggle');
+			var table = $('#dataTableRubroOthersAgreement').DataTable();
+			table.row.add([
+				rubro,
+				description,
+				"<input type='text' autocomplete='off' onkeypress='return validaNumericos(event)'/   size='10' min='1'  pattern='^[0-9]+'  oninput='validity.valid||(value='');' style='width: 100px;font-family: Arial; font-size: 10pt;' id=UpdateOperation1"+rubro+" class='form-control' name='inputOperations'>",
+				"<label type='number'   id=updateRealbalance1"+rubro+"  >"+realBudget+"</label>",
+				"<label type='number'   id=updateBalance1"+rubro+"  ></label>",
+				"<a data-toggle='tooltip' title='Validar operación'><button id='buttonUpdateOperationValidate' onclick='updateOperateBalance("+id+','+rubro+','+realBudget+', " " ,'+ JSON.stringify(description)+','+conceptNewUpdate+','+0+")' class='btn btn-primary btn-sm'><i class='fa fa-check' aria-hidden='true'></i></button></a>"+
+				"<a data-toggle='tooltip' title='Eliminar rubro'><button id='buttonOperationdelete' onclick='deleteNewRubroSelected("+id+","+rubro+",this)' class='btn btn-primary btn-sm'><i class='fa fa-trash' aria-hidden='true'></i></button></a>"						
+			])
+			table.draw(false);
+		}else{
+			swal("Este rubro es mayor", "No se puede añadir", "error");
+		}
+	}
+
+}
+
+
+
+function getNewRubrosUpdateContraByOrigin(){
+	$.ajax({
+			url: '{% url "getRubrosOrigin"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+				'bussines':localStorage.getItem('idBussines'),
+				'origin': originID
+			},
+			dataType: 'json',
+			success: function (data) {
+
+				var table = $('#dataTableSelectRubro').DataTable(); 
+ 				var rows = table.rows().remove().draw();
+				for (var i=0; i<data.RUBRO.length; i++){
+
+				table.row.add( [
+				data.RUBRO[i].rubro,
+				data.RUBRO[i].description,
+				data.RUBRO[i].realBudget,
+				data.RUBRO[i].budgetEject,
+				"<a data-toggle='tooltip' title='Seleccionar rubro'><button  id="+JSON.stringify(data.RUBRO[i].id)+" onclick=\'getNewRubroByUpdateContraOperation("+JSON.stringify(data.RUBRO[i].id)+','+ JSON.stringify(data.RUBRO[i].rubro)+','+JSON.stringify(data.RUBRO[i].description)+','+JSON.stringify(data.RUBRO[i].realBudget)+','+JSON.stringify(data.RUBRO[i].typeRubro)+")\' class='btn btn-primary btn-sm'><i class='fa fa-check' aria-hidden='true'></i></button></a>"			
+				])
+			}
+			table.draw( false );
+			}
+		});
+}
+
+function getNewRubroByUpdateContraOperation(id,rubro,description,realBudget,typeRubro){
+	if(rubrosToUpdateContraOperation.includes("#balance"+rubro)){
+		swal("Este rubro ya fue añadido", "No se puede añadir el mismo rubro", "error");
+	}
+	else{
+		if(typeRubro=='A'){
+			console.log(id,rubro,description,realBudget,typeRubro)
+			rubrosToUpdateContraOperation.push("#balance"+rubro);
+			$('#myModalRubroOrigin').modal('toggle');
+			var table = $('#dataTableContraRubrosAgreement').DataTable(); 
+			console.log(conceptNewContraUpdate)
+			table.row.add([
+				rubro,
+				description,
+				"<input type='text' autocomplete='off' onkeypress='return validaNumericos(event)'/   size='10' min='1'  pattern='^[0-9]+'  oninput='validity.valid||(value='');' style='width: 100px;font-family: Arial; font-size: 10pt;' id=UpdateContraOperation1"+rubro+" class='form-control' name='inputOperations'>",
+				"<label type='number'   id=updateContraBalance1"+rubro+"  >"+realBudget+"</label>",
+				"<label type='number'   id=updateContraRealbalance1"+rubro+"  ></label>",
+				"<a data-toggle='tooltip' title='Validar operación'><button id='buttonUpdateOperationValidate' onclick='updateContraOperateBalance("+id+','+rubro+','+realBudget+','+ JSON.stringify(description)+','+conceptNewContraUpdate+','+0+")' class='btn btn-primary btn-sm'><i class='fa fa-check' aria-hidden='true'></i></button></a>"+
+				"<a data-toggle='tooltip' title='Eliminar rubro'><button id='buttonOperationdelete' onclick='deleteNewContraRubroSelected("+id+","+rubro+",this)' class='btn btn-primary btn-sm'><i class='fa fa-trash' aria-hidden='true'></i></button></a>"						
+			])
+			table.draw(false);
+		}else{
+			swal("Este rubro es mayor", "No se puede añadir", "error");
+		}
+	}
+
+}
+
+
+
+$("form#updateAG").submit(function() {
+     
+	 var agreementUpdate =  $("#AgreementUpdate option:selected").text();
+	 var numberUpdate = $('input[name="numberAgreementUpdate"]').val();
+	 var dateUpdate = $('input[name="dateAgreementUpdate"]').val();
+	 var descriptionUpdate = $('textarea[name="conceptUpdate"]').val();	   
+	 var idtypeagreement = $("#typeAgreementUpdate option:selected").val()
+	
+	  if (agreementUpdate, numberUpdate, dateUpdate, descriptionUpdate) {
+		  // Create Ajax Call
+	   
+		  $.ajax({
+		  url: '{% url "updateAgreementRubro"  0 %}'.replace('0', localStorage.getItem('userID')),
+		  data: {
+			  'origin': originID,
+			  'id': agreementId,
+			  'numberAg': numberUpdate,
+			  'dateAg': dateUpdate,
+			  'descriptionAg': descriptionUpdate,
+			  'idtypeagreement': idtypeagreement,
+					
+		  },
+		  dataType: 'json',
+		  success: function (data) {
+			  if(data.CREATE == "TRUE"){
+			  var tableUpdateAg = $('#dataTableMovTem').DataTable(); 
+			  var rows = tableUpdateAg.rows().remove().draw();
+			  for (var i=0; i<data.AG.length; i++){
+							
+				  tableUpdateAg.row.add( [
+				  data.AG[i].descriptionAg,
+				  data.AG[i].numberAg,
+				  data.AG[i].typeAgreement,
+				  data.TA[i].nameTA,
+					   
+					"<a data-toggle='tooltip' href='#' id='updateAgreement' title='Actualizar Tipo de Acuerdo'><button  onclick=\'changeUpdateAgreement("+JSON.stringify(data.AG[i].id)+','+JSON.stringify(data.AG[i].typeAgreement)+','+JSON.stringify(data.AG[i].numberAg)+','+JSON.stringify(data.AG[i].dateAg)+','+JSON.stringify(data.AG[i].descriptionAg)+")\' data-toggle='modal' data-target='#myModalAgreementUpdate' class='btn btn-primary btn-sm'><i class='fa fa-pencil'></i></button></a>"+ //agregue button
+				  "<a data-toggle='tooltip' href='#' id='detalleAR' title='Detalles del Acuerdo'><button onclick=\'getDetallAgreement("+JSON.stringify(data.AG[i].id)+")\' data-toggle='modal' data-target='#myModalAgreeementOperation' class='btn btn-primary btn-sm'><i class='fa fa-search'></i></button></a>"
+				  ])
+			  }
+			  tableUpdateAg.draw(false);
+			  swal("Actualización exitosa!", "Continua con tu proceso!", "success");
+			  $('#myModalAgreementUpdate').modal('toggle');
+			  }else{
+	
+				  swal("No se puede actualizar el tipo de acuerdo", "Ya existe un tipo de acuerdo con este nombre", "error");
+				  $('#myModalAgreementUpdate').modal('toggle');
+			  }
+					
+		  }
+		  });
+	  }else {
+		  alert("All fields must have a valid value.");
+	  }
+	  return false;
+ });
+ function deleteAgreement(id, numberAg,row){
+   
+	  swal({
+	  title: "Desea eliminar el tipo de acuerdo número " + numberAg + "?",
+	  text: "Al confirmar esta acción, el tipo de acuerdo número " + numberAg + " sera eliminado.",
+	  icon: "warning",
+	  buttons: true,
+	  dangerMode: true,
+	  })
+	  .then((willDelete) => {
+	  if (willDelete) {
+	  
+		  $.ajax({
+			  url: '{% url "deleteAll"  0 %}'.replace('0', localStorage.getItem('userID')),
+			  data: {
+				  'origin': originID,
+				  'id': id,
+				  'option': '8'
+			  },
+			  dataType: 'json',
+			  success: function (data) {   
+				 var tableUpdateAg = $('#dataTableMovTem').DataTable(); 
+				 var rows = tableUpdateAg.rows().remove().draw();
+				  for (var i=0; i<data.AG.length; i++){
+							  
+					  tableUpdateAg.row.add( [
+					  
+						 data.AG[i].descriptionAg,
+						 data.AG[i].numberAg,
+						 data.AG[i].typeAgreement,
+						 data.TA[i].nameTA,
+					"<a data-toggle='tooltip' href='#' id='updateAgreement' title='Actualizar Tipo de Acuerdo'><button  onclick=\'changeUpdateAgreement("+JSON.stringify(data.AG[i].id)+','+JSON.stringify(data.AG[i].typeAgreement)+','+JSON.stringify(data.AG[i].numberAg)+','+JSON.stringify(data.AG[i].dateAg)+','+JSON.stringify(data.AG[i].descriptionAg)+")\' data-toggle='modal' data-target='#myModalAgreementUpdate' class='btn btn-primary btn-sm'><i class='fa fa-pencil'></i></button></a>"+ //agregue button
+					  "<a data-toggle='tooltip' href='#' id='detalleAR' title='Detalles del Acuerdo'><button onclick=\'getDetallAgreement("+JSON.stringify(data.AG[i].id)+")\' data-toggle='modal' data-target='#myModalAgreeementOperation' class='btn btn-primary btn-sm'><i class='fa fa-search'></i></button></a>"
+					  ])
+				  }
+				  tableUpdateAg.draw(false);
+				  swal("El tipo de acuerdo número " + numberAg + "  se ha eliminado con éxito.", {
+				  icon: "success",
+				  });
+				  
+			  }
+		  });
+	  }
+	  });
+ }
+ 
+ $('#typeAgreement').on('change', function() {
+	 var a = $('#typeAgreement option:selected').val();
+	 console.log(a)
+	 if(a=='Modalagreement'){
+		 $("#myModalTypeAgreement").modal('show'); 
+		 $('#typeAgreement').prop('selectedIndex',0);
+	 }
+ });
+ 
+ 
+ function getDetallAgreement(id){
+	 $.ajax({
+			 url: '{% url "getDetallAgreement"  0 %}'.replace('0', localStorage.getItem('userID')),
+			 data: {
+				 'agreement':id,
+				 'origen': originID,
+				 'bussines': localStorage.getItem('idBussines'),
+			 },
+			 dataType: 'json',
+			 success: function (data) {
+				 var tableAgreeementDetall = $('#dataTableAgreeementOperation').DataTable(); 
+				  var rows = tableAgreeementDetall.rows().remove().draw();
+				 for (var i=0; i<data.MV.length; i++){
+ 
+				 tableAgreeementDetall.row.add( [
+				 data.MV[i].date,
+				 data.MR[i].rubro,
+				 data.MR[i].description,
+				 data.MV[i].concept,
+				 data.MV[i].value,
+				 data.MR[i].initialBudget,
+				 data.MV[i].budgetEject,
+				 data.MV[i].balance,								
+				 ]).order( [ 1, 'asc' ] ).draw( false );
+			 }
+			 }
+		 });
+ }
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////Operaciones Rubros/////////////////////////////////////////////////////////////////////////////////////////////////////
+$(document).on('change', '#chargeInforUpdatem', function(event) {
+		$.ajax({
+			url: '{% url "getOriginBudget"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+				'option': '3',
+				'inform': $("#chargeInforUpdatem option:selected").text(),
+			},
+			dataType: 'json',
+			success: function (data) {
+			const $selectInformDetall = document.querySelector("#detallInformUpdate");
+
+			for (let i = $selectInformDetall.options.length; i >= 0; i--) {
+					$selectInformDetall.remove(i);
+			}
+			$('#detallInformUpdate').append(`<option  hidden  selected"> Selecciona una opción</option>`);
+			for (var i=0; i<data.IFD.length; i++){
+				$('#detallInformUpdate').append(`<option value="${data.IFD[i].codeInfD}">${data.IFD[i].codeInfD}</option>`);
+				}												
+			}
+	});
+});
+
+
+
+function getRadioButonType(){
+	if($('input[name=typeAccount]:checked', '#createRubro').val()=="MAYOR"){
+		$("#initialBudget").css("display", "none");
+		$("#divInitialBudget").css('display', 'block ');
+		$('#divInitialBudget').val(0);
+		$("#selectesInform").css('display', 'none ');
+		$("#selectesInformD").css('display', 'none ');
+		$('#chargeInform').removeAttr("required");
+		$('#detallInform').removeAttr("required");															
+	}else{
+		$("#selectesInformD").css('display', 'block');
+		$("#selectesInform").css('display', 'block');
+		$("#divInitialBudget").css('display', 'block');
+		$("#initialBudget").css('display', 'block');
+
+	}
+
+}
+
+function getRadioButonTypeUpdate(type){
+	newTypeRubroUp=type;
+}
+////////// modifique función agregue un button para detalles informe rubro
+
+$("form#updateRubro").submit(function() {
+
+    var rubroUpdate = $('input[name="rubroUpdate"]').val();
+    var descriptionUpdate = $('input[name="descriptionUpdate"]').val();
+	var valueInitialUpdate =  $('input[name="valueInitialUpdate"]').val();
+	var inform = JSON.stringify(arrayInformsUpdate);
+	var detallTypeInfor = JSON.stringify(arrayCodeUpdate);
+    if (rubroUpdate, descriptionUpdate,valueInitialUpdate) {
+          // Create Ajax Call
+          $.ajax({
+              url: '{% url "updateRubro"  0 %}'.replace('0', localStorage.getItem('userID')),
+              data: {
+				
+				'origin': originID,
+                'idBussines': localStorage.getItem('idBussines'),				 
+				'id': rubroId,
+				'rubro':rubroUpdate,
+				'typeRubro': newTypeRubroUp,
+                'description': descriptionUpdate,
+				'initialBudget':valueInitialUpdate,
+				'inform': inform,
+				'detallInform': detallTypeInfor,
+				 
+              },
+              dataType: 'json',
+              success: function (data) {
+				console.log(data)
+				if (data.SOY_FATHER=="TRUE"){
+						swal("No se puede modificar este rubro, posee RUBROS AUXILIARES", "Por favor verifica", "error");
+						$('#myModalRubroUpdate').modal('toggle');
+				}	
+				if (data.SOY_FATHER=="FALSE"){
+					var tableUpdateRubro = $('#dataTableRubroTem').DataTable(); 
+					var rows = tableUpdateRubro.rows().remove().draw();
+
+					for (var i=0; i<data.RUBRO.length; i++){
+						tableUpdateRubro.row.add( [
+						data.RUBRO[i].id,
+						data.RUBRO[i].rubro,
+						data.RUBRO[i].typeRubro,
+						data.RUBRO[i].description,
+						data.RUBRO[i].initialBudget,
+						data.RUBRO[i].realBudget,
+						data.RUBRO[i].budgetEject,
+						"<a data-toggle='tooltip' href='#' id='deleteRubro'title='Eliminar Rubro'><button onclick=\'deleteRubro("+JSON.stringify(data.RUBRO[i].id)+','+JSON.stringify(data.RUBRO[i].rubro)+")\' class='btn btn-primary btn-sm'><i class='fa fa-trash'></i></button></a>"+ 
+						"<a data-toggle='tooltip' href='#' id='updateRubro' title='Actualizar Rubro'><button  onclick=\'changeUpdateRubro("+JSON.stringify(data.RUBRO[i].id)+','+JSON.stringify(data.RUBRO[i].rubro)+','+JSON.stringify(data.RUBRO[i].typeRubro)+','+JSON.stringify(data.RUBRO[i].description)+','+JSON.stringify(data.RUBRO[i].initialBudget)+','+JSON.stringify(data.RUBRO[i].inform)+','+JSON.stringify(data.RUBRO[i].detallTypeInfor)+")\' data-toggle='modal' data-target='#myModalRubroUpdate' class='btn btn-primary btn-sm'><i class='fa fa-pencil'></i></button></a>"+ //agregue button
+						"<a data-toggle='tooltip' href='#' id='detailRubroOperation' title='Ver Movimientos Presupuestales'><button onclick=\'getDetailRubroOperation("+JSON.stringify(data.RUBRO[i].id)+','+JSON.stringify(data.RUBRO[i].description)+")\' data-toggle='modal' data-target='#myModalRubroOperation' class='btn btn-primary btn-sm'><i class='fa fa-info-circle'></i></button></a>"+
+						"<a data-toggle='tooltip' href='#' id='detaillDisponibilitys' title='Ver Disponibilidades'><button onclick=\'getDispoinibilityByRubro("+JSON.stringify(data.RUBRO[i].id)+")\' data-toggle='modal' data-target='#myModalDatesDispoinibility' class='btn btn-primary btn-sm'><i class='fa fa-info-circle'></i></button></a>"
+						])
+					}
+					tableUpdateRubro.draw( false );
+					swal("Actualización exitosa!", "Continua con tu proceso!", "success");
+					$('#myModalRubroUpdate').modal('toggle');
+				}	
+				else if(data.MOVIMIENTO=="TRUE"){
+						swal("No se puede actualizar este rubro tiene MOVIMIENTOS", "Por favor verifica", "error");
+						$('#myModalRubroUpdate').modal('toggle');
+				}
+				else if(data.DESCRIPTION=="TRUE"){
+						swal("Solo se puede actualizar la descripcion"," ", "warning");
+						$('#myModalRubroUpdate').modal('toggle');
+				}
+				else{
+					
+					if(data.MOVIMIENTO=="FALSE"){
+					var tableUpdateRubro = $('#dataTableRubroTem').DataTable(); 
+					var rows = tableUpdateRubro.rows().remove().draw();
+
+					for (var i=0; i<data.RUBRO.length; i++){
+						tableUpdateRubro.row.add( [
+						data.RUBRO[i].id,
+						data.RUBRO[i].rubro,
+						data.RUBRO[i].typeRubro,
+						data.RUBRO[i].description,
+						data.RUBRO[i].initialBudget,
+						data.RUBRO[i].realBudget,
+						data.RUBRO[i].budgetEject,
+						"<a data-toggle='tooltip' href='#' id='deleteRubro'title='Eliminar Rubro'><button onclick=\'deleteRubro("+JSON.stringify(data.RUBRO[i].id)+','+JSON.stringify(data.RUBRO[i].rubro)+")\' class='btn btn-primary btn-sm'><i class='fa fa-trash'></i></button></a>"+ 
+						"<a data-toggle='tooltip' href='#' id='updateRubro' title='Actualizar Rubro'><button  onclick=\'changeUpdateRubro("+JSON.stringify(data.RUBRO[i].id)+','+JSON.stringify(data.RUBRO[i].rubro)+','+JSON.stringify(data.RUBRO[i].typeRubro)+','+JSON.stringify(data.RUBRO[i].description)+','+JSON.stringify(data.RUBRO[i].initialBudget)+','+JSON.stringify(data.RUBRO[i].inform)+','+JSON.stringify(data.RUBRO[i].detallTypeInfor)+")\' data-toggle='modal' data-target='#myModalRubroUpdate' class='btn btn-primary btn-sm'><i class='fa fa-pencil'></i></button></a>"+ //agregue button
+						"<a data-toggle='tooltip' href='#' id='detailRubroOperation' title='Ver Movimientos Presupuestales'><button onclick=\'getDetailRubroOperation("+JSON.stringify(data.RUBRO[i].id)+','+JSON.stringify(data.RUBRO[i].description)+")\' data-toggle='modal' data-target='#myModalRubroOperation' class='btn btn-primary btn-sm'><i class='fa fa-info-circle'></i></button></a>"+
+						"<a data-toggle='tooltip' href='#' id='detaillDisponibilitys' title='Ver Disponibilidades'><button onclick=\'getDispoinibilityByRubro("+JSON.stringify(data.RUBRO[i].id)+")\' data-toggle='modal' data-target='#myModalDatesDispoinibility' class='btn btn-primary btn-sm'><i class='fa fa-info-circle'></i></button></a>"
+						]);
+					}
+					tableUpdateRubro.draw( false );
+
+					swal("Actualización exitosa!", "Continua con tu proceso!", "success");
+					$('#myModalRubroUpdate').modal('toggle');
+				}
+					
+					}	
+					
+				}
+          });
+        } else {
+          alert("All fields must have a valid value.");
+      }
+      $('form#formAPUpdateRubro').trigger("reset");
+      return false;
+});
+
+function getDetailRubroOperation(rubroId, description){
+	$("#movementByRubro").text("Movimientos Presupuestales de "+description)															
+	$.ajax({
+			url: '{% url "getRubroOperationDetail"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+				'id': rubroId
+				
+			},
+			dataType: 'json',
+			success: function (data) {
+				var TableRubroOperationDetail = $('#dataTableRubroOperation').DataTable(); 
+ 				var rows = TableRubroOperationDetail.rows().remove().draw();
+				for (var i=0; i<data.MVRUBRO.length; i++){
+
+				TableRubroOperationDetail.row.add( [
+				data.MVRUBRO[i].typeOperation,
+				data.MVRUBRO[i].value,
+				data.MVRUBRO[i].balance,
+				data.MVRUBRO[i].date,						
+				]).draw( false );
+			}
+			}
+		});
+
+}
+
+function getDispoinibilityByRubro(rubroId){
+	idRubroDisponibilityDate = rubroId;
+}
+
+document.getElementById('initialDate').addEventListener('change', function() {
+      // se ejecuta cuando el datepicker cambie de valor
+      initialDate = this.value;
+	  $.ajax({
+		url: '{% url "getDataRubroDisponibility"  0 %}'.replace('0', localStorage.getItem('userID')),
+		data: {
+			'id': idRubroDisponibilityDate,
+			'initialDate': initialDate,
+			'finalDate': finalDate
+		},
+		dataType: 'json',
+		success: function (data) {
+			var table = $('#dataTableDisponiblityRubros').DataTable(); 
+ 			var rows = table.rows().remove().draw();
+			for (var i=0; i<data.DPRUBRO.length; i++){
+
+				table.row.add( [
+				data.DPRUBRO[i].movement__disponibility,
+				data.DPRUBRO[i].date,
+				data.DPRUBRO[i].value,
+				data.DPRUBRO[i].balance,							
+				])
+		}
+		table.draw( false );
+		}
+		}
+	);
+});
+document.getElementById('finalDate').addEventListener('change', function() {
+      // se ejecuta cuando el datepicker cambie de valor
+      finalDate = this.value;
+	  $.ajax({
+		url: '{% url "getDataRubroDisponibility"  0 %}'.replace('0', localStorage.getItem('userID')),
+		data: {
+			'id': idRubroDisponibilityDate,
+			'initialDate': initialDate,
+			'finalDate': finalDate
+		},
+		dataType: 'json',
+		success: function (data) {
+			var table = $('#dataTableDisponiblityRubros').DataTable(); 
+ 			var rows = table.rows().remove().draw();
+			for (var i=0; i<data.DPRUBRO.length; i++){
+
+				table.row.add( [
+				data.DPRUBRO[i].movement__disponibility,
+				data.DPRUBRO[i].date,
+				data.DPRUBRO[i].value,
+				data.DPRUBRO[i].balance,						
+				])
+		}
+		table.draw( false );
+		}
+		}
+	);
+});
+function getDetalleInformRubro(id){
+	$.ajax({
+			url: '{% url "getDetailRubro"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+				'id':id,
+				'bussines':localStorage.getItem('idBussines'),
+				'origin': $('input[name=origins]:checked', '#addOptions').val(),
+			},
+			dataType: 'json',
+			success: function (data) {
+				var tableDetailInformRubro = $('#dataTableDetailInformRubro').DataTable(); 
+ 				var rows = tableDetailInformRubro.rows().remove().draw();
+				for (var i=0; i<data.RUBRO.length; i++){
+
+				tableDetailInformRubro.row.add( [
+				data.RUBRO[i].bussines_id,
+				data.RUBRO[i].origin_id,
+				data.RUBRO[i].rubro,
+				data.RUBRO[i].rubroFather,
+				data.RUBRO[i].typeRubro,
+				data.RUBRO[i].nivel,
+				data.RUBRO[i].description,
+				data.RUBRO[i].dateCreation,
+				data.RUBRO[i].initialBudget,
+				data.RUBRO[i].realBudget,
+							
+				]).draw( false );
+			}
+			}
+		});
+}
+
+function deleteRubro(id, rubro){
+    swal({
+    title: "Desea eliminar el rubro " + rubro + "?",
+    text: "Al confirmar este acción, el rubro " + rubro + " sera eliminado.",
+    icon: "warning",
+    buttons: true,
+    dangerMode: true,
+    })
+    .then((willDelete) => {
+    if (willDelete) {
+
+        $.ajax({
+            url: '{% url "deleteRubro"  0 %}'.replace('0', localStorage.getItem('userID')),
+            data: {
+				'origin': originID,
+				'idBussines': localStorage.getItem('idBussines'),
+                'id': id,
+                'option': '1'
+            },
+            dataType: 'json',
+            success: function (data) { 
+				if (data.SOY_FATHER=="TRUE"){
+						swal("No puede eliminar rubro mayor, posee auxiliares", "Por favor verifica", "error");			
+					}
+				if (data.MOVEMENTS=="TRUE"){
+					swal("El rubro tiene movimientos por ende no se puede eliminar", "Por favor verifica", "error");			
+				}
+				else{
+					if  (data.ELIMINADO=='TRUE'){
+
+						var tableDeleteRubro = $('#dataTableRubroTem').DataTable(); 
+						var rows = tableDeleteRubro.rows().remove().draw();
+
+						for (var i=0; i<data.RUBRO.length; i++){
+							tableDeleteRubro.row.add( [
+							data.RUBRO[i].id,
+							data.RUBRO[i].rubro,
+							data.RUBRO[i].typeRubro,
+							data.RUBRO[i].description,
+							data.RUBRO[i].initialBudget,
+							data.RUBRO[i].realBudget,
+							data.RUBRO[i].budgetEject,
+							"<a data-toggle='tooltip' href='#' id='deleteRubro'title='Eliminar Rubro'><button onclick=\'deleteRubro("+JSON.stringify(data.RUBRO[i].id)+','+JSON.stringify(data.RUBRO[i].rubro)+")\' class='btn btn-primary btn-sm'><i class='fa fa-trash'></i></button></a>"+
+							"<a data-toggle='tooltip' href='#' id='updateRubro' title='Actualizar Rubro'><button  onclick=\'changeUpdateRubro("+JSON.stringify(data.RUBRO[i].id)+','+JSON.stringify(data.RUBRO[i].rubro)+','+JSON.stringify(data.RUBRO[i].typeRubro)+','+JSON.stringify(data.RUBRO[i].description)+','+JSON.stringify(data.RUBRO[i].initialBudget)+','+JSON.stringify(data.RUBRO[i].inform)+','+JSON.stringify(data.RUBRO[i].detallTypeInfor)+")\' data-toggle='modal' data-target='#myModalRubroUpdate' class='btn btn-primary btn-sm'><i class='fa fa-pencil'></i></button></a>"+ //agregue button
+							"<a data-toggle='tooltip' href='#' id='detailRubroOperation' title='Ver Movimientos Presupuestales'><button onclick=\'getDetailRubroOperation("+JSON.stringify(data.RUBRO[i].id)+','+JSON.stringify(data.RUBRO[i].description)+")\' data-toggle='modal' data-target='#myModalRubroOperation' class='btn btn-primary btn-sm'><i class='fa fa-info-circle'></i></button></a>"+		
+							"<a data-toggle='tooltip' href='#' id='detaillDisponibilitys' title='Ver Disponibilidades'><button onclick=\'getDispoinibilityByRubro("+JSON.stringify(data.RUBRO[i].id)+")\' data-toggle='modal' data-target='#myModalDatesDispoinibility' class='btn btn-primary btn-sm'><i class='fa fa-info-circle'></i></button></a>"
+							])
+						}
+						tableDeleteRubro.draw( false );	
+						swal("El rubro " + rubro + "  se ha eliminado con éxito.", {
+							icon: "success",
+							});
+					}
+				} 
+            }
+
+        });
+    }
+    });
+}
+var patronArray = [];
+//////////////////////////fin de funciones de botones tatan
+function generateRubro(){
+
+	
+	$("#finalButton").css("display", "none");
+	var tableContra = $('#dataTableContraRubros').DataTable(); 
+	var table = $('#dataTableRubroOthers').DataTable(); 
+	var rows = table.rows().remove().draw();
+	var rowsContra = tableContra.rows().remove().draw();
+	$("#rubroOperations").css('display', 'none');
+	$("#rubroContraOperations").css('display', 'none');				
+	$("#divAgreement").css("display", "none");
+	addContraperation.length = 0;
+	addOperation.length = 0;
+	rubrosToOperation.length = 0;
+	rubrosToContraOperation.length =0;
+	totalOperateArray.length =0;
+	totalContraOpArray.length =0;
+	totalcontraOperate = 0;
+	totalValorContraOp = 0;
+	totalValor = 0;
+	countOB = 0;
+	totalOperate = 0;
+	$('#typeAgreement').prop('selectedIndex',0);
+	$('#numberAgreement').val('');
+	$('#dateAgreement').val('');
+	$('#concept').val('');
+	$("#totalPresupuestoOp").text("PRESUPUESTO POR EJECUTAR: "+ totalOperate);	
+	$("#totalValorOp").text("VALOR: "+ totalValor);	
+	$('#bAddRubroOperation').attr("hidden", false);
+	$('#fOperation').attr("hidden", false);
+	$('#bAddRubroContraOperation').attr("hidden", false);
+	$('#fContraOperation').attr("hidden", false);
+	$("#finalButton").css("display", "none");
+	$('input[name="inputOperations"]').attr("disabled", false);
+	$('#buttonContraOperationdelete').attr("disabled", false);
+	$('#buttonContraOperationValidate').attr("disabled", false);	
+	$('#buttonOperationValidate').attr("disabled", false);
+	$('#buttonOperationdelete').attr("disabled", false);	
+
+
+
+	clik = 1; 
+	var regex = /(\d+)/g;
+	var pattern = localStorage.getItem('patron');
+	var acumulatorImport = 0;
+	for (var i = 0; i < (pattern.match(regex)).length; i++) {
+		acumulatorImport = acumulatorImport + parseInt(pattern.match(regex)[i]);
+		patronArray.push(acumulatorImport)
+	}
+
+	if($('input[name=operations]:checked', '#addOptions').val()=="CREAR RUBRO"){
+		$("#divRubro").css("display", "block");
+		$("#divAgreement").css("display", "none");
+		$("#divCreate").css('display', 'block');				
+
+		$.ajax({
+			url: '{% url "getOriginBudget"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+				'option': '2',
+				'idBussines': localStorage.getItem('idBussines'),
+
+		},
+		dataType: 'json',
+		success: function (data) {
+				$("#textTable").text("Lista de rubros por presupuesto de "+$('input[name=origins]:checked', '#addOptions').val())															
+				$('#chargeInform').append(`<option  hidden  selected"> Selecciona una opción</option>`);
+				for (var i=0; i<data.IF.length; i++){
+					$('#chargeInform').append(`<option value="`+data.IF[i].nameI+`">`+data.IF[i].nameI+`</option>`)
+				}
+												
+			}
+		});
+	}else{
+		$("#divRubro").css("display", "none");
+		$("#divAgreement").css("display", "block");
+		$.ajax({
+			url: '{% url "getOriginBudget"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+				'option': '4',
+		},
+		dataType: 'json',
+		success: function (data) {
+				const $select = document.querySelector("#typeAgreement");
+
+				for (let i = $select.options.length; i >= 0; i--) {
+						$select.remove(i);
+				}
+				$('#typeAgreement').append(`<option  hidden  selected"> Selecciona una opción</option>`);
+				for (var i=0; i<data.TA.length; i++){
+					$('#typeAgreement').append(`<option value="`+data.TA[i].nameTA+`">`+data.TA[i].nameTA+`</option>`)
+				}
+				$('#typeAgreement').append(`<option  value='Modalagreement'> Agregar </option>`)
+				var tableRubros = $('#dataTableRubroOthers').DataTable(); 
+				var tableContraRubros = $('#dataTableContraRubros').DataTable(); 
+				var rowsRubros = tableRubros.rows().remove().draw();
+				var rowsContraRubros = tableContraRubros.rows().remove().draw();
+				$("#rubroContraOperations").css('display', 'none');		
+				$("#rubroOperations").css('display', 'none');
+				$('#typeAgreement').prop('disabled', false);
+				$('#saveAgreement').attr("disabled", false);
+				rubrosToContraOperation.length = 0
+				rubrosToOperation.length = 0
+				addContraperation.length = 0
+				addOperation.length = 0				
+			}
+		});
+		
+	}
+
+}
+
+$(document).on('change', '#chargeInform', function(event) {
+		$.ajax({
+			url: '{% url "getOriginBudget"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+				'option': '3',
+				'inform': $("#chargeInform option:selected").text(),
+			},
+			dataType: 'json',
+			success: function (data) {
+			const $selectInformDetall = document.querySelector("#detallInform");
+
+			for (let i = $selectInformDetall.options.length; i >= 0; i--) {
+					$selectInformDetall.remove(i);
+			}
+			$('#detallInform').append(`<option  hidden  selected"> Selecciona una opción</option>`);
+			for (var i=0; i<data.IFD.length; i++){
+				$('#detallInform').append(`<option value="${data.IFD[i].codeInfD}">${data.IFD[i].codeInfD}</option>`);
+				}												
+			}
+	});
+});
+
+$(document).on('change', '#detallInform', function(event) {
+
+	$("#tablesInformDiv").css("display", "block");
+	var table = $('#dataTableInformTem').DataTable(); 
+	arrayInforms.push($("#chargeInform option:selected").text());
+	arrayCode.push($("#detallInform option:selected").text());
+    table.row.add( [$("#chargeInform option:selected").text(),$("#detallInform option:selected").text(),"<a data-toggle='tooltip' id='delete' onclick='deleteInformTem()'  title='Eliminar informe'><button  class='btn btn-primary btn-sm'><i class='fa fa-trash'></i></button></a>"]).draw( false );//Agrega las filas a la tabla
+})
+
+$(document).on('change', '#detallInformUpdate', function(event) {
+
+	var table = $('#dataTableInformUpdateT').DataTable(); 
+	arrayInformsUpdate.push($("#chargeInforUpdatem option:selected").text());
+	arrayCodeUpdate.push($("#detallInformUpdate option:selected").text());
+	table.row.add( [$("#chargeInforUpdatem option:selected").text(),$("#detallInformUpdate option:selected").text(),"<a data-toggle='tooltip' id='delete' onclick='deleteInformUpdate()'  title='Eliminar informe'><button  class='btn btn-primary btn-sm'><i class='fa fa-trash'></i></button></a>"]).draw( false );//Agrega las filas a la tabla
+
+})
+
+$("form#createRubro").submit(function() {
+
+	var rubro = $('input[name="rubro"]').val();
+	var rubroFather = $('input[name="rubroFather"]').val();
+	var nivel = $('input[name="nivel"]').val();
+	var description = $('input[name="description"]').val();
+	var initialBudget =  $('input[name="initialBudget"]').val();
+	var typeRubro = $('input[name=typeAccount]:checked', '#createRubro').val()
+	var inform = JSON.stringify(arrayInforms);
+	var detallTypeInfor = JSON.stringify(arrayCode);
+	var ru = ''
+	if(newRubro.length > 1){
+		ru = newRubro.substring(0, newRubro.length - 1)
+	}else{
+		ru = newRubro
+	}
+	if (rubro,rubroFather,nivel,description,initialBudget, typeRubro) {
+		
+
+		const box = document.getElementById('coreRubroPattern');
+		if(box.style.color=="green") {
+				$("#coreRubroPattern").css("color", "green");			
+				if(typeRubroCreate=='A'){
+					swal("Rubro padre es auxiliar", "El rubro padre debe ser una cuenta mayor", "error");		
+				}else{
+					$.ajax({
+					url: '{% url "createRubro"  0 %}'.replace('0', localStorage.getItem('userID')),
+					data: {
+						'bussines':  localStorage.getItem('idBussines'),
+						'period':  localStorage.getItem('idAC'),
+						'origin': originID,
+						'rubro': ru,
+						'rubroFather': rubroFather,
+						'nivel': nivel,
+						'description': description,
+						'initialBudget': initialBudget,
+						'typeRubro': typeRubro,
+						'inform': inform,
+						'detallInform': detallTypeInfor,
+					},
+					dataType: 'json',
+					success: function (data) {
+						if(data.MOVIMIENTO != "TRUE"){
+							if (data.CREATE == "TRUE"){
+								$("#createRubro")[0].reset();
+								swal("Creado exitoso del rubro!", "Continua con tu proceso!", "success");
+								arrayInforms.length=0;
+								arrayCode.length=0;
+								var table = $('#dataTableInformTem').DataTable(); 
+								var rows = table.rows().remove().draw();
+								$("#tablesInformDiv").css("display", "none");
+								$.ajax({
+									url: '{% url "getRubroCreate"  0 %}'.replace('0', localStorage.getItem('userID')),
+									data: {
+										'origin':originID,
+										'idBussines': localStorage.getItem('idBussines'),
+									},
+									dataType: 'json',
+									success: function (dataTwo) {
+										var tableRubro = $('#dataTableRubroTem').DataTable(); 
+										var rowsRubro = tableRubro.rows().remove().draw();
+
+										
+										for (var i=0; i<dataTwo.RUBRO.length; i++){
+											tableRubro.row.add( [
+											dataTwo.RUBRO[i].id,
+											dataTwo.RUBRO[i].rubro,
+											dataTwo.RUBRO[i].typeRubro,
+											dataTwo.RUBRO[i].description,
+											dataTwo.RUBRO[i].initialBudget,
+											dataTwo.RUBRO[i].realBudget,
+											dataTwo.RUBRO[i].budgetEject,
+											"<a data-toggle='tooltip' href='#' id='deleteRubro'title='Eliminar Rubro'><button onclick=\'deleteRubro("+JSON.stringify(dataTwo.RUBRO[i].id)+','+JSON.stringify(dataTwo.RUBRO[i].rubro)+")\' class='btn btn-primary btn-sm'><i class='fa fa-trash'></i></button></a>"+ 
+											"<a data-toggle='tooltip' href='#' id='updateRubro' title='Actualizar Rubro'><button  onclick=\'changeUpdateRubro("+JSON.stringify(dataTwo.RUBRO[i].id)+','+JSON.stringify(dataTwo.RUBRO[i].rubro)+','+JSON.stringify(dataTwo.RUBRO[i].typeRubro)+','+JSON.stringify(dataTwo.RUBRO[i].description)+','+JSON.stringify(dataTwo.RUBRO[i].initialBudget)+','+JSON.stringify(dataTwo.RUBRO[i].inform)+','+JSON.stringify(dataTwo.RUBRO[i].detallTypeInfor)+")\' data-toggle='modal' data-target='#myModalRubroUpdate' class='btn btn-primary btn-sm'><i class='fa fa-pencil'></i></button></a>"+ //agregue button
+											"<a data-toggle='tooltip' href='#' id='detailRubroOperation' title='Ver Movimientos Presupuestales'><button onclick=\'getDetailRubroOperation("+JSON.stringify(dataTwo.RUBRO[i].id)+','+JSON.stringify(dataTwo.RUBRO[i].description)+")\' data-toggle='modal' data-target='#myModalRubroOperation' class='btn btn-primary btn-sm'><i class='fa fa-info-circle'></i></button></a>"+
+											"<a data-toggle='tooltip' href='#' id='detaillDisponibilitys' title='Ver Disponibilidades'><button onclick=\'getDispoinibilityByRubro("+JSON.stringify(dataTwo.RUBRO[i].id)+")\' data-toggle='modal' data-target='#myModalDatesDispoinibility' class='btn btn-primary btn-sm'><i class='fa fa-info-circle'></i></button></a>"
+											])
+										}
+										tableRubro
+										.order( [ 1, 'asc' ] )
+										.draw();
+										tableRubro.draw(false);
+										newRubro = ''
+										$("#coreRubroPattern").text("Código rubro");
+										$("#coreRubroPattern").css("color", "gray");
+										$("#selectesInformD").css('display', 'block');
+										$("#selectesInform").css('display', 'block');
+										$("#divInitialBudget").css('display', 'block');
+										$("#initialBudget").css('display', 'block');
+										$("#initialBudget").css('display', 'none');
+
+								}
+							});
+							}else{
+								if(data.CREATE == "TRUE"){
+									swal("Rubro repetido", "Por favor verifique sus datos", "error");
+								}else{
+									if(data.CREATECCPET == "FALSE"){
+										swal("Error", "Por favor ingresar la tabla CCPET", "error");
+									}
+								}
+							}
+						}else{
+							swal("Error", "El rubro padre es un auxiliar y se encuentra en operación", "error");
+						}
+						
+					}
+				});
+			}		
+		}else{
+			swal("Patrón rubro inválido", "Por favor verifique el código", "error");
+		}
+		
+	} else {
+		swal("Todos los campos deben ser llenados", "Por favor verifique", "warning");
+	}
+	return false;
+});
+
+
+
+$('#dataTableInformTem tbody').on('click', 'tr', function () {	
+	indexTable=$(this).index();
+} );
+$('#dataTableSelectRubro tbody').on('click', 'tr', function () {
+	indexTable=$(this).index();
+} );
+$('#dataTableRubroOthers tbody').on('click', 'tr', function () {
+	indexTable=$(this).index();
+} );
+$('#dataTableContraRubros tbody').on('click', 'tr', function () {
+	indexTable=$(this).index();
+} );
+$('#dataTableInformUpdateT tbody').on('click', 'tr', function () {
+	indexTable=$(this).index();
+} );
+$('#dataTableRubroTem tbody').on('click', 'tr', function () {
+	indexTable=$(this).index();
+} );
+function deleteInformTem(){
+
+	oTable = $('#dataTableInformTem').DataTable();
+	oTable.row(':eq('+indexTable +')').remove().draw();
+	arrayCode.splice(indexTable, 1);
+	arrayInforms.splice(indexTable, 1);
+}
+
+function deleteInformUpdate(){
+	oTable = $('#dataTableInformUpdateT').DataTable();
+	oTable.row(':eq('+indexTable +')').remove().draw();
+	arrayCodeUpdate.splice(indexTable, 1);
+	arrayInformsUpdate.splice(indexTable, 1);
+}
+/*Cambios*/
+function deleteRubroSelected(id,row){
+	var table = $('#dataTableRubroOthers').DataTable()
+	addOperation.splice(addOperation.findIndex(el=> el.id ==id), 1);
+	var index = totalOperateArray.findIndex(el=> el.id ==id)
+	console.log(index)
+	if($("#"+id+"").val()!='' && index!=-1){
+		
+		totalOperate = totalOperate - totalOperateArray[index].subtotalOp;
+		totalValor = totalValor - totalOperateArray[index].valorOp;	
+	}
+	$("#totalPresupuestoOp").text("PRESUPUESTO POR EJECUTAR: "+ totalOperate);	
+	$("#totalValorOp").text("VALOR: "+ totalValor);														
+	totalOperateArray.splice(totalOperateArray.findIndex(el=> el.id ==id), 1);
+	rubrosToOperation.splice(rubrosToOperation.indexOf("#balance"+id), 1);
+	countOB -= 1
+    table.row(row.closest('tr')).remove().draw(false);
+}
+
+function deleteContraRubroSelected(id,row){
+	console.log(addContraperation)
+	console.log(totalContraOpArray)
+	console.log(rubrosToContraOperation)
+
+
+	var oTable = $('#dataTableContraRubros').DataTable();
+	var index = totalContraOpArray.findIndex(el=> el.id ==id)
+
+	if($("#contra"+id+"").val()!=''&& index!=-1){
+		totalcontraOperate = totalcontraOperate + totalContraOpArray[index].valorContraOp;
+		totalValorContraOp = totalValorContraOp - totalContraOpArray[index].valorContraOp;
+		$("#totalPresupuestoContraOp").text("FALTA POR CONTRA OPERAR: "+ totalcontraOperate);	
+		$("#totalValorContraOp").text("VALOR: "+ totalValorContraOp);														
+		totalContraOpArray.splice(totalContraOpArray.findIndex(el=> el.id ==id), 1);
+
+		addContraperation.splice(addContraperation.findIndex(el=> el.id ==id), 1);	
+	}
+	
+	rubrosToContraOperation.splice(rubrosToContraOperation.indexOf("#balancecontra"+id), 1);
+	
+	oTable.row(row.closest('tr')).remove().draw(false);
+
+}
+
+
+//Funcion para crear nuevo tipo de acuerdo en la seccion de operaciones
+$("form#addTypeAgreement").submit(function() {
+
+var codeTA = $('input[name="codeTA"]').val();
+var nameTA = $('input[name="nameTA"]').val();
+var descriptionTA = $('textarea[name="descriptionTA"]').val();
+var ordenTA = $('input[name="ordenTA"]').val();
+
+if (codeTA,nameTA,descriptionTA,ordenTA) {
+	// Create Ajax Call
+	$.ajax({
+		url: '{% url "createTypeAgreement"  0 %}'.replace('0', localStorage.getItem('userID')),
+		data: {
+			'bussines': localStorage.getItem('idBussines'),
+			'codeTA': codeTA,
+			'nameTA': nameTA,
+			'descriptionTA': descriptionTA,               
+			'ordenTA': ordenTA,    
+
+		},
+		dataType: 'json',
+		success: function (data) {
+			console.log(data);
+			if(data.CREATE == "TRUE"){
+				generateRubro()
+				swal("Creado el nuevo tipo de acuerdo!", "Continua con tu proceso!", "success");
+				$('#myModalTypeAgreement').modal('toggle');
+				
+			}else{
+				swal("No se puede crear el tipo de acuerdo", "Ya existe un tipo de acuerdo con este nombre", "error");
+				$('#myModalTypeAgreement').modal('toggle');
+			}
+			
+		}
+	});
+} else {
+	alert("Por favor llene todos los campos");
+}
+$('form#addTypeAgreement').trigger("reset");
+return false;
+});
+
+
+function getRubrosByOrigin(){
+	$.ajax({
+			url: '{% url "getRubrosOrigin"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+				'bussines':localStorage.getItem('idBussines'),
+				'origin': originID
+			},
+			dataType: 'json',
+			success: function (data) {
+
+				var table = $('#dataTableSelectRubro').DataTable(); 
+ 				var rows = table.rows().remove().draw();
+				for (var i=0; i<data.RUBRO.length; i++){
+
+				table.row.add( [
+				data.RUBRO[i].rubro,
+				data.RUBRO[i].description,
+				data.RUBRO[i].realBudget,
+				data.RUBRO[i].budgetEject,
+				"<a data-toggle='tooltip' title='Seleccionar rubro'><button  id="+JSON.stringify(data.RUBRO[i].id)+" onclick=\'getRubroByOperation("+JSON.stringify(data.RUBRO[i].id)+','+ JSON.stringify(data.RUBRO[i].rubro)+','+JSON.stringify(data.RUBRO[i].description)+','+JSON.stringify(data.RUBRO[i].realBudget)+','+JSON.stringify(data.RUBRO[i].typeRubro)+")\' class='btn btn-primary btn-sm'><i class='fa fa-check' aria-hidden='true'></i></button></a>"			
+				])
+			}
+			table.draw( false );
+			}
+		});
+}
+
+function getRubroByOperation(id,rubro,description,realBudget,typeRubro){
+	if(rubrosToOperation.includes("#balance"+id)){
+		swal("Este rubro ya fue añadido", "No se puede añadir el mismo rubro", "error");
+	}
+	else{
+		if(typeRubro=='A'){
+			rubrosToOperation.push("#balance"+id);
+			$('#myModalRubroOrigin').modal('toggle');
+			var table = $('#dataTableRubroOthers').DataTable(); 
+			table.row.add([
+			rubro,
+			description,
+			"<input type='text'  autocomplete='off' onkeypress='return validaNumericos(event)'/   size='10' min='1'  pattern='^[0-9]+'  oninput='validity.valid||(value='');' style='width: 150px;font-family: Arial; font-size: 10pt; ' id="+id+" class='form-control' name='inputOperations'>",
+			"<label type='number'   id=Realbalance"+id+"  >"+realBudget+"</label>",
+			"<label type='number'   id=balance"+id+"  ></label>",
+			"<a data-toggle='tooltip' title='Validar operación'><button id='buttonOperationValidate' onclick='operateBalance("+id+','+JSON.stringify(rubro)+','+realBudget+','+ JSON.stringify(description)+")' class='btn btn-primary btn-sm'><i class='fa fa-check' aria-hidden='true'></i></button></a>"+
+			"<a data-toggle='tooltip' title='Eliminar rubro'><button id='buttonOperationdelete' onclick='deleteRubroSelected("+id+",this)' class='btn btn-primary btn-sm'><i class='fa fa-trash' aria-hidden='true'></i></button></a>"						
+			]).node().id = rubro+"IDtr";
+			table.draw(false);
+		}else{
+			swal("Este rubro es mayor", "No se puede añadir", "error");
+		}
+	}
+
+}
+
+countOB = 0
+
+function operateBalance(id,rubro,realBudget,description){
+
+ 	$.ajax({
+			url: '{% url "getDisponibilityByRubros"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+				'id':id,
+				'bussines':localStorage.getItem('idBussines')
+			},
+			dataType: 'json',
+			success: function (response) {
+				var disponibilityByRubro = response.DP
+				var validator;
+				var createId =  "#"+id;
+				var result= "#balance"+id;
+				var resultReal= "#Realbalance"+id;
+				var operate=0;
+				var intBudget = parseInt(realBudget);
+				if(parseInt($(createId).val())==0 || $(createId).val() == ''){
+					swal("No se puede generar una operación de valor 0", " " , "error");
+				}else{
+				const found = addOperation.findIndex(element => element['id'] == id);
+				if(found<0){
+
+					$.ajax({
+						url: '{% url "getOperationByOperate"  0 %}'.replace('0', localStorage.getItem('userID')),
+						data: {
+							'origin': originID,
+							'operation': $('input[name=operations]:checked', '#addOptions').val(),
+						},
+						dataType: 'json',
+						success: function (data) {
+						
+						if(data.OP == '+'){
+							operate = realBudget +  parseInt($(createId).val());
+							operateEject=  realBudget + parseInt($(createId).val())-parseInt(disponibilityByRubro);
+
+							$(result).text(operateEject);
+							$(resultReal).text(operate);
+							addOperation.push({
+								"id": id,
+								"rubro": rubro,
+								"description": description,
+								"concept": $('input[name=operations]:checked', '#addOptions').val(),
+								"value":parseInt($(createId).val()),
+								"balance":operate,
+								"byEject":operateEject,
+								"realBudget": realBudget,
+							})
+							validator="True";
+						}else if(data.OP == '-'){
+							operate = realBudget - parseInt($(createId).val());
+							operateEject=  realBudget - parseInt($(createId).val())-parseInt(disponibilityByRubro);
+
+							if(operate<0){
+								swal("Esta intentando sacar mas de lo posible", "No se puede realizar la operación", "error");
+								validator="False"
+							}else{
+
+								$(result).text(operateEject);
+								$(resultReal).text(operate);
+								addOperation.push({
+									"id": id,
+									"rubro": rubro,
+									"description": description,
+									"concept": $('input[name=operations]:checked', '#addOptions').val(),
+									"value":parseInt($(createId).val()),
+									"balance":operate,
+									"byEject":operateEject,
+									"realBudget": realBudget
+								})
+								validator="True";				
+							}	
+						}else{
+							console.log(data)
+						}			
+						if (validator=="True"){
+							
+								countOB += 1
+								totalOperateArray.push({
+								"id": id,
+								"subtotalOp": operateEject,
+								"valorOp":  parseInt($(createId).val())
+								})
+								totalOperate = totalOperate + operateEject;	
+								totalValor = totalValor + parseInt($(createId).val());
+								$("#totalPresupuestoOp").text("PRESUPUESTO POR EJECUTAR: "+ totalOperate);														
+								$("#totalValorOp").text("VALOR: "+ totalValor);
+							}
+
+						}
+				});
+				}else{
+					$.ajax({
+						url: '{% url "getOperationByOperate"  0 %}'.replace('0', localStorage.getItem('userID')),
+						data: {
+							'origin': originID,
+							'operation': $('input[name=operations]:checked', '#addOptions').val(),
+						},
+						dataType: 'json',
+						success: function (data) {
+						
+						if(data.OP == '+'){
+							operate = realBudget +  parseInt($(createId).val());
+							operateEject=  realBudget + parseInt($(createId).val())-parseInt(disponibilityByRubro);
+
+							$(result).text(operateEject);
+							$(resultReal).text(operate);
+							addOperation[found] = {
+								"id": id,
+								"rubro": rubro,
+								"description": description,
+								"concept": $('input[name=operations]:checked', '#addOptions').val(),
+								"value":parseInt($(createId).val()),
+								"balance":operate,
+								"byEject":operateEject,
+								"realBudget": realBudget
+						}
+						validator="True";
+						}else if(data.OP == '-'){
+						operate = realBudget - parseInt($(createId).val());
+						operateEject=  realBudget - parseInt($(createId).val())-parseInt(disponibilityByRubro);
+						if(operate<0){
+							swal("Esta intentando sacar mas de lo posible", "No se puede realizar la operación", "error");
+							validator="False"
+						}else{
+							$(result).text(operateEject);
+							$(resultReal).text(operate);
+							addOperation[found] = {
+								"id": id,
+								"rubro": rubro,
+								"description": description,
+								"concept": $('input[name=operations]:checked', '#addOptions').val(),
+								"value":parseInt($(createId).val()),
+								"balance":operate,
+								"byEject":operateEject,
+								"realBudget": realBudget
+							}
+							validator="True";				
+						}	
+						}else{
+							console.log(data)
+						}			
+						if (validator=="True"){
+								totalOperate = totalOperate - totalOperateArray[found]['subtotalOp'];	
+								totalValor = totalValor - totalOperateArray[found]['valorOp'];
+								totalOperateArray[found] = {
+								"id": id,
+								"subtotalOp": operateEject,
+								"valorOp":  parseInt($(createId).val())
+								}				
+								totalOperate = totalOperate + totalOperateArray[found]['subtotalOp'];	
+								totalValor = totalValor + totalOperateArray[found]['valorOp'];
+								$("#totalPresupuestoOp").text("PRESUPUESTO POR EJECUTAR: "+ totalOperate);														
+								$("#totalValorOp").text("VALOR: "+ totalValor);
+							}
+
+						}
+				});
+				}
+				}
+			}
+	});
+
+	
+	
+}
+
+
+function finishOperation(){
+	swal({
+    title: "Desea terminar el proceso de operación ?",
+    text: "Una vez terminado no podra modificar valores, por favor verifique.",
+    icon: "warning",
+    buttons: true,
+    dangerMode: true,
+    })
+    .then((willDelete) => {
+    if (willDelete) {
+		$.ajax({
+			url: '{% url "getOperationByOperate"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+				'origin': originID,
+				'operation': $('input[name=operations]:checked', '#addOptions').val(),
+			},
+			dataType: 'json',
+			success: function (data) {
+				console.log(rubrosToOperation,countOB)
+
+				if(countOB == rubrosToOperation.length){
+					for (var i = 0; i < rubrosToOperation.length; i++) {
+						totalOperate = totalOperate + parseInt($(rubrosToOperation[i]).text());	
+						$("#rubroContraOperations").css('display', 'block');
+
+					}
+					totalcontraOperate = totalValor;
+					$("#textContraperations").text("Rubros de "+ data.CO);
+					$("#totalPresupuestoContraOp").text("FALTA POR CONTRA OPERAR: "+ totalcontraOperate);
+					$('#bAddRubroOperation').attr("hidden", true);
+					$('#fOperation').attr("hidden", true);
+					$('#buttonOperationValidate').attr("disabled", true);
+					$('#buttonOperationdelete').attr("disabled", true);	
+					$('input[name="inputOperations"]').attr("disabled", true);	
+					var table = $('#dataTableSelectRubro').DataTable(); 
+					var rows = table.rows().remove().draw();
+
+				}else{
+					swal("Error al finalizar operacion", "validar todos los rubros", "error");
+				}
+				
+			}
+		});	
+      }
+    });
+
+}
+
+function validaNumericos(event) {
+    if(event.charCode >= 48 && event.charCode <= 57){
+      return true;
+     }
+     return false;        
+}
+
+function getContraOperation(){
+	$.ajax({
+			url: '{% url "getRubrosContraOperation"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+				'origin': originID,
+				'bussines':localStorage.getItem('idBussines'),
+				'operation': $('input[name=operations]:checked', '#addOptions').val(),
+			},
+			dataType: 'json',
+			success: function (data) {
+				console.log(data)
+				simbolContraoperation = data.CONTRAOPERACION
+				nameContraoperation = data.NAME
+				var table = $('#dataTableSelectContraRubro').DataTable(); 
+ 				var rows = table.rows().remove().draw();
+				for (var i=0; i<data.RUBRO.length; i++){
+
+				table.row.add( [
+				data.RUBRO[i].rubro,
+				data.RUBRO[i].description,
+				data.RUBRO[i].realBudget,
+				data.RUBRO[i].budgetEject,
+				"<a data-toggle='tooltip' title='Seleccionar rubro'><button  id=contra"+data.RUBRO[i].id+" onclick=\'getRubroByContraOperation("+JSON.stringify(data.RUBRO[i].id)+','+ JSON.stringify(data.RUBRO[i].rubro)+','+JSON.stringify(data.RUBRO[i].description)+','+JSON.stringify(data.RUBRO[i].realBudget)+','+JSON.stringify(data.RUBRO[i].typeRubro)+")\' class='btn btn-primary btn-sm'><i class='fa fa-check' aria-hidden='true'></i></button></a>"			
+				])
+			}
+			table.draw(false);
+			}
+	});
+}
+function getRubroByContraOperation(id,rubro,description,realBudget,typeRubro){
+	if(rubrosToContraOperation.includes("#balancecontra"+id)){
+		swal("Este rubro ya fue añadido", "No se puede añadir el mismo rubro", "error");
+	}else{
+		if(typeRubro=='A'){
+			rubrosToContraOperation.push("#balancecontra"+id);
+			$('#myModalRubroContraOrigin').modal('toggle');
+			var table = $('#dataTableContraRubros').DataTable(); 
+			table.row.add([
+			rubro,
+			description,
+			"<input type='text' autocomplete='off' onkeypress='return validaNumericos(event)'/ min='1'  pattern='^[0-9]+' size='10' oninput='validity.valid||(value='');' style='width: 150px;font-family: Arial; font-size: 10pt;'  id=contra"+id+" class='form-control' name='inputOperations'>",
+			"<label type='number' id=RealContrabalance"+id+" >"+realBudget+"</label>",
+			"<label type='number' id=balancecontra"+id+"  ></label>",
+			"<a data-toggle='tooltip' title='Validar operación'><button id='buttonContraOperationValidate'  onclick='operateContraBalance("+id+','+JSON.stringify(rubro)+','+realBudget+','+ JSON.stringify(description) +")' class='btn btn-primary btn-sm'><i class='fa fa-check' aria-hidden='true'></i></button></a>"	+			
+			"<a data-toggle='tooltip' title='Eliminar rubro'><button id='buttonContraOperationdelete' onclick='deleteContraRubroSelected("+id+",this)' class='btn btn-primary btn-sm'><i class='fa fa-trash' aria-hidden='true'></i></button></a>"
+			]).node().id = "contra"+rubro+"IDtr";
+			table.draw(false);
+		}else{
+			swal("Este rubro es mayor", "No se puede añadir", "error");
+		}
+	}
+}
+
+
+function operateContraBalance(id,rubro,realBudget,description){
+
+	$.ajax({
+			url: '{% url "getDisponibilityByRubros"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+				'id':id,
+				'bussines':localStorage.getItem('idBussines')
+			},
+			dataType: 'json',
+			success: function (response) {
+				var disponibilityByRubro =  response.DP;
+				var validator;
+				var createId =  "#contra"+id;
+				var result= "#balancecontra"+id;
+				var resultReal= "#RealContrabalance"+id;
+				var contraOperate=0;
+				
+				const found = addContraperation.findIndex(element => element['id'] == id);
+				console.log(found)
+				if(parseInt($(createId).val())==0 || $(createId).val()==''){
+					swal("No se puede generar una operacion de valor 0", " " , "error");
+				}else{
+					if(found<0){
+						if(simbolContraoperation == '+')
+						{
+							var intBudget = parseInt(realBudget)
+							contraOperate = realBudget +  parseInt($(createId).val());
+							contraOperateEject = realBudget +  parseInt($(createId).val())-parseInt(disponibilityByRubro);	
+							$(result).text(contraOperateEject);		
+							$(resultReal).text(contraOperate);
+							addContraperation.push({
+								"id": id,
+								"rubro": rubro,
+								"description": description,
+								"concept":nameContraoperation,
+								"value":parseInt($(createId).val()),
+								"balance":contraOperate,
+								"byEject":contraOperateEject,
+								"realBudget": realBudget
+							})
+							validator="True";		
+						
+						
+						}else if(simbolContraoperation == '-')
+						{
+							var intBudget = parseInt(realBudget)
+							contraOperate = realBudget -  parseInt($(createId).val());
+							contraOperateEject = realBudget -  parseInt($(createId).val())-parseInt(disponibilityByRubro);
+							if(contraOperate<0){
+								validator="False";
+								swal("Esta intentando sacar mas de lo posible", "No se puede realizar la operación", "error");
+							}else{
+
+								$(result).text(contraOperateEject);		
+								$(resultReal).text(contraOperate);
+								addContraperation.push({
+									"id": id,
+									"rubro": rubro,
+									"description": description,
+									"concept":nameContraoperation,
+									"value":parseInt($(createId).val()),
+									"balance":contraOperate,
+									"byEject":contraOperateEject,
+									"realBudget": realBudget
+								})
+								validator="True";						
+							}			
+						}
+
+						if (validator=="True"){
+							totalContraOpArray.push({
+							"id": id,
+							"subtotalContraOp": contraOperate,
+							"valorContraOp":  parseInt($(createId).val())
+							})
+							totalcontraOperate = totalcontraOperate - parseInt($(createId).val());	
+							totalValorContraOp = totalValorContraOp + parseInt($(createId).val());
+							$("#totalPresupuestoContraOp").text("FALTA POR CONTRA OPERAR: "+ totalcontraOperate);														
+							$("#totalValorContraOp").text("VALOR: "+ totalValorContraOp);
+						}
+				}
+				else{
+
+					if(simbolContraoperation == '+'){
+
+					var intBudget = parseInt(realBudget)
+					contraOperate = realBudget +  parseInt($(createId).val());
+					contraOperateEject = realBudget +  parseInt($(createId).val()) - parseInt(disponibilityByRubro);
+					$(result).text(contraOperateEject);		
+					$(resultReal).text(contraOperate);	
+					addContraperation[found] = {
+						"id": id,
+						"rubro": rubro,
+						"description": description,
+						"concept": nameContraoperation,
+						"value":parseInt($(createId).val()),
+						"balance":contraOperate,
+						"byEject":contraOperateEject,
+						"realBudget": realBudget
+					}
+					validator="True";				
+					}else if(simbolContraoperation == '-'){
+						var intBudget = parseInt(realBudget)
+						contraOperate = realBudget -  parseInt($(createId).val());
+						contraOperateEject = realBudget -  parseInt($(createId).val())-parseInt(disponibilityByRubro);
+						if(contraOperate<0){
+							validator="False";
+							swal("Esta intentando sacar mas de lo posible", "No se puede realizar la operación", "error");
+						}else{
+
+							$(result).text(contraOperateEject);		
+							$(resultReal).text(contraOperate);
+							addContraperation[found] = {
+								"id": id,
+								"rubro": rubro,
+								"description": description,
+								"concept": nameContraoperation,
+								"value":parseInt($(createId).val()),
+								"balance":contraOperate,
+								"byEject":contraOperateEject,
+								"realBudget": realBudget
+							}
+							validator="True";						
+						}			
+						}else{
+							console.log("sno")
+						}
+					if (validator=="True"){
+						console.log(totalContraOpArray,totalcontraOperate )
+						totalcontraOperate = totalcontraOperate + totalContraOpArray[found]['valorContraOp'];	
+						totalValorContraOp = totalValorContraOp - totalContraOpArray[found]['valorContraOp'];
+						totalContraOpArray[found] = {
+						"id": id,
+						"subtotalContraOp": contraOperate,
+						"valorContraOp":  parseInt($(createId).val())
+						}
+						console.log(totalContraOpArray)			
+						totalcontraOperate = totalcontraOperate - totalContraOpArray[found]['valorContraOp'];	
+						totalValorContraOp = totalValorContraOp + totalContraOpArray[found]['valorContraOp'];
+						$("#totalPresupuestoContraOp").text("FALTA POR CONTRA OPERAR: "+ totalcontraOperate);														
+						$("#totalValorContraOp").text("VALOR: "+ totalValorContraOp);
+					}
+				}		
+			}
+		}
+	})
+
+	
+	console.log(addContraperation)
+	console.log(totalContraOpArray)
+	console.log(rubrosToContraOperation)
+	
+}
+ 
+function finishContraoperation(){
+	swal({
+    title: "Desea terminar el proceso de contraoperación ?",
+    text: "Una vez terminado no podra modificar valores, por favor verifique.",
+    icon: "warning",
+    buttons: true,
+    dangerMode: true,
+    })
+    .then((willDelete) => {
+    if (willDelete) {
+		if (totalValor==totalValorContraOp){
+			console.log(addContraperation)
+			console.log(totalContraOpArray)
+			console.log(rubrosToContraOperation)
+			$("#finalButton").css("display", "block");
+			$('#bAddRubroContraOperation').attr("hidden", true);
+			$('#fContraOperation').attr("hidden", true);
+			$('#buttonContraOperationdelete').attr("disabled", true);
+			$('#buttonContraOperationValidate').attr("disabled", true);	
+			$('input[name="inputOperations"]').attr("disabled", true);
+		}	
+		else{
+			$("#bAddRubroContraOperation").attr('disabled', false);
+			$("#fContraOperation").attr("disabled", false);
+			swal("El valor movido en ambos origenes debe ser igual", "No se puede realizar la operación", "error");
+	}	}
+    });
+
+}
+
+
+function finishProcessOperation(){
+
+	var typeAgreement =  $("#typeAgreement option:selected").text();
+	var conceptAgre = $('textarea[name="concept"]').val();
+	var numberAgre = $('input[name="numberAgreement"]').val();
+	var dateAgre = $('input[name="dateAgreement"]').val();
+		var token = '{{csrf_token}}';
+		$.ajax({
+			headers: { "X-CSRFToken": token },
+			url: '{% url "createOperations"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+				'typeAgreement': typeAgreement,
+				'concept': conceptAgre,
+				'number': numberAgre,
+				'date': dateAgre,
+				'origin': originID,
+				'operation': JSON.stringify(addOperation),
+				'contraoperation': JSON.stringify(addContraperation),
+				'bussines':localStorage.getItem('idBussines'),
+			},
+			type: 'POST',
+			dataType: 'json',
+			success: function (data) {
+				$("#rubroOperations").css('display', 'block');
+				$("#finalButton").css("display", "none");
+				var tableContra = $('#dataTableContraRubros').DataTable(); 
+				var table = $('#dataTableRubroOthers').DataTable(); 
+				var rows = table.rows().remove().draw();
+				var rowsContra = tableContra.rows().remove().draw();
+				$("#rubroOperations").css('display', 'none');
+				$("#rubroContraOperations").css('display', 'none');				
+				$("#divAgreement").css("display", "none");
+				document.querySelectorAll('[name=origins]').forEach((x) => x.checked=false);
+				$("#separatorOP").empty();
+				addContraperation.length = 0;
+				addOperation.length = 0;
+				rubrosToOperation.length = 0;
+				rubrosToContraOperation.length =0;
+				totalOperateArray.length =0;
+				totalContraOpArray.length =0;
+				totalcontraOperate = 0;
+				totalValorContraOp = 0;
+				totalValor = 0;
+				totalOperate = 0;
+				countOB = 0
+				$('#typeAgreement').prop('selectedIndex',0);
+				$('#numberAgreement').val('');
+				$('#dateAgreement').val('');
+				$('#concept').val('');
+				$("#totalPresupuestoOp").text("PRESUPUESTO POR EJECUTAR: "+ totalOperate);	
+				$("#totalValorOp").text("VALOR: "+ totalValor);	
+				swal("Operacion exitosa", "Continua con tu proceso", "success");
+
+				$('#bAddRubroOperation').attr("hidden", false);
+				$('#fOperation').attr("hidden", false);
+				$('#bAddRubroContraOperation').attr("hidden", false);
+				$('#fContraOperation').attr("hidden", false);
+
+
+				$("#finalButton").css("display", "none");
+				$('input[name="inputOperations"]').attr("disabled", false);
+				$('#buttonContraOperationdelete').attr("disabled", false);
+				$('#buttonContraOperationValidate').attr("disabled", false);	
+				$('#buttonOperationValidate').attr("disabled", false);
+				$('#buttonOperationdelete').attr("disabled", false);	
+				
+		}
+		});		
+}
+
+var newRubro = ''
+
+$("#id_rubro").keyup(function(event){
+
+	if (event.keyCode == 8) {
+		$('#rubroFather').val("");
+		$('#nivel').val("");
+		$('#lastRubro').val("");
+	}
+	var currentInput = $(this).val();
+	var fixedInput = currentInput.replace(/[A-Za-z!@#$%^&*()]/g, '');
+    $(this).val(fixedInput);
+
+
+	var campoInputCodigoRubro = $('#id_rubro').val();
+	rubro = $('input[name="rubro"]').val()
+	newRubro = '';
+	if(rubro.length>1){
+		if(arrayImport.includes(rubro.length)){
+			var y = 0
+			for(var i = 1 ; i <=rubro.length; i++){
+				
+				if(arrayImport[y] == i){
+					newRubro += rubro[i-1]+ '.' 
+					y++
+				}else{
+					newRubro += rubro[i-1]
+				}
+			}
+		}
+
+	}else{
+		newRubro += newRubro + rubro
+	}
+
+	
+	
+	
+	if(searchImport(rubro)==true){
+		getLevel(newRubro)
+		k = (newRubro.substring(0, newRubro.length - 1).split('.'))
+		k.pop()
+
+		$.ajax({
+			url: '{% url "searchRubroTw" 0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+				'idBussines':localStorage.getItem('idBussines'),
+				'period':localStorage.getItem('idAC'),
+				'rubro': newRubro.substring(0, newRubro.length - 1),
+				'origin': originID,
+				'rubroFather': k.join('.')
+			},
+			dataType: 'json',
+			success: function (data) {
+				console.log(data)
+				if(data.RUBROFATHER=="PRIMER RUBRO"){
+					searchRubro = $('input[name="rubro"]').val();
+					$("#nivel").val(1);									
+					$('#rubroFather').val($('input[name="rubro"]').val());
+					$('#lastRubro').val($('input[name="rubro"]').val());
+				}else{
+					if(data.RubroMayor == true){
+						$("#coreRubroPattern").text("Código rubro inválido"+ newRubro.substring(0, newRubro.length - 1));
+						$("#coreRubroPattern").css("color", "red");
+					}else{
+						if(data.Rubro == false){
+							$("#coreRubroPattern").text("Código rubro inválido"+ newRubro.substring(0, newRubro.length - 1));
+							$("#coreRubroPattern").css("color", "red");
+						}else{
+							console.log("entro")
+							if(data.RubroNew == true){
+								$("#coreRubroPattern").text("Código rubro valido " + newRubro.substring(0, newRubro.length - 1));
+								$("#coreRubroPattern").css("color", "green");
+								$('#rubroFather').val(k.join('.'));
+								$('#lastRubro').val(data.LAST);
+							}else{
+								$("#coreRubroPattern").text("Código rubro inválido"+ newRubro.substring(0, newRubro.length - 1));
+								$("#coreRubroPattern").css("color", "red");
+							}
+								
+						}
+						
+					}
+				}
+			},error: function(data){
+			}
+		});
+	}
+	else if(campoInputCodigoRubro === ''){
+			$("#coreRubroPattern").text("Código rubro");
+			$("#coreRubroPattern").css("color", "gray");
+	}else{
+		$("#coreRubroPattern").text("Código rubro inválido");
+		$("#coreRubroPattern").css("color", "red");
+	}
+}); 
+
+
+
+function getLevel(rubro){
+	
+	if(rubro.length == 1){
+		$('#nivel').val('1')
+	}else{
+		k = (rubro.substring(0, rubro.length - 1).split('.'))
+		if(searchImport(k.join(''))){
+			
+			d = rubro.substring(0, rubro.length - 1).split('.')
+			if(d.length>1){
+				
+				$('#nivel').val(d.length)
+			}else{
+				$('#nivel').val(d.length)
+			}
+		}
+		
+
+	}
+
+	
+	
+}
+function searchImport(rubro){
+	for (var i = 0; i < arrayImport.length; i++) {
+		if(rubro.length==arrayImport[i]){
+			return true;
+		}
+	}
+}
+function importRubros(){
+	window.location.href = "http://localhost:8000/budget/importRubro/"+localStorage.getItem('idBussines')+"/"+originID;
+}
+function cancels(option){
+	if(option==1){
+		$("#divRubro").css("display", "none");
+		$("#id_rubro").val('')
+		$('input[name="description"]').val('');
+		$('#MAYOR').prop("checked", false);
+		$('#AUXILIAR').prop("checked", false);
+		$("#rubroFather").val('')
+		$("#nivel").val('')
+		$("#lastRubro").val('')
+		$("#coreRubroPattern").text("Código rubro");
+		$("#coreRubroPattern").css("color", "");
+		$("#initialBudget").css("display", "none");
+		$("#selectesInform").css('display', 'none ');
+		$("#selectesInformD").css('display', 'none ');
+		$("#divInitialBudget").css('display', 'none');
+		$("#initialBudget").val('')
+	}
+	if(option==2){
+		
+		swal({
+			title: "Desea cancelar por completo la operación?",
+			text: "No se guardar ningun valor agregado.",
+			icon: "warning",
+			buttons: true,
+			dangerMode: true,
+			})
+			.then((willDelete) => {
+			if (willDelete) {
+				
+				$('#typeAgreement').prop('selectedIndex',0);
+				$('#numberAgreement').val('');
+				$('#dateAgreement').val('');
+				$('#concept').val('');
+				var tableRubros = $('#dataTableRubroOthers').DataTable(); 
+				var tableContraRubros = $('#dataTableContraRubros').DataTable(); 
+				var rowsRubros = tableRubros.rows().remove().draw();
+				var rowsContraRubros = tableContraRubros.rows().remove().draw();
+				$("#rubroContraOperations").css('display', 'none');		
+				$("#rubroContraOperations").css('display', 'none');		
+				$("#rubroOperations").css('display', 'none');
+				$('#typeAgreement').prop('disabled', false);
+				$('#saveAgreement').attr("disabled", false);
+				$('#fContraOperation').attr("disabled", false);
+				$('#fOperation').attr("disabled", false);
+				$('#bAddRubroOperation').attr("disabled", false);
+				addContraperation.length = 0;
+				addOperation.length = 0;
+				rubrosToOperation.length = 0;
+				rubrosToContraOperation.length =0;
+				totalOperateArray.length =0;
+				totalContraOpArray.length =0;
+				totalcontraOperate = 0;
+				totalValorContraOp = 0;
+				totalValor = 0;
+				totalOperate = 0;
+				$("#totalPresupuestoOp").text("PRESUPUESTO POR EJECUTAR: "+ totalOperate);	
+				$("#totalValorOp").text("VALOR: "+ totalValor);	
+				$("#finalButton").css("display", "none");
+
+
+				$("#divAgreement").css('display', 'none ');
+				$('input[name="operations"]').attr("checked", false);
+
+			}
+		});
+	}if(option==3){
+		$('#myModalRubroUpdate').modal('toggle');
+	}
+	if(option==4){
+		
+		$("#upload").val('');
+		$('#MyModalImport').modal('toggle');
+		var table = $('#dataTableImports').DataTable(); 
+ 		var rows = table.rows().remove().draw();
+		jsonImport.length=0;
+	}
+	if(option==5){
+		idDeleteOperations = [];
+				
+				updateOperation=[];
+				totalUpdateOperateArray=[];
+				totalUpdateValor=0;
+				totalUpdateOperate=0;
+
+				updateContraOperation=[];
+				totalUpdateContraOperateArray=[];
+				totalUpdateContraValor=0;
+				totalUpdatContraeOperate=0;
+
+				rubrosToUpdateOperation=[];
+				rubrosToUpdateContraOperation=[];
+
+
+				
+ 				conceptNewUpdate = '';
+				conceptNewContraUpdate = '';
+
+
+				dateAgreement=[];
+
+
+		$('#myModalAgreementUpdate').modal('toggle');
+	}
+}
+
+var ExcelToJSON = function() {
+
+	this.parseExcel = function(file) {
+	var reader = new FileReader();
+	var table = $('#dataTableImports').DataTable(); 
+ 	var rows = table.rows().remove().draw();
+	jsonImport = []
+	arrayVa = []
+	reader.onload = function(e) {
+		var data = e.target.result;
+		var workbook = XLSX.read(data, {
+		type: 'binary'
+		});
+		workbook.SheetNames.forEach(function(sheetName) {
+		// Here is your object
+		var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+		var json_object = JSON.stringify(XL_row_object);
+		console.log(JSON.parse(json_object)[0])
+
+		JSON.parse(json_object).map(function(num) {
+
+			if(num.pinicial == null){
+				jsonImport.push({
+				"TC": num.tipocu,
+				"RB": num.rubro,
+				"DC": num.descrip,
+				"PI": 0.00
+				})
+				table.row.add( [
+					num.tipocu,
+					num.rubro,
+					num.descrip,
+					0.00,
+					"<label type='number' id=import"+num.rubro+"  ></label>",			
+				])
+
+			}else{
+				jsonImport.push({
+				"TC": num.tipocu,
+				"RB": num.rubro,
+				"DC": num.descrip,
+				"PI": Math.trunc(num.pinicial)
+				})
+				table.row.add( [
+					num.tipocu,
+					num.rubro,
+					num.descrip,
+					num.pinicial,
+					"<label type='number' id=import"+num.rubro+"  ></label>",			
+				])
+			}
+			
+			console.log(num.pinicial)
+		})
+		/* for (var i = 0; i < (JSON.parse(json_object)).length; i++) {
+
+
+			dato =  Object.keys(JSON.parse(json_object)[i])
+			if(dato.includes('pinicial') == false){
+				jsonImport.push({
+				"TC": JSON.parse(json_object)[i].tipocu,
+				"RB": JSON.parse(json_object)[i].rubro,
+				"DC": JSON.parse(json_object)[i].descrip,
+				"PI": 0.00
+				})
+				table.row.add( [
+					JSON.parse(json_object)[i].tipocu,
+					JSON.parse(json_object)[i].rubro,
+					JSON.parse(json_object)[i].descrip,
+					0.00,
+					"<label type='number' id=import"+JSON.parse(json_object)[i].rubro+"  ></label>",			
+				])
+			}else{
+				jsonImport.push({
+				"TC": JSON.parse(json_object)[i].tipocu,
+				"RB": JSON.parse(json_object)[i].rubro,
+				"DC": JSON.parse(json_object)[i].descrip,
+				"PI": Math.trunc(JSON.parse(json_object)[i].pinicial)
+				})
+				table.row.add( [
+					JSON.parse(json_object)[i].tipocu,
+					JSON.parse(json_object)[i].rubro,
+					JSON.parse(json_object)[i].descrip,
+					Math.trunc(JSON.parse(json_object)[i].pinicial),
+					"<label type='number' id=import"+JSON.parse(json_object)[i].rubro+"  ></label>",			
+				])
+
+			}
+			
+			
+		}
+		 */
+		table.draw(false);
+		})
+	};
+
+	reader.onerror = function(ex) {
+		console.log(ex);
+	};
+
+	reader.readAsBinaryString(file);
+	};
+};
+
+function handleFileSelect(evt) {
+
+	var files = evt.target.files; // FileList object
+	var xl2json = new ExcelToJSON();
+	xl2json.parseExcel(files[0]);
+}
+document.getElementById('upload').addEventListener('change', handleFileSelect, false);
+
+function validateDataImport(){
+	
+
+	$.ajax({
+			url: '{% url "getPatternOrigin" 0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+				'idAC':localStorage.getItem('idAC'),
+				'origin': $('input[name=origins]:checked', '#addOptions').val(),
+			},
+			dataType: 'json',
+			success: function (data) {
+				mensajeValidateError = '';
+				if(jsonImport.length>0){
+						$('#contenedor_carga').show();
+						acumulatorImport = 0;
+						arrayImport = [];
+						var regex = /(\d+)/g;
+						var pattern = data.PT[0]['pattern']
+						var countOk = 0;
+						var currentAux="";
+						var pos = ""
+						var table = $('#dataTableImports').DataTable(); 
+						var data = table.rows().data();
+						var nRow = table.rows().count();
+
+						console.log(pattern)
+						for (var i = 0; i < (pattern.match(regex)).length; i++) {
+							
+							acumulatorImport = acumulatorImport + parseInt(pattern.match(regex)[i]);
+							arrayImport.push(acumulatorImport)
+						}
+
+
+						var filteredData = table.column( 1 ).data().filter( function ( value, index ) {
+							d = value.split('.')
+							console.log(d.join('').length)
+							if(value <= 0){
+								table.cell(index,4).data("Numero negativo").draw()
+								mensajeValidateError += value+ " Numero negativo\n"
+							}else{
+									if(arrayImport.includes(d.join('').length)){
+								
+										table.cell(index,4) .data("OK").draw()	
+											countOk += 1;														
+											return false;
+									}else{
+										
+										table.cell(index,4) .data("No cumple con el patrón").draw()
+										mensajeValidateError += value + " No cumple con el patrón\n"
+									}
+								}
+							
+						});
+							
+						
+					data.each(function (value, index) {
+						if(jsonImport.filter(element => element['RB'] == value[1]).length > 1){
+								countOk -= 1	
+								table.cell(index,4) .data("Codigo repetido").draw()	
+						
+				}else{
+					if(value[3]<0){
+							countOk -= 1	
+							table.cell(index,4) .data("Valor negativo en presupuesto").draw()
+							mensajeValidateError += value[1]+ " " + value[2]+ " Codigo repetido\n"	
+						}else{
+							if(value[0]=='A'){
+							pos = value[1]; 
+							if(currentAux==""){
+								currentAux = value[1];
+							}else{
+								if(pos.includes(currentAux)){
+									table.cell(index,4) .data("Rubro padre como auxiliar").draw()
+									mensajeValidateError += value[1]+ " Rubro padre como auxiliar\n"
+									countOk -= 1														
+								}else{
+									currentAux = value[1];
+								}
+							}
+							}
+						}
+				}	
+				});
+						
+				console.log(jsonImport.filter(element => element['RB'] == "2101010103").length)
+				for (var i=jsonImport.length - 1; i>=0; i--){
+					if(jsonImport[i].TC=='M'){
+						var sum=0;
+						for (var j=jsonImport.length-1; j>=0; j--){
+							if(jsonImport[j].TC=='A'){
+								if(jsonImport[j].RB.substr(0,jsonImport[i].RB.length).includes(jsonImport[i].RB)){
+									sum = sum + parseInt(jsonImport[j].PI)
+								
+								}
+							}
+
+						}
+						if(sum!=jsonImport[i].PI){
+							countOk -= 1
+
+							table.cell(i,4) .data("El total de la cuenta mayor no coincide").draw()
+							mensajeValidateError += jsonImport[i]["RB"]+ " El total de la cuenta mayor no coincide\n"
+						}
+								
+					}
+				sum	=0;
+				}
+				
+
+				if(countOk==nRow) {
+					nextImport = true;
+					$('#contenedor_carga').hide();
+				}else{
+					nextImport = false
+					$('#contenedor_carga').hide();
+				}
+
+			} 
+
+			}
+	})
+	
+
+} 
+
+function sendDataToBD(){
+	if(nextImport==true){
+		$('#contenedor_carga').show();
+		var token = '{{csrf_token}}';
+		$.ajax({
+				headers: { "X-CSRFToken": token },
+				url: '{% url "importRubrosBD"  0 %}'.replace('0', localStorage.getItem('userID')),
+				data: {
+					'idBussines':localStorage.getItem('idBussines'),
+					'rubros': JSON.stringify(jsonImport),
+					'origin': originID,
+					'period': localStorage.getItem('idAC')
+				},	
+				type: 'POST',
+				dataType: 'json',	
+				success: function (data) {
+					if(data.IMPORT=="TRUE"){
+						var table = $('#dataTableRubroTem').DataTable(); 
+						var rows = table.rows().remove().draw();
+						for (var i=0; i<data.RUBRO.length; i++){
+							table.row.add( [
+							data.RUBRO[i].id,
+							data.RUBRO[i].rubro,
+							data.RUBRO[i].typeRubro,
+							data.RUBRO[i].description,
+							data.RUBRO[i].initialBudget,
+							data.RUBRO[i].realBudget,
+							data.RUBRO[i].budgetEject,
+							"<a data-toggle='tooltip' href='#' id='deleteRubro'title='Eliminar Rubro'><button onclick=\'deleteRubro("+JSON.stringify(data.RUBRO[i].id)+','+JSON.stringify(data.RUBRO[i].rubro)+")\' class='btn btn-primary btn-sm'><i class='fa fa-trash'></i></button></a>"+
+							"<a data-toggle='tooltip' href='#' id='updateRubro' title='Actualizar Rubro'><button  onclick=\'changeUpdateRubro("+JSON.stringify(data.RUBRO[i].id)+','+JSON.stringify(data.RUBRO[i].rubro)+','+JSON.stringify(data.RUBRO[i].typeRubro)+','+JSON.stringify(data.RUBRO[i].description)+','+JSON.stringify(data.RUBRO[i].initialBudget)+','+JSON.stringify(data.RUBRO[i].inform)+','+JSON.stringify(data.RUBRO[i].detallTypeInfor)+")\' data-toggle='modal' data-target='#myModalRubroUpdate' class='btn btn-primary btn-sm'><i class='fa fa-edit'></i></button></a>"+ //agregue button
+							"<a data-toggle='tooltip' href='#' id='detailRubroOperation' title='Ver Movimientos Presupuestales'><button onclick=\'getDetailRubroOperation("+JSON.stringify(data.RUBRO[i].id)+','+JSON.stringify(data.RUBRO[i].description)+")\' data-toggle='modal' data-target='#myModalRubroOperation' class='btn btn-primary btn-sm'><i class='fa fa-info-circle'></i></button></a>"+	
+							"<a data-toggle='tooltip' href='#' id='detaillDisponibilitys' title='Ver Disponibilidades'><button onclick=\'getDispoinibilityByRubro("+JSON.stringify(data.RUBRO[i].id)+")\' data-toggle='modal' data-target='#myModalDatesDispoinibility' class='btn btn-primary btn-sm'><i class='fa fa-info-circle'></i></button></a>"
+							])
+						}
+						table.draw(false);
+						$('#MyModalImport').modal('toggle');
+						swal("Importacion completa ","", "success");
+						var tableImport = $('#dataTableImports').DataTable(); 
+						var rowsImport = tableImport.rows().remove().draw();
+						jsonImport.length=0;
+						$('#contenedor_carga').hide();
+					}else{
+						if(data.IMPORT == "FALSE"){
+
+							deleteRubroToPassword();	
+						}else{
+							
+							if(data.IMPORTCCPET == "FALSE"){
+								swal("Error", "Por favor ingresar la tabla CCPET", "error");
+								$('#contenedor_carga').hide();
+							}		
+
+						}			
+					}
+					
+				}
+		});
+	}else{
+		swal({
+            title: "Verifique el archivo 2",
+            text: "No todos los datos son correctos ",
+            icon: "error",
+			height: '300px !important',
+            content: { 
+				height: '300px !important',
+                element: "textarea",
+                attributes: {
+					height: '300px !important',
+                    disabled: true,
+                    placeholder: mensajeValidateError,
+					style:{
+						height: '300px !important',
+					}
+                }, 
+            },
+        });
+	}
+	
+}
+
+function deleteRubroToPassword(){
+	
+	swal({
+			title: "Existen datos repetidos, desea eliminar los rubros previos? ",
+			text: "Al confirmar este acción, todos los rubros previos seran eliminado.",
+			icon: "warning",
+			buttons: true,
+			dangerMode: true,
+	})
+	.then((willDelete) => {
+		if (willDelete) {	
+			$.ajax({
+				url: '{% url "getMovementsByOrigin"  0 %}'.replace('0', localStorage.getItem('userID')),
+				data: {
+					'idBussines':localStorage.getItem('idBussines'),
+					'origin': originID,
+				},
+				dataType: 'json',
+				success: function (data) {
+					if(data.MOVEMENTS=="FALSO"){
+						confirmatePassword();
+
+					}else{
+						swal("Ya se han realizado movimientos en este presupuesto ","No se puede eliminar", "error");
+						
+						$('#contenedor_carga').hide();
+					}
+				}
+			});						
+			
+		}
+	});	
+}
+function confirmatePassword(){
+	swal({
+		
+		buttons: true,
+		content: {
+			element: "input",
+			attributes: {
+			placeholder: "Por favor ingrese su contraseña:",
+			type: "password",
+			},
+		}
+	})
+	.then((value) => {
+		$.ajax({
+			url: '{% url "getValidatePassword"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+				'password': value,
+				'user':localStorage.getItem('userID')
+			},
+			dataType: 'json',
+			success: function (data) {
+				if(data.EQUALS== "TRUE"){
+					var token = '{{csrf_token}}';
+					$.ajax({
+							headers: { "X-CSRFToken": token },
+							url: '{% url "deleteRubrosImported"  0 %}'.replace('0', localStorage.getItem('userID')),
+							data: {
+								'idBussines':localStorage.getItem('idBussines'),
+								'rubros': JSON.stringify(jsonImport),
+								'origin': originID,
+							},	
+							type: 'POST',
+							dataType: 'json',
+							success: function (data) {
+								if(data.DELETE== "TRUE"){
+									var table = $('#dataTableRubroTem').DataTable(); 
+									var rows = table.rows().remove().draw();
+									$('#contenedor_carga').hide();
+									swal("Se han borrado los  rubros", "Vuelve a importar", "success");
+								}else{
+									$('#contenedor_carga').hide();
+									swal("Ha ocurrido un error inesperado ","Vuelva a intentarlo", "error");
+								}
+						}
+					});		
+				}else{
+					return confirmatePassword();
+				}
+			}
+	});
+	});
+}
+
+function sumIncludes(mayor){
+	var sum=0;
+	for (var i=jsonImport.length-1; i>=0; i--){
+		if(jsonImport[i].TC=='A'){
+			if(jsonImport[i].RB.substr(0,mayor.length).includes(mayor)){
+				sum = sum + parseInt(jsonImport[i].PI)
+			
+			}
+		}
+
+	}
+	return sum;
+}
+
+</script>
+
+{% endblock %}
+</body>

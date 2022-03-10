@@ -1,0 +1,898 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zxx" class="no-js">
+
+<head>
+	<!-- Mobile Specific Meta -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<!-- Favicon-->
+	<link rel="shortcut icon" href="img/fav.png">
+	<!-- Author Meta -->
+	<meta name="author" content="codepixer">
+	<!-- Meta Description -->
+	<meta name="description" content="">
+	<!-- Meta Keyword -->
+	<meta name="keywords" content="">
+	<!-- meta character set -->
+	<meta charset="UTF-8">
+	<!-- Site Title -->
+	<title>SICAP</title>
+	{% block css %}
+	<link rel="icon" type="image/png" href="{% static 'login/images/icons/SICAP.ico' %}"/>
+	<link href="https://fonts.googleapis.com/css?family=Poppins:400,600|Roboto:400,400i,500" rel="stylesheet"> 
+	<link rel="stylesheet" href="{% static 'css/linearicons.css' %}">
+	<link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+	<link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+	<link rel="stylesheet" href="{% static 'css/magnific-popup.css' %}">
+	<link rel="stylesheet" href="{% static 'css/nice-select.css' %}">
+	<link rel="stylesheet" href="{% static 'css/hexagons.min.css' %}">
+	<link rel="stylesheet" href="{% static 'css/owl.carousel.css' %}">
+	<link rel="stylesheet" href="{% static 'css/main.css' %}">
+	<link rel="stylesheet" href="{% static 'css/carga.css' %}">
+	<link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" >
+	<!-- para generar el DataTable del usuario -->
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" >
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
+
+
+
+	{% endblock %}
+
+</head>
+
+<body>
+	<!-- start header Area -->	
+	<header id="header">
+		
+		<div class="container main-menu col-md-10">
+			
+			<div class="row align-items-center justify-content-between d-flex">
+				<div class="myTablaInform" *ngIf="localStorage.getItem('admin') === false">
+					<table BORDER="#00FFFF">
+						<tr>
+							<th><label for="inputPassword6" style="color:rgb(0,0,0);">EMPRESA:</label></th>
+							<th><label for="inputPassword6" style="color:rgb(0,0,0);">{{request.session.nameBussines}}</label></th>
+							<th><label for="inputPassword6" style="color:rgb(0,0,0);">NIT: </label></th>
+							<th><label for="inputPassword6" style="color:rgb(0,0,0);">{{request.session.nitBussines}}</label></th>					
+						</tr>
+						<tr>
+							<th><label for="inputPassword6" style="color:rgb(0,0,0);">PERÍODO CONTABLE:</label></th>
+							<th><label for="inputPassword6" style="color:rgb(0,0,0);">{{request.session.accountPeriodBussines}}</label></th>
+							<th><label for="inputPassword6" style="color:rgb(0,0,0);">USUARIO:</label></th>
+							<th><label for="inputPassword6" style="color:rgb(0,0,0);">{{request.user.first_name}}</label></th>
+						</tr>
+					</table>
+				</div>
+				<div  id="logo" class="myLogo ">
+					<a href="index.html"><img  src="{% static 'login/images/SICAP2_opt2.png' %}" alt="" title="" ></a>
+				</div>
+					
+				<nav id="nav-menu-container">
+					<ul  class="nav-menu">
+						<li class="menu-has-children"><a href="#" style="color:rgb(0,0,0);">Configuraciones</a>
+							<ul>
+								<li Fs><a id="accountPeriodBase " href="#" style="color:rgb(0,0,0);" onclick="redirect(1)" >Períodos contables</a></li>
+								<li><a id="createAggrementID" href="#" style="color:rgb(0,0,0);" onclick="redirect(2)" >Acuerdos</a></li>
+								<li><a id="createPC " href="#" style="color:rgb(0,0,0);" onclick="redirect(12)" >Descuentos</a></li>	
+								<li><a id="createInform" href="#" style="color:rgb(0,0,0);" onclick="redirect(3)" >Tipos de informes</a></li>	
+								<li><a id="createTypeContract " href="#" style="color:rgb(0,0,0);" onclick="redirect(8)" >Tipo de Contrato</a></li>
+								<li><a id="createTypeDocument " href="#" style="color:rgb(0,0,0);" onclick="redirect(13)" >Tipos de Documentos</a></li>
+								<li><a id="createTypeDocument " href="#" style="color:rgb(0,0,0);" onclick="redirect(14)" >Cuentas CCPET</a></li>								
+							</ul>
+						</li>
+						<li><a href="#" style="color:rgb(0,0,0);">Contabilidad</a>
+							<ul>
+								<li><a id="createAccount " href="#" style="color:rgb(0,0,0);" onclick="redirect(9);" >Cuenta</a></li>
+								<li><a id="createPC " href="#" style="color:rgb(0,0,0);" onclick="redirect(10)" >Parametrización Ppto Contable</a></li>	
+								<li><a id="createPC " href="#" style="color:rgb(0,0,0);" onclick="redirect(11)" >Informes bancarios</a></li>	
+							</ul>
+						</li>
+						<li><a href="#" style="color:rgb(0,0,0);">Movimientos</a>
+							<ul>
+								<li><a id="createVoucher " href="#" style="color:rgb(0,0,0);" onclick="redirect(5)" >Comprobantes</a></li>								
+								<li><a id="documents" href="#" style="color:rgb(0,0,0);" onclick="redirect(6)">Documentos Presupuestales</a></li>
+								<li><a id="createThird " href="#" style="color:rgb(0,0,0);" onclick="redirect(7)" >Terceros</a></li>
+							</ul>
+						</li>
+						<li class="menu-has-children" onclick="redirect(4)" ><a  href="#" style="color:rgb(0,0,0);">Presupuestos</a>
+						</li>
+						<li class="menu-has-children"><a href="" style="color:rgb(0,0,0);">Reportes</a>
+							<ul>
+								<li><a href="blog-home.html" style="color:rgb(0,0,0);">Contabilidad</a></li>								
+								<li><a href="blog-single.html" style="color:rgb(0,0,0);">Blog Single</a></li>
+							</ul>
+						</li>
+						<li><a href="{% url 'userLogout' %}" style="color:rgb(0,0,0);">Finalizar</a></li>
+					</ul>
+				</nav>	
+			</div>
+		</div>
+	</header>
+	<!-- end header Area -->
+	<!-- start banner Area -->														
+	<section class="home-banner-area">
+
+		<br>
+		<br>
+		<br>
+
+		{% block main %}
+		{% endblock %}
+	</section>
+	<!-- End banner Area -->
+
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<!-- End feature Area -->
+
+	
+<div>
+	<div class="modal fade bd-example-modal-lx" id="MyModalInformGlobal" role="dialog">
+		<div class="modal-dialog modal-lx"  style=" width: 80%;max-width:1800px;">
+		  <div class="modal-content">
+			<div class="modal-header">
+			  <h4 class="modal-title">Informes</h4>
+				</div>
+					<div class="modal-body" >
+						<div  class="container-fluid col-12" >
+							<div>
+								<form id="addInformsGlobal">
+									<h2>Seleccione el origen </h2>
+									<br>
+									<div id="separator_informsGlobal">
+									</div>
+								</form>
+							<div  style="display: none" id="visualinformGlobal"  class="card mb-12" >
+							<div class="card-header " ><i class="fas fa-table mr-1" ></i>Rubros</div>
+							<div class="card-body" >
+								<div class="table-responsive" style="height: 500px !important;">
+									<font size="2" face="Arial" >
+									<table class="table table-bordered dataTable " style="width: 100% !important;" id="dataTableInformsGlobal" cellspacing="0" 
+										role="grid" aria-describedby="dataTable_info">	
+									</table>
+									</font>
+								</div>	
+							</div>
+						</div>
+							</div>
+						</div>
+					</div> 
+				 </div>
+			</div>         
+		</div>  
+</div>
+<div>	
+	<div class="modal fade bd-example-modal-lx" id="myModalRubroListGlobal" role="dialog">
+		<div class="modal-dialog modal-lx"  style=" width: 50%;max-width:1800px;">
+			<div class="modal-content">
+				<div class="modal-header ">
+				<h4 class="modal-title">Rubros</h4>
+				</div>
+				<div class="modal-body">
+					<div  class="container-fluid col-12" >
+						<div>
+							<form id="addOrigin">
+								<h2>Seleccione el origen </h2>
+								<br>
+								<div id="separato_rubros">
+								</div>
+							</form>
+							<div  style="display: none" id="visualRubroGlobal"  class="card mb-12" >
+								<div class="card-header " ><i class="fas fa-table mr-1" ></i>Rubros</div>
+								<div class="card-body" >
+									<div class="table-responsive">
+										<font size="2" face="Arial" >                      
+											<table class="table table-bordered dataTable" id="dataTableRubroGlobal" cellspacing="0" role="grid" aria-describedby="dataTable_info">
+											</table>
+										</font>   
+									</div>	
+								</div>    
+							</div>
+						</div> 
+					</div> 
+				</div> 
+			</div>  
+		</div>
+	</div>
+</div>
+
+<div>	
+	<div class="modal fade bd-example-modal-lx" id="myModalClosed" role="dialog">
+		<div class="modal-dialog modal-lx"  style=" width: 50%;max-width:1800px;">
+			<div class="modal-content">
+				<div class="modal-header ">
+				<h4 class="modal-title">Cierre</h4>
+				</div>
+				<div class="modal-body">
+					<div  class="container-fluid col-12" >
+						<div>
+							<form id="addClosePeriodo">
+								<h2 id="titlePeriod">Periodo </h2>
+								<br>
+								<div id="separato_mounth" class="form-row col-12">
+									<div class="col-7 mb-4">
+										<label>MESES:</label>
+									</div>
+									<div style="text-align: center;"class="col-5 mb-4">
+										<label>Cerrar mes:</label>
+									</div>
+								</div>
+							</form>
+						</div> 
+					</div> 
+				</div> 
+			</div>  
+		</div>
+	</div>
+</div>
+<div class="fab-container">
+	<div class="fab fab-icon-holder">
+		<i class="fa fa-plus" aria-hidden="true"></i>
+	</div>
+
+	<ul class="fab-options">
+		<li>
+			<span class="fab-label">Informes</span>
+			<div title="Consultar Informes" data-toggle='modal' data-target='#MyModalInformGlobal' onclick="getOriginInfromsGlobal()" class="fab-icon-holder">
+				<i class="fa fa-file-text-o" aria-hidden="true"></i>
+			</div>
+		</li>
+		<li>
+			<span class="fab-label">Rubros</span>
+			<div  title="Consultar Rubros" data-toggle='modal' data-target='#myModalRubroListGlobal' onclick="getOriginGlobal()" class="fab-icon-holder">
+				<i class="fa fa-book" aria-hidden="true"></i>
+			</div>
+		</li>
+		<li>
+			<span class="fab-label">Cierres</span>
+			<div  title="Consultar Rubros" data-toggle='modal' data-target='#myModalClosed' onclick="getClosedmounth()"  class="fab-icon-holder">
+				<i class="fa fa-times" aria-hidden="true"></i>
+			</div>
+		</li>
+	</ul>
+</div>
+
+
+    {% block js %}
+	
+
+	<script src="{% static 'js/vendor/jquery-2.2.4.min.js' %}"></script>
+	<script src="{% static 'js/tilt.jquery.min.js' %}"></script>
+	<script src="{% static 'js/vendor/bootstrap.min.js' %}"></script>
+	<script src="{% static 'js/easing.min.js' %}"></script>
+	<script src="{% static 'js/hoverIntent.js' %}"></script>
+	<script src="{% static 'js/superfish.min.js' %}"></script>
+	<script src="{% static 'js/jquery.ajaxchimp.min.js' %}"></script>
+	<script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
+	<script src="{% static 'js/owl.carousel.min.js' %}"></script>
+	<script src="{% static 'js/owl-carousel-thumb.min.js' %}"></script>
+	<script src="{% static 'js/hexagons.min.js' %}"></script>
+	<script src="{% static 'js/jquery.nice-select.min.js' %}"></script>
+	<script src="{% static 'js/waypoints.min.js' %}"></script>
+	<script src="{% static 'js/mail-script.js' %}"></script>
+	<script src="{% static 'js/main.js' %}"></script>
+
+
+	<!--Carrusel Minified JS library -->
+	<!-- CarruselCompiled and minified Bootstrap JavaScript -->
+	<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" defer></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/jszip.js" defer></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/xlsx.js" defer></script>
+	<!--library para los buttons of export -->
+	<script src="https://cdn.datatables.net/buttons/1.6.1/css/buttons.dataTables.min.css"></script>
+	<script src="https://cdn.datatables.net/buttons/1.6.1/js/dataTables.buttons.min.js" defer></script>
+	<script src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.flash.min.js" defer></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js" defer></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js" defer></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js" defer></script>
+	<script src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.html5.min.js" defer></script>
+	<script src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.print.min.js" defer></script>
+	<script src="https:////cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json" defer></script>
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js" defer></script>
+	<!--library para los reportes graficos en general -->
+	<!-- Page level plugins -->
+	<script >
+
+		var idioma_español ={
+		  
+		  "sProcessing": "Procesando ...",
+		  "sLengthMenu": "Mostrar _MENU_ registros",
+		  "sZeroRecords": "No se encontraron resultados",
+		  "sEmptyTable": "Ningún dato disponible en esta tabla",
+		  "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+		  "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+		  "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+		  "sInfoPostFix": "",
+		  "sSearch": "Buscar:",
+		  "sUrl": "",
+		  "sInfoThousands": ",",
+		  "sLoadingRecords": "Cargando ...",
+		  "oPaginate": {
+			  "sFirst": "Primero",
+			  "sLast": "Último",
+			  "sNext": "Siguiente",
+			  "sPrevious": "Anterior"
+		  },
+		  "oAria": {
+			  "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+			  "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+		  },
+		  "buttons": {
+			  "copy": "Copiar",
+			  "colvis": "Visibilidad",
+			  "print" : "Imprimir"
+		  }
+		}
+
+		function redirect(option){
+			if(option==1){
+				window.location.href = "http://localhost:8000/settings/"+localStorage.getItem('idBussines')+"/"+localStorage.getItem('userID');
+			}
+			if(option==2){
+				window.location.href = "http://localhost:8000/settings/listTypeAgreement/"+localStorage.getItem('idBussines')+"/"+localStorage.getItem('userID');	
+			}
+			if(option==3){
+				window.location.href = "http://localhost:8000/settings/listInform/"+localStorage.getItem('idBussines')+"/"+localStorage.getItem('userID');
+			}
+			if(option==4){
+				window.location.href = "http://localhost:8000/budget/createBudget/"+localStorage.getItem('userID');
+			}
+			if(option==5){
+				window.location.href = "http://localhost:8000/documents/listVoucher/"+localStorage.getItem('idBussines')+"/"+localStorage.getItem('userID');	
+			}			
+			if(option==6){
+				window.location.href = "http://localhost:8000/documents/generateDocuments/"+localStorage.getItem('userID');
+			}
+			if(option==7){
+				window.location.href = "http://localhost:8000/documents/documents/listThird/"+localStorage.getItem('idBussines')+"/"+localStorage.getItem('userID');	
+			}
+			if(option==8){
+				window.location.href = "http://localhost:8000/documents/documents/listTypeContract/"+localStorage.getItem('idBussines')+"/"+localStorage.getItem('userID');	
+			}
+			if(option==9){
+				window.location.href = "http://localhost:8000/settings/listAccount/"+localStorage.getItem('idAC')+"/"+localStorage.getItem('userID');	
+			}
+			if(option==10){
+				window.location.href = "http://localhost:8000/settings/generateAccounting/"+localStorage.getItem('idBussines')+"/"+localStorage.getItem('userID');	
+			}	
+			if(option==11){
+				window.location.href = "http://localhost:8000/settings/listInformBank/"+localStorage.getItem('idBussines')+"/"+localStorage.getItem('userID');	
+			}	
+			if(option==12){
+				window.location.href = "http://localhost:8000/settings/listDiscount/"+localStorage.getItem('idBussines')+"/"+localStorage.getItem('userID');	
+			}
+			if(option==13){
+				window.location.href = "http://localhost:8000/settings/typeDocument/"+localStorage.getItem('idBussines')+"/"+localStorage.getItem('userID');	
+			}
+			if(option==14){
+				window.location.href = "http://localhost:8000/settings/CCPET/"+localStorage.getItem('idBussines')+"/"+localStorage.getItem('userID');	
+			}
+			
+		}
+
+
+		var optionchecked = 0;
+		var optioncheckedseparated = 0;
+		$('.botonF1').hover(function(){
+		$('.btn').addClass('animacionVer');
+		})
+		$('.contenedorBase').mouseleave(function(){
+		$('.btn').removeClass('animacionVer');
+		})
+		$(document).ready(function() {
+
+			$('#myModalRubroListGlobal').on('hidden.bs.modal', function () {
+				var esVisible = $("#visualRubroGlobal").is(":hidden");
+
+				$('#separato_rubros').empty()
+				if(esVisible && optionchecked!=0){
+					var tablaDatos =  $('#dataTableRubroGlobal').DataTable()
+					tablaDatos.destroy()
+					$('#dataTableRubroGlobal').empty()
+					var rows = tablaDatos.rows().remove().draw();
+					$("#visualRubroGlobal").css('display', 'none');
+					optionchecked = 0
+				}	
+			})
+
+			$('#myModalClosed').on('hidden.bs.modal', function () {
+				$('#separato_mounth').empty()
+			})
+
+			$('#MyModalInformGlobal').on('hidden.bs.modal', function () {
+			var esVisible = $("#visualinformGlobal").is(":hidden");
+
+			optioncheckedseparated = 0
+			$('#separator_informsGlobal').empty()
+			if(esVisible && optionchecked!=0 ){
+				console.log("entro")
+				var tablaDatos =  $('#dataTableInformsGlobal').DataTable()
+				tablaDatos.destroy()
+				$('#dataTableInformsGlobal').empty()
+				var rows = tablaDatos.rows().remove().draw();
+				$("#visualinformGlobal").css('display', 'none');
+				optionchecked = 0
+			}	
+		})
+
+
+		})
+
+
+		function getOriginGlobal() {	
+			$.ajax({
+				url: '{% url "getOriginBudget"  0 %}'.replace('0', localStorage.getItem('userID')),
+				data: {
+					'option': '1',
+					'nameAC': localStorage.getItem('nameAC'),
+					'idBussines': localStorage.getItem('idBussines'),
+
+				},
+				dataType: 'json',
+				success: function (data) {
+					if(data.OR.length>0){
+						for (var i=0; i<data.OR.length; i++){
+							$('#separato_rubros')
+							.append(`<div class="custom-control custom-radio custom-control-inline">
+							<input type="radio"  onclick="getRubrosGlobal()" class="custom-control-input" value="`+data.OR[i].nameOrigin+`" id="`+data.OR[i].id+`"name="base_origins">
+							<label class="custom-control-label" for="`+data.OR[i].id+`">`+data.OR[i].nameOrigin+`</label>
+							</div>`)
+							}
+					}else{
+						swal("Error", "No posee origen", "error");
+					}
+				}			
+			});		
+		}
+
+
+		function getClosedmounth() {	
+			$.ajax({
+				url: '{% url "getClosedMounth"  0 %}'.replace('0', localStorage.getItem('userID')),
+				data: {
+					'period': localStorage.getItem('idAC')
+
+				},
+				dataType: 'json',
+				success: function (data) {
+					var date = new Date()
+					console.log(data)
+					$('#titlePeriod').text('Periodo '+data.NM)
+					for (var i=0; i<data.CM.length; i++){
+
+						date.setDate(1)
+						date.setMonth(data.CM[i]['month']-1)
+						date.setFullYear(data.CM[i]['year'])
+
+						console.log(date)
+
+						const monthNameLong = date.toLocaleString("es-ES", { month: "long" });
+						
+						$('#separato_mounth')
+						.append(`
+						<div class="col-7 mb-4">
+							<label>`+monthNameLong.toUpperCase()+`</label>
+							<label>DEL `+data.CM[i]['year']+`</label>
+						</div>
+						<div class="col-5 mb-4" style="text-align: center;">
+							<div class="custom-control custom-checkbox custom-control-inline">
+								<input type="checkbox" onclick="ClosedMounth(`+data.CM[i]['id']+`,`+data.CM[i]['activate']+`)" class="custom-control-input" value ="`+data.CM[i]['id']+`" id="`+data.CM[i]['id']+`" name="`+data.CM[i]['id']+`">
+								<label class="custom-control-label" for="`+data.CM[i]['id']+`" id="tag`+data.CM[i]['id']+`"></label>
+							</div>
+						</div>
+						`)
+
+						if(data.CM[i]['activate']==true){
+							$('#'+data.CM[i]['id']).attr('checked', true);
+							$('#tag'+data.CM[i]['id']).text('Abierto')
+						}else{
+							$('#'+data.CM[i]['id']).attr('checked', false);
+							$('#tag'+data.CM[i]['id']).text('Cerrado')
+						}
+
+					}
+				}			
+			});		
+		}
+
+		function ClosedMounth(id,active){
+
+			$('#'+id).on('change', function() {
+				if($(this).is(":checked")){
+					setTimeout(()=>{
+						swal("Error", "No se puede abrir un mes cerrado", "error");
+					},50)
+					this.checked = false
+				}else{
+					
+					swal({
+						title: "Deseas cerrar este mes?",
+						text: "Al confirmar este acción, no se podra realizar nuevas operacions en este mes",
+						icon: "warning",
+						buttons: true,
+						dangerMode: true,
+					})
+					.then((willDelete) => {
+						if (willDelete) {
+							$('#tag'+id).text('Cerrado')
+							$.ajax({
+								url: '{% url "deactivateMonth"  0 %}'.replace('0', localStorage.getItem('userID')),
+								data: {
+									'idMes': id,
+									'activate': false
+								},
+								dataType: 'json',
+								success: function (data) {
+									setTimeout(()=>{
+										location.reload();
+									},50)
+								}
+							})
+
+						}else{
+							this.checked = true
+						}
+					})
+				}
+			});
+			
+		}
+
+
+		function getRubrosGlobal(){
+			optionchecked = 1
+			$.ajax({
+				url: '{% url "getOperationBudget"  0 %}'.replace('0', localStorage.getItem('userID')),
+				data: {
+					'nameOrigin':$('input[name=base_origins]:checked', '#separato_rubros').val(),
+					'nameAC': localStorage.getItem('nameAC'),
+					'idBussines': localStorage.getItem('idBussines'),
+				},
+				dataType: 'json',
+				success: function (data) {
+					if(data.RUBRO.length!=0){
+
+						console.log(data.RUBRO)
+						$("#visualRubroGlobal").css('display', 'block');	
+						var titulos = [
+							{ "title": "Rubro", "targets": 0 },
+							{ "title": "Tipo", "targets": 1 },
+							{ "title": "Descripción", "targets": 2 },
+							{ "title": "Presupuesto inicial", "targets": 3 },
+							{ "title": "Presupuesto Real", "targets": 4 },
+							{ "title": "Presupuesto por ejecutar", "targets": 5 },
+
+						];
+						var datos = []
+						for( i  = 0; i<data.RUBRO.length; i++){
+							datos.push([data.RUBRO[i]["rubro"],data.RUBRO[i]["typeRubro"],data.RUBRO[i]["description"],data.RUBRO[i]["initialBudget"],data.RUBRO[i]["realBudget"],data.RUBRO[i]["budgetEject"]])
+						}
+						console.log(datos)
+						var tablaDatos =  $('#dataTableRubroGlobal').DataTable({
+							"language": idioma_español,
+							"destroy":true,
+							dom: 'Bfrtip',	
+							"responsive": true,
+							"columnDefs": titulos,
+							data: datos,
+							"columns": [
+								{ "type": "string" }
+							],
+						});
+				}else{
+					swal("Error", "No posee rubros", "error");
+					$('input[name=base_origins]:checked', '#addOrigin').prop("checked", false);
+					$("#visualRubroGlobal").css('display', 'none');	
+					$('#myModalRubroListGlobal').modal('toggle');
+					optionchecked = 0	
+				}
+				
+				
+				
+			}
+
+		})
+	}
+
+	function getOriginInfromsGlobal() {	
+		
+			$.ajax({
+				url: '{% url "getOriginBudget"  0 %}'.replace('0', localStorage.getItem('userID')),
+				data: {
+					'option': '1',
+					'nameAC': localStorage.getItem('nameAC'),
+					'idBussines': localStorage.getItem('idBussines'),
+
+				},
+				dataType: 'json',
+				success: function (data) {
+					
+					if(data.OR.length>0){
+						for (var i=0; i<data.OR.length; i++){
+						$('#separator_informsGlobal')
+						.append(`<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" onclick="getInformsGlobal()" class="custom-control-input" value="`+data.OR[i].nameOrigin+`" id="`+data.OR[i].id+`"name="base_originsInforms">
+						<label class="custom-control-label" for="`+data.OR[i].id+`">`+data.OR[i].nameOrigin+`</label>
+						</div>`)
+						}
+					}else{
+						swal("Error", "No posee origen", "error");
+						$('#MyModalInformGlobal').modal('toggle');
+					}	
+				}		
+			});		
+		}
+
+function saveDataInformDetall(input){
+	console.log(input)
+	var createid = []
+	var newData = []
+	var truedata = false
+	for(k =0; k<input.length; k++){
+		var idValue = $('#'+input[k]['datalist']).val();
+		
+		if(idValue!=""){
+			var dataID =  $('#'+input[k]['id']+' [value="' + idValue + '"]').data('id');
+			newData.push([dataID,input[k]['rubro'],input[k]['idCategory']])
+
+		}
+	}
+	if(!truedata){
+		$.ajax({
+				url: '{% url "saveInformsDetall"  0 %}'.replace('0', localStorage.getItem('userID')),
+				data: {				
+					'newData':  JSON.stringify(newData)
+			},
+			dataType: 'json',
+			success: function (data) {
+				if(data.TRUE == "TRUE"){
+					swal("Regristo Existoso", "Continua con tu proceso!", "success");
+				}					
+			}
+		})
+	}
+
+}
+
+
+
+function getInformsGlobal() {
+	$.ajax({
+		
+		url: '{% url "getInforms"  0 %}'.replace('0', localStorage.getItem('userID')),
+		data: {
+			'idBussines': localStorage.getItem('idBussines')
+
+		},
+		dataType: 'json',
+		success: function (data) {
+			if(optioncheckedseparated == 0){
+				if(data.OR.length>0){
+					$('#separator_informsGlobal').append(`<br><h2>Seleccione el tipo de informe</h2><br>`)
+					$('#MyModalInformGlobal').modal('show');
+					for (var i=0; i<data.OR.length; i++){
+						$('#separator_informsGlobal')
+						.append(`<div class="custom-control custom-radio custom-control-inline">
+						<input onclick="getRadioButonInformGlobal()"  type="radio" class="custom-control-input" value="`+data.OR[i].id+`" id="`+data.OR[i].nameI+`"name="listInformGlobal">
+						<label class="custom-control-label" for="`+data.OR[i].nameI+`">`+data.OR[i].nameI+`</label>
+						</div>`)
+					}
+					optioncheckedseparated = 1
+				}else{
+					swal("Error", "No posee informes", "error");
+					$('#MyModalInformGlobal').modal('toggle');
+				}
+			}
+			
+
+		}	
+	});		
+}
+var b
+var n 
+var m
+var zz
+function getRadioButonInformGlobal(){
+	if(optionchecked!=0 ){
+		console.log(optionchecked)
+		var tablaDatos =  $('#dataTableInformsGlobal').DataTable()
+		tablaDatos.destroy()
+		$('#dataTableInformsGlobal').empty()
+		var rows = tablaDatos.rows().remove().draw();
+		$("#visualinformGlobal").css('display', 'none');
+		
+	}	
+	
+	console.log($('input[name=base_originsInforms]:checked', '#addInformsGlobal').val(), $('input[name=listInformGlobal]:checked', '#addInformsGlobal').val())
+	var informDetallRubro = []
+	var informDetall = []
+	var detall = []
+	$.ajax({
+		url: '{% url "getInformsDetall"  0 %}'.replace('0', localStorage.getItem('userID')),
+		data: {
+			'idInforms':$('input[name=listInformGlobal]:checked', '#addInformsGlobal').val(),
+			'nameOrigin':  $('input[name=base_originsInforms]:checked', '#addInformsGlobal').val(),
+		},
+		dataType: 'json',
+		success: function (data) {
+			//var table = $('#dataTableInforms').DataTable();
+			if(data.RB.length!=0){
+				if(data.IF.length>0){
+					informDetall =Array.from(data.IF)
+					detall = Array.from(data.DT)
+					informDetallRubro = Array.from(data.RB)
+					b=Array.from(data.IF)
+					n= Array.from(data.DT)
+					m= Array.from(data.RB)
+					zz= Array.from(data.RD)
+					optionchecked = 1
+					
+					var count = 2
+					var campos = []
+					$("#visualinformGlobal").css('display', 'block');	
+					var titulos = [
+						{ "title": "Rubro", "targets": 0 },
+
+						{ "title": "Descripción", "targets": 1 }
+					];
+					for( i  = 0; i<data.IF.length; i++){
+						titulos.push({
+							"title": data.IF[i]["codeInfD"], "targets": 2+i
+						})
+						campos.push(data.IF[i]["descriptionInfD"])
+						count++
+					}
+
+					titulos.push({
+							"title": "Acciones", "targets": count
+						})
+
+					var datos = []
+					var input = [];
+					var inputCategory = [];
+					console.log(data.IF)
+					for( i  = 0; i<data.RB.length; i++){
+
+						datos.push([data.RB[i]["rubro"],data.RB[i]["description"]])
+
+						for(k =0; k<data.IF.length; k++){
+							
+							//datos[i].push('<input type="text" autocomplete="off" id='+data.RB[i]["id"]+data.IF[k]["id"]+'  style="width:100px" value="'+ found[k]["rubroinformdetall__valor"]+'">')
+							datos[i].push('<input  autocomplete="off" class="form-control" list="CategorySelect'+i+"-"+k+'" id="DataListaCategorySelect'+i+"-"+k+'">'+
+                                    '<datalist style="width: 100%; "id="CategorySelect'+i+"-"+k+'" name="CategorySelect'+i+"-"+k+'"></datalist>')
+							/* var my_list=document.getElementById("CategorySelect"+data.IF[k]["id"])
+							var src = ''
+							
+							for (var n=0; n<data.DT.length; n++){
+								if(data.DT[n]["informDetall_id"] == data.IF[k]["id"]){
+									src +=`<option  data-id="${data.DT[n]["id"]}" value="${data.DT[n]["descriptionInfD"]}" > </option>`
+								}
+								
+							}	
+							
+							console.log(src)
+							my_list.innerHTML = src; */
+							inputCategory.push({
+								'rubro': data.RB[i]["id"],
+								'id': 'CategorySelect'+i+"-"+k,
+								'idCategory':data.IF[k]['id'],
+								'code': data.IF[k]['codeInfD'],
+								'datalist': 'DataListaCategorySelect'+i+"-"+k
+							})
+							input.push([data.RB[i]["id"],data.IF[k]["id"],data.IF[k]["codeInfD"]])
+						}
+						datos[i].push('<button style="" onclick=\'saveDataInformDetall('+JSON.stringify(inputCategory)+')\'class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i></button>')
+						input=[]
+						
+						inputCategory=[]
+					}
+					var tablaDatos =  $('#dataTableInformsGlobal').DataTable({
+						"language": idioma_español,
+						"destroy":true,
+						dom: 'Bfrtip',	
+						"responsive": true,
+						"columnDefs": titulos,
+						"data": datos,
+						"columns": [
+							{ "type": "string" }
+						],
+					});
+
+					load(informDetallRubro,informDetall,detall);
+				}else{
+					swal("Error", "No posee campos", "error");
+					$('input[name=listInformGlobal]:checked', '#addInformsGlobal').prop("checked", false);
+					$("#visualinformGlobal").css('display', 'none');	
+					optionchecked = 0
+				}
+
+			}else{
+				swal("Error", "No posee rubros", "error");
+				$('input[name=listInformGlobal]:checked', '#addInformsGlobal').prop("checked", false);
+				$("#visualinformGlobal").css('display', 'none');	
+				$('#MyModalInformGlobal').modal('toggle');
+				optionchecked = 0	
+			}
+			
+			
+			
+		}
+	})
+}
+
+
+$(document).ready(function() { 
+	$('#dataTableInformsGlobal').on('draw.dt', function() {
+		load(m,b,n)
+	})
+})
+
+
+
+function load(informDetallRubro,informDetall,detall) {
+	var my_list
+	var src = ''
+	for(k =0; k<informDetallRubro.length; k++){
+		
+		
+		for (var n=0; n<informDetall.length; n++){
+			
+			
+			my_list = document.getElementById("CategorySelect"+k+"-"+n)
+			for(o =0; o<zz.length; o++){
+				if(zz[o]['id']==informDetallRubro[k]["id"] && informDetall[n]['id']==zz[o]['rubroinformdetall__informdetall_id']){
+					$('#DataListaCategorySelect'+k+"-"+n).val(zz[o]['rubroinformdetall__detall__descriptionInfD'])
+					break
+				}
+			}
+			for (var m=0; m<detall.length; m++){
+				
+				if(detall[m]["informDetall_id"] == informDetall[n]["id"]){
+					src +=`<option  data-id="${detall[m]["id"]}" value="${detall[m]["descriptionInfD"]}"></option>`
+					 
+				}
+				
+			
+			}
+			if(my_list != null){
+
+				my_list.innerHTML = src
+			}
+			src = ''
+			
+		}
+	
+		
+	}
+};
+
+		
+	</script>
+	
+    {% endblock %}
+	<footer class="sticky-footer bg-white" style="display:none">
+        <div class="container my-auto">
+          <div class="copyright text-center my-auto">
+			<span>Andres Felipe Serrato Gomez &copy; Email: andres.serrato@correounivalle.edu.co </span>
+			<br>
+			<span>Jhonatan Valencia Abonia &copy; Email: jhonatan.valencia.abonia@correounivalle.edu.co</span>	
+			<div>Iconos diseñados por <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.es/" title="Flaticon">www.flaticon.es</a></div>		
+          </div>
+        </div>
+	</footer>
+
+</body>
+
+</html>

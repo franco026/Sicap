@@ -1,0 +1,222 @@
+{% load static %}
+{% load bootstrap4 %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>SICAP</title>
+	<meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% block css %}
+
+<!--===============================================================================================-->	
+	<link rel="icon" type="image/png" href="{% static 'login/images/icons/SICAP.ico' %}"/>
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{% static 'login/vendor/bootstrap/css/bootstrap.min.css' %}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{% static 'login/fonts/font-awesome-4.7.0/css/font-awesome.min.css' %}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{% static 'login/vendor/animate/animate.css' %}">
+<!--===============================================================================================-->	
+	<link rel="stylesheet" type="text/css" href="{% static 'login/vendor/css-hamburgers/hamburgers.min.css' %}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{% static 'login/vendor/select2/select2.min.css' %}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{% static 'login/css/util.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'login/css/main4.css' %}">
+<!--===============================================================================================-->
+{% endblock %}
+
+</head>
+<body>
+	
+	<div class="limiter">
+    
+		<div class="container-login100" >
+			<div class="wrap-login100">
+				<div class="login100-pic js-tilt" data-tilt>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+					<img src="{% static 'login/images/SICAP2.png' %}" alt="IMG">
+				</div>
+				<div id="charge"  style="display:none">
+					<br>
+					<br>
+					<br>
+					<br>
+					<img
+					  width="200"
+					 src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif" />
+					<p>
+					  <b>Cargando respuesta</b> 
+					</p>
+				</div>
+				<form method="POST" id="formLogin" class="login100-form validate-form" style="display:block">
+					{% csrf_token %}
+					<div>
+					<span class="login100-form-title">
+						Login SICAP
+					</span>
+	
+					
+					<div class="wrap-input100 validate-input" >
+						<input class="input100" type="text" name="username" placeholder="Username">
+						<span class="focus-input100"></span>
+						<span class="symbol-input100">
+							<i class="fa fa-envelope" aria-hidden="true"></i>
+						</span>
+					</div>
+
+					<div class="wrap-input100 validate-input" data-validate = "Password is required">
+						<input class="input100" type="password" name="password" placeholder="Password">
+						<span class="focus-input100"></span>
+						<span class="symbol-input100">
+							<i class="fa fa-lock" aria-hidden="true"></i>
+						</span>
+					</div>
+					
+					<div class="container-login100-form-btn">
+						<button type="submit" class="login100-form-btn">
+							Login
+						</button>
+					</div>
+				</div>	
+				</form>
+
+				<div id="id_bussinesD" class="container-d" style="visibility:hidden">
+					<form method="POST" id="formStart" class="login100-form validate-form" >
+
+					<br>
+					<br>
+					<br>
+					<br>
+					<br>
+					
+					{% csrf_token %}			
+					<div class="Row">
+						{% bootstrap_form form %}
+					</div>
+					<button type="submit" class="login100-form-btn">
+						Guardar
+					</button>
+				</form>
+
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+
+  {% block js %}
+
+<!--===============================================================================================-->	
+	<script src="{% static 'login/vendor/jquery/jquery-3.2.1.min.js' %}"></script>
+<!--===============================================================================================-->
+	<script src="{% static 'login/vendor/bootstrap/js/popper.js' %}"></script>
+	<script src="{% static 'login/vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+<!--===============================================================================================-->
+	<script src="{% static 'login/vendor/select2/select2.min.js' %}"></script>
+<!--===============================================================================================-->
+	<script src="{% static 'login/vendor/tilt/tilt.jquery.min.js' %}"></script>
+	<script >
+		var nameBussines;
+		$('.js-tilt').tilt({
+			scale: 1.1
+		})
+
+
+$("form#formLogin").submit(function() {
+	var usernameInput = $('input[name="username"]').val();
+	var passwordInput = $('input[name="password"]').val();
+	if (usernameInput, passwordInput) {
+		$("#charge").css('display', 'block');
+		$("#formLogin").css('display', 'none');
+		$.ajax({
+			url: '{% url "userLoginView" %}',
+			data: {
+				'usernameInput': usernameInput,
+				'passwordInput': passwordInput,
+			},
+			dataType: 'json',
+			success: function (data) {
+				console.log(data)
+				if(data.usuario == "admin"){
+					localStorage.setItem('admin', true);
+					window.location.href = "http://localhost:8000/settings/"+0+"/"+ data.id;
+				}else{
+
+					$("#charge").css('display', 'none');
+					$("#id_bussinesD").css('visibility', 'visible');
+					$(".container-d").insertAfter(".login100-pic js-tilt");
+				}
+
+			},error: function(data){
+				$("#charge").css('display', 'none');
+				$("#formLogin").css('display', 'block');
+			}
+		});
+	} else {
+	alert("Error en los datos del formulario");
+}
+$('form#formLogin').trigger("reset");
+	return false;
+});
+
+
+		$(document).on('change', '#id_bussines', function(event) {
+			nameBussines = $("#id_bussines option:selected").text();
+			$.ajax({
+					url: '{% url "getAcccountPeriod" %}',
+					data: {
+						'nameBussines': nameBussines,
+					},
+					dataType: 'json',
+					success: function (data) {
+						console.log(data.AC);
+						const $select = document.querySelector("#id_accountsP");
+						for (let i = $select.options.length; i >= 0; i--) {
+								$select.remove(i);
+						}
+						$('#id_accountsP').append(`<option  hidden  selected"> Selecciona una opción</option>`);
+						for (var i=0; i<data.AC.length; i++){
+							$('#id_accountsP').append(`<option value="${data.AC[i].name}">${data.AC[i].name} </option>`);
+						}
+												
+					}
+				});
+		});
+
+		$("form#formStart").submit(function() {
+			var nameAC = $("#id_accountsP option:selected").text();
+			$.ajax({
+					url: '{% url "getStartApp" %}',
+					data: {
+						'nameAC': nameAC,
+						'nameBussines': nameBussines,
+					},
+					dataType: 'json',
+					success: function (data) {
+						var id = data.idBussines;
+						localStorage.setItem('nameBussines', nameBussines);
+						localStorage.setItem('nameAC', nameAC);
+						localStorage.setItem('idAC', data.idAC);
+						localStorage.setItem('idBussines', id);
+						localStorage.setItem('patron', data.patron);
+						localStorage.setItem('userID', data.userID);
+						localStorage.setItem('patronAccount', data.patronAccount);
+						window.location.href = "http://localhost:8000/settings/"+id+"/"+ data.userID;
+		
+					}
+				});
+		});
+		</script>
+<!--===============================================================================================-->
+	<script src="{% static 'login/js/main.js' %}"></script>
+	{% endblock %}
+
+</body>
+</html>

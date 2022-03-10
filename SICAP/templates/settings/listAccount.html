@@ -1,0 +1,1180 @@
+{% extends 'base' %}
+{% load bootstrap4 %}
+{% block main %}
+<style>
+    .swal-content__textarea{
+		height: 300px;
+	}
+   .loader-page {
+    position: fixed;
+    z-index: 25000;
+    background: rgb(255, 255, 255);
+    left: 0px;
+    top: 0px;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition:all .3s ease;
+  }
+  .loader-page::before {
+    content: "";
+    position: absolute;
+    border: 2px solid rgb(50, 150, 176);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    box-sizing: border-box;
+    border-left: 2px solid rgba(50, 150, 176,0);
+    border-top: 2px solid rgba(50, 150, 176,0);
+    animation: rotarload 1s linear infinite;
+    transform: rotate(0deg);
+  }
+  @keyframes rotarload {
+      0%   {transform: rotate(0deg)}
+      100% {transform: rotate(360deg)}
+  }
+  .loader-page::after {
+    content: "";
+    position: absolute;
+    border: 2px solid rgba(50, 150, 176,.5);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    box-sizing: border-box;
+    border-left: 2px solid rgba(50, 150, 176, 0);
+    border-top: 2px solid rgba(50, 150, 176, 0);
+    animation: rotarload 1s ease-out infinite;
+    transform: rotate(0deg);
+  }
+ 
+</style>
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+<div id="accountsDivs" class="container-fluid">
+    <h1 class="mt-4">Lista de cuentas</h1>
+    <div class="card mb-4">
+        <div class="card-header"><i class="fas fa-table mr-1"></i>Lista de cuentas</div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <button onclick="generateAccountPattern()" data-toggle="modal" data-target="#myModalAccount" type="button" class="genric-btn primary small">Añadir cuenta</button>              
+                <button class="genric-btn primary small" data-toggle='modal' data-target='#MyModalImport'>Importar cuentas</button>  
+                <table class="table table-bordered dataTable" id="dataTableAccount" width="100%" cellspacing="0"
+                      role="grid" aria-describedby="dataTable_Account" style="width: 100%;">
+                    
+                    <thead>
+                        <tr>           
+                            <th>Código</th>
+                            <th>Descripción</th>
+                            <th>Naturaleza</th>
+                            <th>Tipo cuenta</th>
+                            <th>Corriente</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Código</th>
+                            <th>Descripción</th>
+                            <th>Naturaleza</th>
+                            <th>Tipo cuenta</th>
+                            <th>Corriente</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </tfoot>
+                    <!-- <tbody>
+                        {% if object_list %}
+                        {% for account in object_list %}                        
+                              <tr>      
+                                                                           
+                                <td>{{account.code}}</td>                        
+                                <td>{{account.description}}</td>
+                                <td>{{account.nature}}</td>
+                                <td>{{account.typeAccount}}</td> 
+                                <td>{{account.corriente}}</td>
+                                <td>
+                        </div>
+                      </div>
+                      <a href="#" data-toggle="tooltip"   title="Eliminar cuenta">
+                        <button onclick="deleteAccount('{{account.id}}','{{account.code}}')" class="btn btn-primary btn-sm"  >
+                        <i class="fa fa-trash"></i>
+                        </button>
+                      </a>
+                      <a href="#" data-toggle="tooltip" id="updateAccount"  title="Actualizar cuenta">
+                        <button onclick="changeTypeUpdateAccount('{{account.id}}','{{account.code}}','{{account.description}}','{{account.nature}}','{{account.typeAccount}}','{{account.level}}','{{account.state}}','{{account.corriente}}')" data-toggle='modal' data-target='#myModalAccountUpdate' class="btn btn-primary btn-sm">
+                        <i class="fa fa-pencil"></i>
+                        </button>
+                      </a> 
+                                </td>
+                              </tr>
+                            {% endfor %}
+                            {% else %}
+                            <h1 class="black-color">No hay cuentas registradas de esta empresa</h1>
+                            {% endif %}  
+                    </tbody> -->
+                </table>
+        </div>
+
+<div class="modal fade" id="myModalAccount" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Añadir nueva cuenta</h4>
+            </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <form id="addAccount" autocomplete="off" action="">
+                            <input type="hidden" name="csrfmiddlewaretoken" value="0u1oJWxpjn4V4uoZjUxWXgq45qJumoJhu6hZ7bOptjBAfGHtR5aPj2ism7Zdbg2z">
+                            <div class="form-group"><label for="id_code" id="id_code_label">Código</label><input type="text" name="code" maxlength="100" class="form-control" placeholder="Código" title="" required="" id="id_code"></div>
+                            <div class="form-group" id="div_banco" style="display:none"><label >Banco</label><input maxlength="100" class="form-control" placeholder="Banco" title="" id="banco_description_input"></div>
+                            <div class="form-group" id="div_description" style="display:none"><label >#</label><input maxlength="100" class="form-control"  placeholder="#" title="" id="numero_description_input" ></div>
+                            <div class="form-group"><label for="id_description">Descripción</label><input type="text" name="description" maxlength="100" class="form-control" placeholder="Descripción" title="" required="" id="id_description"></div>
+
+                            <div class="form-group"><label for="id_nature">Natural</label><input type="text" name="nature" maxlength="100" class="form-control" placeholder="Natural" title="" required="" id="id_nature" disabled></div>
+                            <div class="form-group"><label for="id_typeAccount">Tipo de cuenta</label><select name="typeAccount" class="form-control" title="" required="" id="id_typeAccount">
+                            <option value="" selected="">---------</option>
+
+                            <option value="M">Mayor</option>
+
+                            <option value="A">Auxiliar</option>
+
+                            </select></div>
+                            <div class="form-group"><label for="id_level">Nivel</label><input type="number" name="level" class="form-control" placeholder="Nivel" title="" required="" id="id_level" disabled></div>
+                            <div class="form-group"><label for="id_state">Estado</label><select name="state" class="form-control" title="" required="" id="id_state">
+                            <option value="" selected="">---------</option>
+
+                            <option value="Activo">Activo</option>
+
+                            <option value="Inactivo">Inactivo</option>
+
+                            </select></div>
+                            <div class="form-group"><label for="id_corriente">Corriente</label><input type="text" name="corriente" maxlength="100" class="form-control" placeholder="Corriente" title="" required="" id="id_corriente" disabled></div>
+                            <div class="form-group"><input type="hidden" maxlength="100" class="form-control"  title="" id="account_father"></div>
+                            <div id="divCreateAccount" class="form-group">
+                                <button id="btnCreateAccount" type="submit" class="genric-btn success circle">Registrar cuenta</button>
+                                <button type="submit" class="genric-btn default circle" data-dismiss="modal">Cancelar</button>
+                            </div>   
+                    
+                        </form>  
+                    </div>
+                </div>
+            </div>         
+        </div>  
+</div>
+<div class="modal fade" id="myModalAccountUpdate" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Actualizar cuenta</h4>
+            </div>
+                <div class="modal-body">
+                    <div  class="container-fluid">
+                        <form id="formAPUpdateAccount" action="">
+                            {% csrf_token %}
+                            {% bootstrap_form AccountUpdate %}
+                            <div id="divCreateButtons"  class="form-group">
+                                <button id="btnCreate" type="submit" class="genric-btn success circle" >Actualizar cuenta</button>
+                                <button type="button" class="genric-btn default circle" data-dismiss="modal">Cancelar</button>
+                            </div> 
+                            
+                        </form>  
+                    </div>
+                </div>
+            </div>         
+        </div>  
+</div>
+
+<div class="modal fade bd-example-modal-lg" id="MyModalImport" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Importar plan de cuentas</h4>
+            </div>
+                <div class="modal-body">
+					
+						<form enctype="multipart/form-data">
+							<input id="upload" type=file  name="files[]">
+						</form>
+
+						<div  class="container-fluid col-12" >
+							<div class="card mb-12" >
+							<div class="card-header " ><i class="fas fa-table mr-1" ></i>Importar plan de cuentas</div>
+							<div class="card-body" >
+								<div class="table-responsive">
+									<button onclick="validateDataImport();" class="genric-btn primary small">Validar</button>  
+									<button onclick="sendDataToBD();" class="genric-btn primary small" >Importar</button>  
+									<button onclick="cancels(4)" class="genric-btn primary small">Cancelar</button>  
+									<font size="2" face="Arial" >
+									<table class="table table-bordered dataTable" id="dataTableImports" cellspacing="0" 
+										role="grid" aria-describedby="dataTable_informDetailRubro">	
+										<thead>
+											<tr>
+												<th>Tipo cuenta</th>
+												<th>Código</th>
+												<th>Descripción</th>																				
+                                                <th>Naturaleza</th>
+                                                <th>Corriente</th>
+												<th>Observaciones</th>																																										
+											</tr>
+										</thead>
+										<tfoot>
+											<tr>
+												<th>Tipo cuenta</th>
+												<th>Código</th>
+												<th>Descripción</th>																				
+                                                <th>Naturaleza</th>
+                                                <th>Corriente</th>
+												<th>Observaciones</th>
+											</tr>
+										</tfoot>
+											<tbody>
+												<h1></h1>
+											</tbody>
+										</table>
+									</font>
+								</div>	
+								</div>
+							</div>
+						</div> 
+                </div>
+            </div>         
+        </div>  
+</div>
+</div>
+<style>
+    #MyModalCarga {
+        width: 300px;
+        height: 300px;
+        position: absolute;
+        left: 50%;
+        top: 50%; 
+        margin-left: -150px;
+        margin-top: -150px;
+    }
+    *,*:after,*:before{
+	margin: 0;
+	padding: 0;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+#contenedor_carga{
+    display:none;  
+	width: 100%;
+	position: fixed;
+	-webkit-transition: all  1s ease;
+	-o-transition: all  1s ease;
+	transition: all  1s ease;
+	z-index: 10000;
+    background-color: rgb(0 0 0 / 50%);
+    height: 100%;
+    top: -1px;
+    left: -1px;
+}
+#carga{
+	border: 15px solid #ccc;
+	border-top-color: #46dbf9;
+	border-top-style: groove;
+	height: 100px;
+	width:  100px;
+	border-radius: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	margin: auto;
+	-webkit-animation: girar 1.5s linear infinite;
+	-o-animation: girar 1.5s linear infinite;
+	animation: girar 1.5s linear infinite;
+}
+@keyframes girar{
+	from{transform: rotate(0deg);}
+	to {transform: rotate(360deg);}
+}
+</style>
+<div id="contenedor_carga">
+    <div id="carga">
+    </div>
+</div>  
+<script>
+
+
+$(document).ready(function() {
+    $('#dataTableAccount').DataTable( {
+		"destroy":true,
+		"language": idioma_español,
+		"paging":   true,
+        "columns": [ 
+			{ "type": "string" },
+				null,
+				null,
+				null,
+				null,
+				null
+			],
+        "columnDefs":[
+            {"type":"string", "targets": 0}
+            ],
+		dom: 'Bfrtip',
+		buttons: [
+			'copy', 'csv', 'excel', 'pdf', 'print'
+			]
+			
+    });
+
+	
+    
+    $('#dataTableImports').DataTable( {
+		  "destroy":true,
+		  "paging": true,
+          "ordering": false,
+		  "language": idioma_español,
+		  
+    dom: 'Bfrtip',			
+	} );		 
+   getListAccount()
+})
+
+function getListAccount(){
+    $('#contenedor_carga').show();
+    $.ajax({
+        url: '{% url "getListAccount"  0 %}'.replace('0', localStorage.getItem('userID')),
+        data: {
+            'accountId': localStorage.getItem('idAC'),
+        },
+        dataType: 'json',
+        success: function (data) {
+            var tableRubro = $('#dataTableAccount').DataTable(); 
+            var rowsRubro = tableRubro.rows().remove().draw();
+            console.log(data)
+            for (var i=0; i<data.ac.length; i++){
+                tableRubro.row.add( [
+                data.ac[i].code,
+                data.ac[i].description,
+                data.ac[i].nature,
+                data.ac[i].typeAccount,
+                data.ac[i].corriente,
+                "<a data-toggle='tooltip' href='#' id='deleteRubro'title='Eliminar Rubro'><button onclick=\'deleteAccount("+JSON.stringify(data.ac[i].id)+','+JSON.stringify(data.ac[i].code)+','+JSON.stringify(data.ac[i].description)+")\' class='btn btn-primary btn-sm'><i class='fa fa-trash'></i></button></a>"+
+                "<a data-toggle='tooltip' href='#' id='updateRubro' title='Actualizar Rubro'><button  onclick=\'changeTypeUpdateAccount("+JSON.stringify(data.ac[i].id)+','+JSON.stringify(data.ac[i].code)+','+JSON.stringify(data.ac[i].description)+','+JSON.stringify(data.ac[i].nature)+','+JSON.stringify(data.ac[i].typeAccount)+','+JSON.stringify(data.ac[i].level)+','+JSON.stringify(data.ac[i].state)+','+JSON.stringify(data.ac[i].corriente)+")\'  data-toggle='modal' data-target='#myModalAccountUpdate' class='btn btn-primary btn-sm'><i class='fa fa-pencil'></i></button></a>"
+                ])
+            }
+            tableRubro
+            .order( [ 0, 'asc' ] )
+            .draw();
+            tableRubro.draw(false);
+            
+            $('#contenedor_carga').hide();
+        }
+    });
+}
+/* $(window).on('load', function () {
+      setTimeout(function () {
+          
+        $('#contenedor_carga').show();
+  }, 50);
+  $('#contenedor_carga').hide();
+}); */
+
+var searchRubro;
+var accountId;
+var accountCurrentCode
+var patronArray = [];
+var typeRubroCreate;
+var multiDescription;
+var jsonImport=[]
+
+
+function getAccount(id){
+    accountId =  id; 
+ 
+}
+function changeTypeUpdateAccount(id,code,description,nature,typeAccount,level,state,corriente){
+    accountId =  id;
+    accountCurrentCode = code;
+    
+    var codeAUpdate = document.getElementById("id_codeAccountUpdate");
+    codeAUpdate.value = code;
+    var descriptionAUpdate = document.getElementById("id_descriptionAccountUpdate");
+    descriptionAUpdate.value = description;
+    var natureAUpdate = document.getElementById("id_natureAccountUpdate");
+    natureAUpdate.value = nature;
+    var typeAccountUpdate = document.getElementById("id_typeAccountUpdate");
+    typeAccountUpdate.value = typeAccount; 
+    var levelAUpdate = document.getElementById("id_levelAccountUpdate");
+    levelAUpdate.value = level;
+    var stateAUpdate = document.getElementById("id_stateAccountUpdate");
+    stateAUpdate.value = state;
+    var corrienteAUpdate = document.getElementById("id_corrienteAccountUpdate");
+    corrienteAUpdate.value = corriente;
+
+
+}
+
+$("form#addAccount").submit(function() {
+
+    if(multiDescription==false){
+        var code = $('#id_code').val();
+        var description = $('#banco_description_input').val()+ $('#numero_description_input').val()+ $('#id_description').val();
+        var nature = $('#id_nature').val();
+        var level = $('#id_level').val();
+        var state = $("#id_state option:selected").val();
+        var corriente = $('#id_corriente').val();
+        var accountFather = $('#account_father').val();
+        var typeAccount = $("#id_typeAccount option:selected").val();
+
+        if (code,description,nature, level,typeAccount,state) {
+            
+            // Create Ajax Call
+            $.ajax({
+                    url: '{% url "createAccount"  0 %}'.replace('0', localStorage.getItem('userID')),
+                    data: {
+                        'accountId': localStorage.getItem('idAC'),
+                        'bussines':localStorage.getItem('idBussines'),
+                        'code': code,
+                        'description': description,
+                        'nature': nature,
+                        'level': level,
+                        'state': state,
+                        'corriente': corriente,
+                        'accountFather': accountFather,
+                        'typeAccount':typeAccount
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        //$("#dataTableAccount").load(" #dataTableAccount");
+                        if(data.CREATE == "TRUE"){
+                            swal("Creado exitoso de la cuenta!", "Continua con tu proceso!", "success");
+                            $('#myModalAccount').modal('toggle');
+                            
+                        }else{
+                            swal("No se puede crear la cuenta", "Ya existe una cuenta con este código", "error");
+                            $('#myModalAccount').modal('toggle');
+                        }
+                        
+                    }
+                });
+        } else {
+            alert("Por favor llene todos los campos");
+        }
+        $('form#addAccount').trigger("reset");
+        return false;
+    }else{
+        var code = $('#id_code').val();
+        var description = $('#id_description').val();
+        var nature = $('#id_nature').val();
+        var level = $('#id_level').val();
+        var state = $("#id_state option:selected").val();
+        var corriente = $('#id_corriente').val();
+        var accountFather = $('#account_father').val();
+        var typeAccount = $("#id_typeAccount option:selected").val();
+
+        if (code,description,nature, level,typeAccount,state) {
+            
+            // Create Ajax Call
+            $.ajax({
+                    url: '{% url "createAccount"  0 %}'.replace('0', localStorage.getItem('userID')),
+                    data: {
+                        'accountId': localStorage.getItem('idAC'),
+                        'code': code,
+                        'description': description,
+                        'nature': nature,
+                        'level': level,
+                        'state': state,
+                        'corriente': corriente,
+                        'accountFather': accountFather,
+                        'typeAccount':typeAccount
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        if(data.CREATE == "TRUE"){
+                            
+                            $('#myModalAccount').modal('toggle');
+                            
+                            console.log(data)
+                            console.log("data")
+                            $.ajax({
+                                url: '{% url "getListAccount"  0 %}'.replace('0', localStorage.getItem('userID')),
+                                data: {
+                                    'accountId': localStorage.getItem('idAC'),
+                                },
+                                dataType: 'json',
+                                success: function (data) {
+                                    var tableRubro = $('#dataTableAccount').DataTable(); 
+                                    var rowsRubro = tableRubro.rows().remove().draw();
+
+                                    for (var i=0; i<data.ac.length; i++){
+                                        tableRubro.row.add( [
+                                        data.ac[i].code,
+                                        data.ac[i].description,
+                                        data.ac[i].nature,
+                                        data.ac[i].typeAccount,
+                                        data.ac[i].typeAccount,
+                                        "<a data-toggle='tooltip' href='#' id='deleteRubro'title='Eliminar Rubro'><button onclick=\'deleteAccount("+JSON.stringify(data.ac[i].id)+','+JSON.stringify(data.ac[i].code)+")\' class='btn btn-primary btn-sm'><i class='fa fa-trash'></i></button></a>"+
+                                        "<a data-toggle='tooltip' href='#' id='updateRubro' title='Actualizar Rubro'><button  onclick=\'changeTypeUpdateAccount("+JSON.stringify(data.ac[i].id)+','+JSON.stringify(data.ac[i].code)+','+JSON.stringify(data.ac[i].description)+','+JSON.stringify(data.ac[i].nature)+','+JSON.stringify(data.ac[i].typeAccount)+','+JSON.stringify(data.ac[i].level)+','+JSON.stringify(data.ac[i].state)+','+JSON.stringify(data.ac[i].corriente)+")\'  data-toggle='modal' data-target='#myModalAccountUpdate' class='btn btn-primary btn-sm'><i class='fa fa-pencil'></i></button></a>"
+                                        ])
+						            }
+                                    tableRubro
+                                    .order( [ 0, 'asc' ] )
+                                    .draw();
+                                    tableRubro.draw(false);
+                                    
+                                    swal("Creado exitoso de la cuenta!", "Continua con tu proceso!", "success");
+                                }
+                            });
+                        }else{
+                            swal("No se puede crear la cuenta", "Ya existe una cuenta con este código", "error");
+                            $('#myModalAccount').modal('toggle');
+                        }
+                        
+                    }
+                });
+        } else {
+            alert("Por favor llene todos los campos");
+        }
+        $('form#addAccount').trigger("reset");
+        return false;
+    }
+
+            
+});
+
+$("form#formAPUpdateAccount").submit(function() {
+     
+    var codeAUpdate = $('input[name="codeAccountUpdate"]').val();
+    var descriptionAUpdate = $('input[name="descriptionAccountUpdate"]').val();   
+    var natureAUpdate = $('input[name="natureAccountUpdate"]').val();
+    var typeAccountUpdate = $('select[name="typeAccountUpdate"]').val();
+    var levelAUpdate = $('input[name="levelAccountUpdate"]').val();
+    var stateAUpdate = $('select[name="stateAccountUpdate"]').val();
+    var corrienteAUpdate = $('input[name="corrienteAccountUpdate"]').val();
+
+    if (accountCurrentCode,codeAUpdate,descriptionAUpdate,typeAccountUpdate,natureAUpdate,levelAUpdate,stateAUpdate,corrienteAUpdate) {
+
+        // Create Ajax Call
+        if(accountCurrentCode==codeAUpdate){
+            $.ajax({
+
+                url: '{% url "updateAccount"  0 %}'.replace('0', localStorage.getItem('userID')),
+                data: {
+                    'bussinesId': localStorage.getItem('idBussines'),
+                    'accountPeriod': localStorage.getItem('idAC'),
+                    'equalCode': 'TRUE',
+                    'id': accountId,
+                    'code': codeAUpdate,
+                    'description': descriptionAUpdate,
+                    'nature': natureAUpdate,
+                    'typeAccount': typeAccountUpdate,
+                    'level': levelAUpdate,
+                    'state': stateAUpdate,
+                    'corriente': corrienteAUpdate,
+                    
+                },
+                dataType: 'json',
+                success: function (data) {                   
+                    if(data.UPDATE == "TRUE"){
+                        $.ajax({
+                        url: '{% url "getListAccount"  0 %}'.replace('0', localStorage.getItem('userID')),
+                        data: {
+                            'accountId': localStorage.getItem('idAC'),
+                        },
+                        dataType: 'json',
+                        success: function (data) {
+                            var tableRubro = $('#dataTableAccount').DataTable(); 
+                            var rowsRubro = tableRubro.rows().remove().draw();
+
+                            for (var i=0; i<data.ac.length; i++){
+                                tableRubro.row.add( [
+                                data.ac[i].code,
+                                data.ac[i].description,
+                                data.ac[i].nature,
+                                data.ac[i].typeAccount,
+                                data.ac[i].typeAccount,
+                                "<a data-toggle='tooltip' href='#' id='deleteRubro'title='Eliminar Rubro'><button onclick=\'deleteAccount("+JSON.stringify(data.ac[i].id)+','+JSON.stringify(data.ac[i].code)+")\' class='btn btn-primary btn-sm'><i class='fa fa-trash'></i></button></a>"+
+                                "<a data-toggle='tooltip' href='#' id='updateRubro' title='Actualizar Rubro'><button  onclick=\'changeTypeUpdateAccount("+JSON.stringify(data.ac[i].id)+','+JSON.stringify(data.ac[i].code)+','+JSON.stringify(data.ac[i].description)+','+JSON.stringify(data.ac[i].nature)+','+JSON.stringify(data.ac[i].typeAccount)+','+JSON.stringify(data.ac[i].level)+','+JSON.stringify(data.ac[i].state)+','+JSON.stringify(data.ac[i].corriente)+")\' data-toggle='modal' data-target='#myModalAccountUpdate' class='btn btn-primary btn-sm'><i class='fa fa-pencil'></i></button></a>"
+                                ])
+                            }
+                            tableRubro
+                            .order( [ 0, 'asc' ] )
+                            .draw();
+                            tableRubro.draw(false);
+                            
+                        }
+                    });
+                        swal("Actualización exitosa!", "Continua con tu proceso!", "success");
+                        $('#myModalAccountUpdate').modal('toggle');
+                    if (data.ACCOUNTINGSEAT=="TRUE"){
+                        swal("No puede actualizar esta cuenta "+ accountCurrentCode + " posee asientos contables", "Por favor verifica", "error");			
+				    }
+                    }else{
+                        swal("No se puede actualizar la cuenta", "Ya existe una cuenta con este código", "error");
+                        $('#myModalAccountUpdate').modal('toggle');
+                    } 
+                }
+                });
+        }else{
+            $.ajax({
+
+            url: '{% url "updateAccount"  0 %}'.replace('0', localStorage.getItem('userID')),
+            data: {
+                'bussinesId': localStorage.getItem('idBussines'),
+                'accountPeriod': localStorage.getItem('idAC'),
+                'equalCode': 'FALSE',
+                'id': accountId,
+                'code': codeAUpdate,
+                'description': descriptionAUpdate,
+                'nature': natureAUpdate,
+                'typeAccount': typeAccountUpdate,
+                'level': levelAUpdate,
+                'state': stateAUpdate,
+                'corriente': corrienteAUpdate,
+                
+            },
+            dataType: 'json',
+            success: function (data) {               
+                if(data.UPDATE == "TRUE"){
+                    $.ajax({
+                        url: '{% url "getListAccount"  0 %}'.replace('0', localStorage.getItem('userID')),
+                        data: {
+                            'accountId': localStorage.getItem('idAC'),
+                        },
+                        dataType: 'json',
+                        success: function (data) {
+                            var tableRubro = $('#dataTableAccount').DataTable(); 
+                            var rowsRubro = tableRubro.rows().remove().draw();
+
+                            for (var i=0; i<data.ac.length; i++){
+                                tableRubro.row.add( [
+                                data.ac[i].code,
+                                data.ac[i].description,
+                                data.ac[i].nature,
+                                data.ac[i].typeAccount,
+                                data.ac[i].typeAccount,
+                                "<a data-toggle='tooltip' href='#' id='deleteRubro'title='Eliminar Rubro'><button onclick=\'deleteAccount("+JSON.stringify(data.ac[i].id)+','+JSON.stringify(data.ac[i].code)+")\' class='btn btn-primary btn-sm'><i class='fa fa-trash'></i></button></a>"+
+                                "<a data-toggle='tooltip' href='#' id='updateRubro' title='Actualizar Rubro'><button  onclick=\'changeTypeUpdateAccount("+JSON.stringify(data.ac[i].id)+','+JSON.stringify(data.ac[i].code)+','+JSON.stringify(data.ac[i].description)+','+JSON.stringify(data.ac[i].nature)+','+JSON.stringify(data.ac[i].typeAccount)+','+JSON.stringify(data.ac[i].level)+','+JSON.stringify(data.ac[i].state)+','+JSON.stringify(data.ac[i].corriente)+")\' data-toggle='modal' data-target='#myModalAccountUpdate' class='btn btn-primary btn-sm'><i class='fa fa-pencil'></i></button></a>"
+                                ])
+                            }
+                            tableRubro
+                            .order( [ 0, 'asc' ] )
+                            .draw();
+                            tableRubro.draw(false);
+
+                        }
+                    });
+                    swal("Actualización exitosa!", "Continua con tu proceso!", "success");
+                    $('#myModalAccountUpdate').modal('toggle');
+                if (data.ACCOUNTINGSEAT=="TRUE"){
+                    swal("No puede actualizar esta cuenta "+ code + " posee asientos contables", "Por favor verifica", "error");			
+				}
+                }else{
+                    swal("No se puede actualizar la cuenta", "Ya existe una cuenta con este código", "error");
+                    $('#myModalAccountUpdate').modal('toggle');
+                } 
+            }
+            });
+        }
+       
+    } else {
+        alert("All fields must have a valid value.");
+    }
+   
+    return false;
+ });
+ 
+function deleteAccount(id, code, description){
+
+    swal({
+    title: "Desea eliminar la cuenta " + description + "?",
+    text: "Al confirmar esta acción, la cuenta identificada con el codigo " + code + " sera eliminada.",
+    icon: "warning",
+    buttons: true,
+    dangerMode: true,
+    })
+    .then((willDelete) => {
+    if (willDelete) {
+
+        $.ajax({
+            url: '{% url "deleteAccount"  0 %}'.replace('0', localStorage.getItem('userID')),
+            data: {
+                'id': id,
+                'accountPeriod': localStorage.getItem('idAC'),
+                'option': '14'
+            },
+            dataType: 'json',
+            success: function (data) { 
+                console.log(data)
+                if (data.ELIMINADO=="TRUE"){
+                    $.ajax({
+                        url: '{% url "getListAccount"  0 %}'.replace('0', localStorage.getItem('userID')),
+                        data: {
+                            'accountId': localStorage.getItem('idAC'),
+                        },
+                        dataType: 'json',
+                        success: function (data) {
+                            var tableRubro = $('#dataTableAccount').DataTable(); 
+                            var rowsRubro = tableRubro.rows().remove().draw();
+
+                            for (var i=0; i<data.ac.length; i++){
+                                tableRubro.row.add( [
+                                data.ac[i].code,
+                                data.ac[i].description,
+                                data.ac[i].nature,
+                                data.ac[i].typeAccount,
+                                data.ac[i].typeAccount,
+                                "<a data-toggle='tooltip' href='#' id='deleteRubro'title='Eliminar Rubro'><button onclick=\'deleteAccount("+JSON.stringify(data.ac[i].id)+','+JSON.stringify(data.ac[i].code)+")\' class='btn btn-primary btn-sm'><i class='fa fa-trash'></i></button></a>"+
+                                "<a data-toggle='tooltip' href='#' id='updateRubro' title='Actualizar Rubro'><button  onclick=\'changeTypeUpdateAccount("+JSON.stringify(data.ac[i].id)+','+JSON.stringify(data.ac[i].code)+','+JSON.stringify(data.ac[i].description)+','+JSON.stringify(data.ac[i].nature)+','+JSON.stringify(data.ac[i].typeAccount)+','+JSON.stringify(data.ac[i].level)+','+JSON.stringify(data.ac[i].state)+','+JSON.stringify(data.ac[i].corriente)+")\' data-toggle='modal' data-target='#myModalAccountUpdate' class='btn btn-primary btn-sm'><i class='fa fa-pencil'></i></button></a>"
+                                ])
+                            }
+                            tableRubro
+                            .order( [ 0, 'asc' ] )
+                            .draw();
+                            tableRubro.draw(false);
+                            
+                            swal("La cuenta " + description + " se ha eliminado con éxito.", {
+                            icon: "success",
+                            });
+
+                        }
+                    });
+                   
+                }else
+                
+                if(data.SOY_FATHER == "TRUE"){
+                    swal("No puede eliminar la cuenta "+ description + " es una cuenta mayor", "Por favor verifica", "error");
+                }
+                else if(data.MOVEMENTS == "TRUE"){
+                    swal("No puede eliminar la cuenta "+ description + " se encuentra parametrizada", "Por favor verifica", "error");
+                }
+                
+            }
+        });
+    }
+    });
+}
+
+function deleteRubro(id, rubro){
+    swal({
+    title: "Desea eliminar el rubro " + rubro + "?",
+    text: "Al confirmar este acción, el rubro " + rubro + " sera eliminado.",
+    icon: "warning",
+    buttons: true,
+    dangerMode: true,
+    })
+    .then((willDelete) => {
+    if (willDelete) {
+
+        $.ajax({
+            url: '{% url "deleteRubro"  0 %}'.replace('0', localStorage.getItem('userID')),
+            data: {
+				'origin': originID,
+				'idBussines': localStorage.getItem('idBussines'),
+                'id': id,
+                'option': '1'
+            },
+            dataType: 'json',
+            success: function (data) { 
+				if (data.SOY_FATHER=="TRUE"){
+						swal("No puede eliminar rubro mayor, posee auxiliares", "Por favor verifica", "error");			
+					}
+				if (data.MOVEMENTS=="TRUE"){
+					swal("El rubro tiene movimientos por ende no se puede eliminar", "Por favor verifica", "error");			
+				}
+				else{
+					if  (data.ELIMINADO=='TRUE'){
+
+						var tableDeleteRubro = $('#dataTableRubroTem').DataTable(); 
+						var rows = tableDeleteRubro.rows().remove().draw();
+
+						for (var i=0; i<data.RUBRO.length; i++){
+							tableDeleteRubro.row.add( [
+							data.RUBRO[i].id,
+							data.RUBRO[i].rubro,
+							data.RUBRO[i].typeRubro,
+							data.RUBRO[i].description,
+							data.RUBRO[i].initialBudget,
+							data.RUBRO[i].budgetEject,
+							"<a data-toggle='tooltip' href='#' id='deleteRubro'title='Eliminar Rubro'><button onclick=\'deleteRubro("+JSON.stringify(data.RUBRO[i].id)+','+JSON.stringify(data.RUBRO[i].rubro)+")\' class='btn btn-primary btn-sm'><i class='fa fa-trash'></i></button></a>"+
+							"<a data-toggle='tooltip' href='#' id='updateRubro' title='Actualizar Rubro'><button  onclick=\'changeUpdateRubro("+JSON.stringify(data.RUBRO[i].id)+','+JSON.stringify(data.RUBRO[i].rubro)+','+JSON.stringify(data.RUBRO[i].typeRubro)+','+JSON.stringify(data.RUBRO[i].description)+','+JSON.stringify(data.RUBRO[i].initialBudget)+','+JSON.stringify(data.RUBRO[i].inform)+','+JSON.stringify(data.RUBRO[i].detallTypeInfor)+")\' data-toggle='modal' data-target='#myModalRubroUpdate' class='btn btn-primary btn-sm'><i class='fa fa-pencil'></i></button></a>"+ //agregue button
+							"<a data-toggle='tooltip' href='#' id='detailRubroOperation' title='Ver Movimientos Presupuestales'><button onclick=\'getDetailRubroOperation("+JSON.stringify(data.RUBRO[i].id)+','+JSON.stringify(data.RUBRO[i].description)+")\' data-toggle='modal' data-target='#myModalRubroOperation' class='btn btn-primary btn-sm'><i class='fa fa-info-circle'></i></button></a>"+		
+							"<a data-toggle='tooltip' href='#' id='detaillDisponibilitys' title='Ver Disponibilidades'><button onclick=\'getDispoinibilityByRubro("+JSON.stringify(data.RUBRO[i].id)+")\' data-toggle='modal' data-target='#myModalDatesDispoinibility' class='btn btn-primary btn-sm'><i class='fa fa-info-circle'></i></button></a>"
+							])
+						}
+						tableDeleteRubro.draw( false );	
+						swal("El rubro " + rubro + "  se ha eliminado con éxito.", {
+							icon: "success",
+							});
+					}
+				} 
+            }
+
+        });
+    }
+    });
+}
+//---------------------------------
+function validateAccounPattern(accountCode){
+
+    var regex = /(\d+)/g;
+    var patternAccount = localStorage.getItem('account');
+    var acumulatorImport = 0;
+    var arrayImport = [];
+
+    for (var i = 0; i < (patternAccount.match(regex)).length; i++) {
+        acumulatorImport = acumulatorImport + parseInt(patternAccount.match(regex)[i]);
+        arrayImport.push(acumulatorImport)
+    }
+    for (var i = 0; i < patronArray.length; i++) {
+        if(accountCode.length==patronArray[i]){
+            return true;
+        }else{
+
+            $("#import").text("No cumple con el patrón cuenta");	
+        }
+    }
+
+}
+// firma esto es lo que estube implementando para el patron cuenta
+$("#id_code").keyup(function(){
+
+    var campoInputCodigoCuenta = $('#id_code').val();
+
+    if(searchImport(campoInputCodigoCuenta)==true){
+        $("#id_code_label").text("Código valido");
+        $("#id_code_label").css("color", "green");
+        $("#id_code").css("color", "green");
+
+        if(campoInputCodigoCuenta.length==1){
+            if(campoInputCodigoCuenta.substring(0,1)=='1'){
+                $('#id_nature').val('DEBITO');
+                $('#id_corriente').val('CO');
+            }
+            if(campoInputCodigoCuenta.substring(0,1)=='2'){
+                $('#id_nature').val('CREDITO');
+                $('#id_corriente').val('CO');
+            }
+            if(campoInputCodigoCuenta.substring(0,1)=='3' || campoInputCodigoCuenta.substring(0,1)=='4'|| campoInputCodigoCuenta.substring(0,1)=='5'||campoInputCodigoCuenta.substring(0,1)=='6'|| campoInputCodigoCuenta.substring(0,1)=='7'||campoInputCodigoCuenta.substring(0,1)=='8'||campoInputCodigoCuenta.substring(0,1)=='9'){
+                if(campoInputCodigoCuenta.substring(0,1)=='4'|| campoInputCodigoCuenta.substring(0,1)=='3'){
+                    $('#id_nature').val('CREDITO');
+                }else if(campoInputCodigoCuenta.substring(0,1)=='9'){
+                    $('#id_nature').val('CREDITO');
+                }
+                else{
+                    $('#id_nature').val('DEBITO');
+                }
+                $('#id_corriente').val('NCO');
+            }
+        }
+        if(campoInputCodigoCuenta.length==2){
+            if(campoInputCodigoCuenta.substring(0,2)=='11' || campoInputCodigoCuenta.substring(0,2)=='12'||  campoInputCodigoCuenta.substring(0,2)=='13'||campoInputCodigoCuenta.substring(0,2)=='14'){
+                $('#id_corriente').val('CO');            }
+            if(campoInputCodigoCuenta.substring(0,2)=='16' || campoInputCodigoCuenta.substring(0,2)=='17'|| campoInputCodigoCuenta.substring(0,2)=='18'||campoInputCodigoCuenta.substring(0,2)=='19'|| campoInputCodigoCuenta.substring(0,2)=='22'||campoInputCodigoCuenta.substring(0,2)=='23'){
+                $('#id_corriente').val('NCO');
+            }
+        }
+        
+    }
+    else if(campoInputCodigoCuenta === ''){
+            $("#id_code_label").text("Código");
+            $("#id_code_label").css("color", "gray");
+            $("#id_code").css("color", "gray");
+
+    }else{
+        $("#id_code_label").text("Código inválido");
+        $("#id_code_label").css("color", "red");
+        $("#id_code").css("color", "red");
+
+    }
+    $.ajax({
+			data: {
+				'accountPeriod':localStorage.getItem('idAC'),
+				'account': campoInputCodigoCuenta
+			},
+			url: '{% url "searchAccount" 0 %}'.replace('0', localStorage.getItem('userID')),
+			dataType: 'json',
+			success: function (data) {
+				if(data.ACCOUNTFATHER=="PRIMERA CUENTA"){
+                    searchRubro = $('#id_code').val();
+                    $('#account_father').val($('#id_code').val());
+					$("#id_level").val(1);														
+				}
+				else if (data.ACCOUNTFATHER=="TRUE"){
+					typeRubroCreate = data.TYPEACCOUNT;
+					getLevel($('#id_code').val())
+                    $('#account_father').val(data.FATHER);
+
+				}
+				else{			
+					console.log("si");
+				}
+				searchRubro = $('#id_code').val();
+			},error: function(data){
+                getLevel($('#id_code').val())
+                if(campoInputCodigoCuenta.length==2){
+                    $('#account_father').val(campoInputCodigoCuenta.toString().substring(0, campoInputCodigoCuenta.length-1));
+                }else{
+                    $('#account_father').val(campoInputCodigoCuenta.toString().substring(0, campoInputCodigoCuenta.length-2));
+                }
+			}
+		});
+
+    if(campoInputCodigoCuenta.length==4 && campoInputCodigoCuenta=='1110'){
+            $('#div_description').css('display','block');
+            $('#div_banco').css('display','block');
+            multiDescription = true;
+    }
+
+});
+
+function getLevel(account){
+	if(searchImport(account)){
+        if(account.length>2){
+            var code =account.substr(0,account.length).length
+            var levelCode = (code/2)+1
+            $('#id_level').val(levelCode)
+    	}else{
+        	$('#id_level').val(account.length)
+        }
+	}
+}
+
+function searchImport(account){
+    
+	for (var i = 0; i < patronArray.length; i++) {
+        if(account.length==patronArray[i]){
+            return true;
+        }
+    }
+}
+function generateAccountPattern(){
+    var regex = /(\d+)/g;
+	var pattern = localStorage.getItem('patron');
+	var acumulatorImport = 0;
+    for (var i = 0; i < (pattern.match(regex)).length; i++) {
+		acumulatorImport = acumulatorImport + parseInt(pattern.match(regex)[i]);
+		patronArray.push(acumulatorImport)
+	}
+}
+document.getElementById('upload').addEventListener('change', handleFileSelect, false);
+var ExcelToJSON = function() {
+
+    this.parseExcel = function(file) {
+    var tableimport = $('#dataTableImports').DataTable(); 
+    var table = tableimport.rows().remove().draw();
+    jsonImport = []
+    file.arrayBuffer().then((res)=>{
+        var data = new Uint8Array(res)
+        var workbook = XLSX.read(data, {type: "array"})
+        workbook.SheetNames.forEach(function(sheetName) {
+        // Here is your object
+        var XL_row_object = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+        var corrient;
+
+        JSON.parse(XL_row_objec).map(function(code) {
+
+            if(code.substring(0,1)=='1'){
+                if(code.substring(0,1)=='1'){
+                    nature = 'DEBITO';
+                    corrient="CO";               
+                }
+            }
+            if(code.substring(0,1)=='3' || code.substring(0,1)=='4'||code.substring(0,1)=='5'||code.substring(0,1)=='6'||code.substring(0,1)=='7'||code.substring(0,1)=='8'||code.substring(0,1)=='9'){
+                if(code.substring(0,1)=='4'|| code.substring(0,1)=='3'){
+                    nature = 'CREDITO';
+                }else if(code.substring(0,1)=='9'){
+                    nature = 'CREDITO';
+                }
+                else{
+                    nature = 'DEBITO';
+                }
+                corrient = 'NCO';
+            }
+
+            if(code.substring(0,2)=='11' ||code.substring(0,2)=='12'|| code.substring(0,2)=='13'||code.substring(0,2)=='14'){
+                
+                corrient = 'CO';
+            }
+            if(code.substring(0,2)=='16' ||code.substring(0,2)=='17'||code.substring(0,2)=='18'||code.substring(0,2)=='19'||code.substring(0,2)=='22'||code.substring(0,2)=='23'){
+                if(code.substring(0,1)=='2'){
+                    nature = 'CREDITO';
+                }
+                corrient = 'NCO';
+            }
+             
+			jsonImport.push({
+				"TC":XL_row_object[i].tipocu,
+				"CD":XL_row_object[i].codigo,
+				"DC":XL_row_object[i].descri,
+                "NT":nature,  
+                "CO":corrient,
+			})
+
+            table.row.add([
+                    XL_row_object[i].tipocu,
+                    XL_row_object[i].codigo,
+                    XL_row_object[i].descri,
+                    nature,  
+                    corrient,
+                    "<label type='number' id=import"+ XL_row_object[i].codigo+"></label>",			
+            ])  
+
+        })
+        table.draw(false);
+        })
+    })
+    }
+};
+function handleFileSelect(evt) {
+
+    var files = evt.target.files; // FileList object
+    var xl2json = new ExcelToJSON();
+    xl2json.parseExcel(files[0]);
+}
+function fillTable(typeAC, code, description,nature,co){
+    var table = $('#dataTableImports').DataTable(); 
+    
+}
+//cambio
+var mensajeValidateError = '';
+function validateDataImport(){
+    mensajeValidateError = '';
+    if(jsonImport.length>0){
+        $('#contenedor_carga').show();
+        setTimeout(function(){
+        var regex = /(\d+)/g;
+        var pattern = localStorage.getItem('patron');
+        var acumulatorImport = 0;
+        var arrayImport = [];
+        var countOk = 0;
+        var currentAux="";
+        var pos = ""
+        var table = $('#dataTableImports').DataTable(); 
+        var data = table.rows().data();
+        var nRow = table.rows().count();
+
+        for (var i = 0; i < (pattern.match(regex)).length; i++) {
+            acumulatorImport = acumulatorImport + parseInt(pattern.match(regex)[i]);
+            arrayImport.push(acumulatorImport)
+        }
+        var filteredData = table.column( 1 ).data().filter( function ( value, index ) {
+            if(value <= 0){
+                table.cell(index,5).data("Numero negativo").draw()
+                mensajeValidateError += value+ " Numero negativo\n"
+            }else{
+                    if(arrayImport.includes(value.length)){
+                        table.cell(index,5) .data("OK").draw()
+                        countOk += 1;														
+                        return false;
+                    }else{
+                        
+                        table.cell(index,5).data("No cumple con el patrón").draw()
+                        mensajeValidateError += value + " No cumple con el patrón\n"
+                    }
+                }
+        });
+            
+        data.each(function (value, index) {	
+            if(jsonImport.filter(element => element['CD'] == value[1]).length > 1){
+                countOk -= 1	
+                table.cell(index,5) .data("Codigo repetido").draw()	
+                mensajeValidateError += value[1]+ " " + value[2]+ " Codigo repetido\n"
+            }else{
+        
+                if(value[0]=='A'){
+                    pos = value[1]; 
+                    if(currentAux==""){
+                        currentAux = value[1];
+                    }else{
+                        if(pos.includes(currentAux)){
+                            table.cell(index,5).data("Rubro padre como auxiliar").draw()
+                            mensajeValidateError += value[1]+ " Rubro padre como auxiliar\n"
+                            countOk -= 1														
+                        }else{
+                            currentAux = value[1];
+                        }
+                    }
+                }  
+            }    	
+        });
+
+
+
+        if(countOk==nRow) {
+            nextImport = true;
+            $('#contenedor_carga').hide();
+        }else{
+            nextImport = false
+            $('#contenedor_carga').hide();
+        }
+    },5000)
+    }
+
+
+} 
+function sendDataToBD(){
+	if(nextImport==true){
+        $('#contenedor_carga').show();
+		var token = '{{csrf_token}}';
+		$.ajax({
+				headers: { "X-CSRFToken": token },
+				url: '{% url "importAccountsBD"  0 %}'.replace('0', localStorage.getItem('userID')),
+				data: {
+					'accounts': JSON.stringify(jsonImport),
+					'accountPeriod': localStorage.getItem('idAC'),
+				},	
+				type: 'POST',
+				dataType: 'json',	
+				success: function (data) {
+					if(data.IMPORT=="TRUE"){
+						var table = $('#dataTableAccount').DataTable(); 
+						var rows = table.rows().remove().draw();
+                        $("#dataTableAccount").load(" #dataTableAccount");
+						$('#MyModalImport').modal('toggle');
+						swal("Importacion completa ","", "success");
+						var tableImport = $('#dataTableImports').DataTable(); 
+						var rowsImport = tableImport.rows().remove().draw();
+						jsonImport.length=0;
+                        
+                        getListAccount()
+                        $('#contenedor_carga').hide();
+					}else{
+						swal("Existen datos repetidos ","Verifique por favor", "error");
+					}
+					
+			}
+		});
+	}else{
+        swal({
+            title: "Verifique el archivo",
+            text: "No todos los datos son correctos ",
+            icon: "error",
+            content: { 
+                element: "textarea",
+                attributes: {
+                    disabled: true,
+                    placeholder: mensajeValidateError,
+                }, 
+            },
+        });
+	}
+	
+}
+
+function cancels(option){	
+	if(option==4){
+		$("#upload").val('');
+		$('#MyModalImport').modal('toggle');
+		var table = $('#dataTableImports').DataTable(); 
+ 		var rows = table.rows().remove().draw();
+		jsonImport.length=0;
+	}
+}
+</script>
+{% endblock %}

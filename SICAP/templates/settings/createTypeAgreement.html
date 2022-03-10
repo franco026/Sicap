@@ -1,0 +1,27 @@
+{% extends 'base/base.html' %}
+{% load bootstrap4 %}
+{% block main %}
+<br>
+<br>
+<br>
+<br>
+<br>
+	
+{% load bootstrap4 %}
+<div class="container">
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <div class="Row">
+            {% bootstrap_form form %}
+        </div>
+        <div class="Row">
+            <button type="submit" class="genric-btn success circle">Crear Acuerdo</button>
+            <button type="buttton" class="genric-btn default circle">Cancelar</button>
+       
+        </div>
+    </form>
+</div>
+    
+{% endblock %}

@@ -1,0 +1,262 @@
+{% extends 'base/base.html' %}
+{% load bootstrap4 %}
+{% block main %}
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+<div id=divCreate class="container-fluid">
+  <h1 class="mt-4">Lista de Documentos</h1>
+  <div class="card mb-4">
+      <div class="card-header"><i class="fas fa-table mr-1"></i>Lista de tipo de documentos</div>
+      <div class="card-body">
+          <div class="table-responsive">
+              <button data-toggle="modal" data-target="#myModalAddDocument" type="button"  class="genric-btn primary small">Añadir Documento</button>              
+              <table class="table table-bordered dataTable" id="DataTableTypeDocument" width="100%" cellspacing="0"
+                    role="grid" aria-describedby="dataTable_third" style="width: 100%;">
+                  
+                  <thead>
+                      <tr>
+                          <th>id</th>
+                          <th>Codigo</th>
+                          <th>Nombre</th>
+                          <th>Acciones</th>
+                      </tr>
+                  </thead>
+                  <tfoot>
+                      <tr> 
+                        <th>id</th>
+                        <th>Codigo</th>
+                        <th>Nombre</th>
+                        <th>Acciones</th>
+                      </tr>
+                  </tfoot>
+              </table>
+      </div>
+</div>
+
+
+
+<div class="modal fade" id="myModalAddDocument" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Añadir Documento</h4>
+          </div>
+              <div class="modal-body">
+                  <div  class="container-fluid">
+                      <form id="AddDocument" action="">
+                        <div class="form-group">
+                          <label for="id_code" id="id_code_label">Código</label>
+                          <input autocomplete="off" type="text"  style="text-transform:uppercase;" name="code" maxlength="5" class="form-control" title="" required="" id="id_code">
+                        </div>
+                        <div class="form-group">
+                          <label for="id_description">Descripción</label>
+                          <input type="text" autocomplete="off"  style="text-transform:uppercase;" name="description" maxlength="100" class="form-control title="" required="" id="id_description">
+                        </div>
+                          <div id="divCreateDocument"  class="form-group">
+                              <button id="btnCreatenDocument" type="submit" class="genric-btn success circle" >Registrar Document</button>
+                              <button type="submit" class="genric-btn default circle" data-dismiss="modal">Cancelar</button>
+                          </div>   
+                  
+                      </form>  
+                  </div>
+              </div>
+          </div>         
+      </div>  
+</div>
+
+
+<div class="modal fade" id="myModalUpdateDocument" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Modificar Documento</h4>
+          </div>
+              <div class="modal-body">
+                  <div  class="container-fluid">
+                      <form id="UpdateDocument" action="">
+                        <div class="form-group">
+                          <label for="id_code" id="id_code_label">Código</label>
+                          <input autocomplete="off" type="text"  name="code_update" maxlength="5" class="form-control" title="" required="" id="id_update_code">
+                          <input autocomplete="off" type="text"  name="id_udpate" maxlength="5" class="form-control" title="" hidden="true" required="" id="id_document">
+                        </div>
+                        <div class="form-group">
+                          <label for="id_description">Descripción</label>
+                          <input type="text" autocomplete="off" name="description_update" maxlength="100" class="form-control title="" required="" id="id_update_description">
+                        </div>
+                          <div id="divCreateDocument"  class="form-group">
+                              <button id="btnCreatenDocument" type="button" onclick="updateTypeDocument()" class="genric-btn success circle" >Guardar</button>
+                              <button type="submit" class="genric-btn default circle" data-dismiss="modal">Cancelar</button>
+                          </div>   
+                  
+                      </form>  
+                  </div>
+              </div>
+          </div>         
+      </div>  
+</div>
+
+<script>
+  $(document).ready(function() {
+    $('#DataTableTypeDocument').DataTable( {
+      
+      columnDefs: [
+      {
+        targets: 0,
+        "visible": false
+      },
+      { 
+        width: "15%",
+        targets: 1
+      },
+      { 
+        width: "70%",
+        targets: 2
+      },
+      { 
+        width: "15%",
+        targets: 3
+      }
+      ],
+
+		  "language": idioma_español,
+		  "bPaginate": true,
+      "bLengthChange": false,
+      "bFilter": true,
+      "bInfo": false,
+      "bAutoWidth": false
+		  }
+		  );
+
+      getListDocument()
+  })
+
+$("form#AddDocument").submit(function() {
+
+  var code = $('input[name="code"]').val();
+  var description = $('input[name="description"]').val();
+  if (code, description) {
+      // Create Ajax Call
+      $.ajax({
+          url: '{% url "createTypeDocument"  0 %}'.replace('0', localStorage.getItem('userID')),
+          data: {
+              'bussines': localStorage.getItem('idBussines'),
+              'codigo': code,
+              'description': description,
+              'period': localStorage.getItem('idAC')
+          },
+          dataType: 'json',
+          success: function (data) {
+              console.log(data);
+              getListDocument()
+              if (data.CREATE=="TRUE"){
+                  swal("Creado exitoso del nuevo Documento!", "Continua con tu proceso!", "success");
+                  $('#myModalAddDocument').modal('toggle');
+
+              }else{
+                  swal("No se puede crear el documento con el mismo codigo o descripción", "Verifique sus datos!", "error");
+                  $('#myModalAddDocument').modal('toggle');
+              }
+              
+          }
+      });
+  } else {
+    swal("Error", "Por favor llene todos los campos", "error");
+  }
+  $('form#AddDocument').trigger("reset");
+  return false;
+
+});
+
+  function deleteDocument(id){
+    $.ajax({
+			url: '{% url "deleteTypeDocument"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+				'idDocumento':id
+			},
+			dataType: 'json',
+			success: function (data) {
+        
+        getListDocument()
+        swal("Creado exitoso de la cuenta!", "Continua con tu proceso!", "success");
+			}
+	  }) 
+  }
+
+  function updateDocument(id,codigo,description){
+    $('input[name="code_update"]').val(codigo);
+    $('input[name="description_update"]').val(description);
+    $('input[name="id_udpate"]').val(id)
+  }
+
+  function updateTypeDocument(id,codigo,description){
+    var id = $('input[name="id_udpate"]').val()
+    var code = $('input[name="code_update"]').val();
+    var description = $('input[name="description_update"]').val();
+
+    $.ajax({
+			url: '{% url "updateTypeDocument"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+				'idDocumento':id,
+        'codigo': code,
+        'description': description,
+			},
+			dataType: 'json',
+			success: function (data) {
+
+        if(data.UPDATE == "TRUE"){
+          swal("Modificación exitoso del documento!", "Continua con tu proceso!", "success");
+          $('#myModalUpdateDocument').modal('toggle');
+          
+          getListDocument()
+        }else{
+          swal("No se puede modificar el documento con el mismo codigo o descripción", "Verifique sus datos!", "error");
+        }
+
+			}
+	  }) 
+
+
+  }
+
+  
+  function getListDocument(){
+    $.ajax({
+			url: '{% url "getListDocument"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+				'bussines':localStorage.getItem('idBussines'),
+				'accountperiodo': localStorage.getItem('idAC'),
+			},
+			dataType: 'json',
+			success: function (data) {
+				console.log(data)	
+        if(data.LD.length > 0){
+          var tableDocuments = $('#DataTableTypeDocument').DataTable(); 
+          var rows = tableDocuments.rows().remove().draw();		
+          
+          for(var i = 0 ; i< data.LD.length; i++){
+            tableDocuments.row.add([
+            data.LD[i].id,
+						data.LD[i].codigo,
+						data.LD[i].description,
+						//"<a data-toggle='tooltip'  id='delete' title='Eliminar rubro implicado'><button onclick=\'deleteRID("+JSON.stringify(data.AMO[i].id)+")\' class='btn btn-primary btn-sm'><i class='fa fa-trash'></i></button></a>"+
+						"<a data-toggle='tooltip' ' title='Editar'><button data-toggle='modal' data-target='#myModalUpdateDocument' type='button'   id='buttonupdateDocument' onclick=\'updateDocument("+data.LD[i].id+','+JSON.stringify(data.LD[i].codigo)+','+JSON.stringify(data.LD[i].description)+")\' class='btn btn-primary btn-sm'><i class='fa fa-pencil' aria-hidden='true'></i></button></a>"+
+						"<a data-toggle='tooltip' href='#' id='deleteDocument'title='Eliminar Documento'><button onclick=\'deleteDocument("+data.LD[i].id+")\' class='btn btn-primary btn-sm'><i class='fa fa-trash'></i></button></a>"
+				
+						])
+          }
+
+          tableDocuments.draw( false );
+        }
+        
+			}
+	  }) 
+  }
+</script>
+{% endblock %}

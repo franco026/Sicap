@@ -1,0 +1,403 @@
+{% extends 'base/base.html' %}
+{% load bootstrap4 %}
+{% block main %}
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<div id=divCreate class="container-fluid">
+    <h1 class="mt-4">Lista de Empresas</h1>
+    <div class="card mb-4">
+        <div class="card-header"><i class="fas fa-table mr-1"></i>Lista de empresas registradas</div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered dataTable" id="dataTableBussinest" width="100%" cellspacing="0"
+                      role="grid" aria-describedby="dataTable_info" style="width: 100%;">
+                    
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>NIT</th>
+                            <th>Dirección</th>
+                            <th>Teléfono</th>
+                            <th>Representación</th>
+                            <th>Patrón rubro</th> 
+                            <th>Patrón cuenta</th> 
+                            <th>Acciones</th> 
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>NIT</th>
+                            <th>Dirección</th>
+                            <th>Teléfono</th>
+                            <th>Representación</th>
+                            <th>Patrón rubro</th> 
+                            <th>Patrón cuenta</th> 
+                            <th>Acciones</th> 
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {% if object_list %}
+                        {% for bussines in object_list %}                        
+                              <tr>                          
+                                <td>{{bussines.name}}</td>
+                                <td>{{bussines.nit}}</td>
+                                <td>{{bussines.address}}</td>
+                                <td>{{bussines.phone}}</td>
+                                <td>{{bussines.representative}}</td>
+                                <td>{{bussines.rubroPattern}}</td>
+                                <td>{{bussines.accountPattern}}</td>
+                                <td>
+                        </div>
+                      </div>
+
+                              <a href="#" data-toggle="tooltip"   title="Registrar periodo contable">
+                                <button data-toggle="modal" data-target="#myModalAP" class="btn btn-primary btn-sm" onclick="getId('{{bussines.id}}')">
+                                <i class="fa fa-edit"></i>
+                                </button>
+                              </a>
+
+                              <a href="#" data-toggle="tooltip"   title="Registrar Origen">
+                                <button data-toggle="modal" data-target="#myModalOrigin" class="btn btn-primary btn-sm" onclick="getIdOrigin('{{bussines.id}}')">
+                                <i class="fa fa-edit"></i>
+                                </button>
+                              </a>
+
+                              <a href="#" data-toggle="tooltip"   title="Registrar Operación">
+                                <button data-toggle="modal" data-target="#myModalOperation" class="btn btn-primary btn-sm" onclick="getIdOperation('{{bussines.id}}')">
+                                <i class="fa fa-edit"></i>
+                                </button>
+                              </a>
+                                
+                                </td>
+                              </tr>
+                            {% endfor %}
+                            {% else %}
+                            <h1 class="black-color">No hay usuarios registrados</h1>
+                            {% endif %}  
+                    </tbody>
+                </table>
+    </div>
+</div>
+
+<div class="modal fade" id="myModalAP" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Registrar período contable</h4>
+            </div>
+                <div class="modal-body">
+                    <div  class="container-fluid">
+                        <form id="addAP" action="">
+                            {% csrf_token %}
+                            {% bootstrap_form ACform %}
+                            <div id="divCreateButtons"  class="form-group">
+                                <button id="btnCreate" type="submit" class="genric-btn success circle" >Registrar  Período</button>
+                                <button type="button" class="genric-btn default circle" data-dismiss="modal">Cancelar</button>
+                            </div> 
+                            
+                        </form>  
+                    </div>
+                </div>
+            </div>         
+        </div>  
+</div>
+
+<input type="number"   style="display:none" class="form-control"  id="mach" name="mach">             
+<div class="modal fade" id="myModalOrigin" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Registrar Origen</h4>
+            </div>
+                <div class="modal-body">
+                    <div  class="container-fluid">
+                        <form id="addOrigin" action="">
+                            {% csrf_token %}
+                            {% bootstrap_form Originform %}
+                            <div id="divCreateButtonsOrigin"  class="form-group">
+                                <button id="btnCreateOrigin" type="submit" class="genric-btn success circle" >Registrar Origen</button>
+                                <button type="button" class="genric-btn default circle" data-dismiss="modal">Cancelar</button>
+                            </div>   
+                    
+                        </form>  
+                    </div>
+                </div>
+            </div>         
+        </div>  
+</div>
+<div class="modal fade" id="myModalOperation" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Registrar Operación</h4>
+            </div>
+                <div class="modal-body">
+                    <div  class="container-fluid">
+                        <form id="addOperation" action="">
+                            {% csrf_token %}
+                            {% bootstrap_form ByAccountOpforms %}
+                            {% bootstrap_form Operationform %}
+                            <div id="divCreateButtonsOperation"  class="form-group">
+                                <button id="btnCreateOperation" type="submit" class="genric-btn success circle" >Registrar Operación</button>
+                                <button type="button" class="genric-btn default circle" data-dismiss="modal">Cancelar</button>
+                            </div>   
+                    
+                        </form>  
+                    </div>
+                </div>
+            </div>         
+        </div>  
+</div>
+
+
+<script>
+
+var bussinesId;
+var bussinesIdO;
+var bussinesIdOp;
+var accountPeriodId;
+
+$(document).ready(function() {
+		$('#dataTableBussinest').DataTable( {
+		  "destroy":true,
+		  "language": idioma_español,
+		  
+			dom: 'Bfrtip',
+			buttons: [
+				'copy', 'csv', 'excel', 'pdf', 'print'
+			]
+			
+	} );	 	
+} );
+function getIdOrigin(id){
+    accountPeriodId =  id;
+    document.getElementById('id_finalDateOrigin').type = 'date';
+}
+
+function getId(id){
+    
+      bussinesId =  id;
+      document.getElementById('id_initialDate').type = 'date';
+      document.getElementById('id_finalDate').type = 'date';
+}
+
+
+$("form#addAP").submit(function() {
+    var nameInput = $('input[name="name"]').val();
+    var stateInput = $("#id_state option:selected").text();
+    var initialDateInput = $('input[name="initialDate"]').val();
+    var finalDateInput = $('input[name="finalDate"]').val();
+
+    if (nameInput) {
+        // Create Ajax Call
+        $.ajax({
+            url: '{% url "createAccountPeriod"  0 %}'.replace('0', localStorage.getItem('userID')),
+            data: {
+                'bussines': bussinesId,
+                'name': nameInput,
+                'state': stateInput,
+                'initialDate': initialDateInput,
+                'finalDate': finalDateInput,
+            },
+            dataType: 'json',
+            success: function (data) {
+                if(data.CREATE == "TRUE"){
+                    swal("Creado exitoso del período contable!", "Continua con tu proceso!", "success");
+                    $('#myModalAP').modal('toggle');
+                }else{
+                    swal("No se puede crear el período contable", "Ya existe un período con este nombre", "error");
+                    $('#myModalAP').modal('toggle');
+                }
+            }
+        });
+      } else {
+        alert("All fields must have a valid value.");
+    }
+    $('form#addAP').trigger("reset");
+    return false;
+});
+
+//------------------------------inicio del Java Script Origen-------------------
+function getIdOrigin(id){
+
+    bussinesIdO =  id;
+    document.getElementById('id_finalDateOrigin').type = 'date';
+    $.ajax({
+		url: '{% url "getAccountPeriodOrigin"  0 %}'.replace('0', localStorage.getItem('userID')),
+		data: {
+		    'bussinesIdO': bussinesIdO,
+		},
+		dataType: 'json',
+		success: function (data) {
+        const $select = document.querySelector("#id_accountPeriod");
+
+        for (let i = $select.options.length; i >= 0; i--) {
+		        $select.remove(i);
+		}
+        $('#id_accountPeriod').append(`<option  hidden  selected"> Selecciona una opción</option>`);
+
+		for (var i=0; i<data.AC.length; i++){
+			$('#id_accountPeriod').append(`<option value="${data.AC[i].name}">${data.AC[i].name} </option>`);
+			}
+						
+		}
+	});
+}
+   
+$("form#addOrigin").submit(function() {
+
+
+    var codeOrigin = $('input[name="codeOrigin"]').val();
+    var nameOrigin = $('input[name="nameOrigin"]').val();
+    var descriptionOrigin = $('textarea[name="descriptionOrigin"]').val();
+    var orderOrigin = $('input[name="orderOrigin"]').val();
+    var finalDateOrigin =  $('input[name="finalDateOrigin"]').val();
+    var accountPeriod = $("#id_accountPeriod option:selected").text();
+    
+
+    if (codeOrigin,nameOrigin,descriptionOrigin,orderOrigin,finalDateOrigin) {
+        // Create Ajax Call
+        $.ajax({
+            url: '{% url "createOrigin"  0 %}'.replace('0', localStorage.getItem('userID')),
+            data: {
+                'accountPeriod': accountPeriod,
+                'codeOrigin': codeOrigin,
+                'nameOrigin': nameOrigin,
+                'descriptionOrigin': descriptionOrigin,
+                'orderOrigin':  orderOrigin,
+                'finalDateOrigin': finalDateOrigin,
+            },
+            dataType: 'json',
+            success: function (data) {
+                if(data.CREATE == "TRUE"){
+                    swal("Creado exitoso del origen!", "Continua con tu proceso!", "success");
+                    $('#myModalOrigin').modal('toggle');
+                }else{
+                    swal("No se puede crear un origen con el mismo nombre para este período contable", "Verifique sus datos!", "error");
+                    $('#myModalOrigin').modal('toggle');
+                }
+            }
+        });
+      } else {
+        alert("All fields must have a valid value.");
+    }
+    $('form#addOrigin').trigger("reset");
+    return false;
+});
+//---------------Final del Java Script Operación-------------
+
+//---------------inicio del Java Script Operación-------------
+function getIdOperation(id){
+
+bussinesIdOP =  id;
+$.ajax({
+    url: '{% url "getAccountPeriodOperation"  0 %}'.replace('0', localStorage.getItem('userID')),// haci donde voy  comunicación con la View
+    data: {
+        'bussinesIdOP': bussinesIdOP, // enviando, el dato que necesito
+    },
+    dataType: 'json',// enviando al servidor (solicitud del cliente)
+    success: function (data) {//respuesta del servidor
+    const $select = document.querySelector("#id_accountsP");
+
+    for (let i = $select.options.length; i >= 0; i--) {
+            $select.remove(i);
+    }
+
+    $('#id_accountsP').append(`<option  hidden  selected"> Selecciona una opción</option>`);
+    for (var i=0; i<data.ACName.length; i++){
+        $('#id_accountsP').append(`<option value="${data.ACName[i].name}">${data.ACName[i].name}</option>`);
+    }
+    
+    const $selectOrigin = document.querySelector("#id_origin");//remover datos del origen para que mi campo quede vacido
+	for (let i = $selectOrigin.options.length; i >= 0; i--) {
+		$selectOrigin.remove(i);
+		}
+                    
+    }
+    
+});
+}
+// Java Script para seleccionar un dato del campo y traer los datos asociados a esa selección y mostrarlos en el campo que deseo
+$(document).on('change', '#id_accountsP', function(event) {
+			var accountPeriod = $("#id_accountsP option:selected").text();
+			$.ajax({
+					url: '{% url "getAccountPeriodOriginOperation" 0 %}'.replace('0', localStorage.getItem('userID')),
+					data: {
+						'accountPeriod': accountPeriod,
+					},
+					dataType: 'json',
+					success: function (data) {
+						
+						const $select = document.querySelector("#id_origin");
+						for (let i = $select.options.length; i >= 0; i--) {
+								$select.remove(i);
+						}
+
+						for (var i=0; i<data.OR.length; i++){
+							$('#id_origin').append(`<option value="${data.OR[i].nameOrigin}">${data.OR[i].nameOrigin}</option>`);
+						}
+												
+					}
+				});
+});
+
+        
+$("form#addOperation").submit(function() {
+
+var codeOp = $('input[name="codeOp"]').val();
+var nameOp = $('input[name="nameOp"]').val();
+var descriptionOp = $('textarea[name="descriptionOp"]').val();
+var operation = $("#id_operation option:selected").text();
+var orderOp =  $('input[name="orderOp"]').val();
+var accountPeriod = $("#id_accountsP option:selected").text();
+var origin = $('#id_origin').val();
+console.log(origin,"fdsf")
+
+
+if (codeOp,nameOp,descriptionOp,operation,orderOp,origin) {
+    // Create Ajax Call
+    $.ajax({
+        url: '{% url "createOperation"  0 %}'.replace('0', localStorage.getItem('userID')),
+        data: {
+
+            'bussines':bussinesIdOP,
+            'accountPeriod': accountPeriod,
+            'origin': JSON.stringify(origin),
+            'codeOp': codeOp,
+            'nameOp': nameOp,
+            'descriptionOp': descriptionOp,
+            'operation':  operation,
+            'orderOp': orderOp, 
+             
+            
+        },
+        dataType: 'json',
+        success: function (data) {
+            if(data.CREATE == "TRUE"){
+                swal("Creado exitoso de la operación!", "Continua con tu proceso!", "success");
+                $('#myModalOperacion').modal('toggle');
+            }else{
+
+                swal("No se puede crear una operación con el mismo nombre para este origen", "Verifique sus datos!", "error");
+                $('#myModalOperacion').modal('toggle');
+            }
+        }
+    });
+  } else {
+    alert("All fields must have a valid value.");
+}
+$('form#addOperation').trigger("reset");
+return false;
+});
+//---------------Fin del Java Script Operación-------------
+
+</script>
+
+{% endblock %}

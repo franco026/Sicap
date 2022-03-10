@@ -1,0 +1,463 @@
+{% extends 'base/base.html' %}
+{% load bootstrap4 %}
+{% block main %}
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<div id=divCreate class="container-fluid">
+    <h1 class="mt-4">Lista de informes bancarios</h1>
+    <div class="card mb-4">
+        <div class="card-header"><i class="fas fa-table mr-1"></i>Lista de informes bancarios</div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <button data-toggle="modal" data-target="#myModalInformBank" type="button" class="genric-btn primary small">Añadir informe bancario</button>              
+                <table class="table table-bordered dataTable" id="dataTableInformBank" width="100%" cellspacing="0"
+                      role="grid" aria-describedby="dataTable_informBank" style="width: 100%;">
+                    
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Categoría</th>
+                            <th>Dígito</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Categoría</th>
+                            <th>Dígito</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {% if object_list %}
+                        {% for inform in object_list %}                        
+                              <tr>                          
+                                <td>{{inform.nameI}}</td>                        
+                                <td>{{inform.category}}</td>
+                                <td>{{inform.digitI}}</td>
+                                <td>
+                        </div>
+                      </div>
+
+                      <a href="#" data-toggle="tooltip"   title="Registrar detalle bancario">
+                        <button data-toggle="modal" data-target="#myModalInformDetailBank" class="btn btn-primary btn-sm"  onclick="getInformBank('{{inform.id}}')">
+                        <i class="fa fa-info-circle"></i>
+                        </button>
+                      </a>
+                      <a href="#" data-toggle="tooltip"   title="Eliminar informe bancario">
+                        <button onclick="deleteInformBank('{{inform.id}}','{{inform.nameI}}')" class="btn btn-primary btn-sm"  >
+                        <i class="fa fa-trash"></i>
+                        </button>
+                      </a>
+                      <a href="#" data-toggle="tooltip" id="updateInformBank"  title="Actualizar informe bancario">
+                        <button onclick="changeTypeUpdateInformBank('{{inform.id}}','{{inform.nameI}}','{{inform.category}}','{{inform.digitI}}')"data-toggle="modal" data-target="#myModalInformBankUpdate" class="btn btn-primary btn-sm">
+                        <i class="fa fa-pencil"></i>
+                        </button>
+                      </a>
+                      <a href="#" data-toggle="tooltip" id="detailInformBank"  title="Ver informe de detalles bancarios">
+                        <button onclick="getDetailInformBank('{{inform.id}}')" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModalDetailInformBank">
+                        <i class="fa fa-plus"></i>
+                        </button>
+                      </a>                   
+                                </td>                               
+                              </tr>
+                            {% endfor %}
+                            {% else %} 
+                            <h1 class="black-color">No hay informes bancarios registrados de esta empresa</h1>
+                            {% endif %}  
+                    </tbody>
+                </table>
+        </div>
+</div>
+ 
+<div class="modal fade" id="myModalInformDetailBank" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Registrar detalle del informe bancario</h4>
+            </div>
+                <div class="modal-body">
+                    <div  class="container-fluid">
+                        <form id="addInformDetailBank" action="">
+                            {% csrf_token %}
+                            {% bootstrap_form InformDetailBankForm %}
+                            <div id="divCreateButtonsOrigin"  class="form-group">
+                                <button id="btnCreateDetailInformBank" type="submit" class="genric-btn success circle" >Registrar detalle del informe bancario</button>
+                                <button type="button" class="genric-btn default circle" data-dismiss="modal">Cancelar</button>
+                            </div>   
+                    
+                        </form>  
+                    </div>
+                </div>
+            </div>         
+        </div>  
+</div>
+
+<div class="modal fade" id="myModalInformBank" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Añadir nuevo informe bancario</h4>
+            </div>
+                <div class="modal-body">
+                    <div  class="container-fluid">
+                        <form id="addInformBank" action="">
+                            {% csrf_token %}
+                            {% bootstrap_form InformBankForm %}
+
+                            <div id="divCreateInform"  class="form-group">
+                                <button id="btnCreatenform" type="submit" class="genric-btn success circle" >Registrar Informe bancario</button>
+                                <button type="submit" class="genric-btn default circle" data-dismiss="modal">Cancelar</button>
+                            </div>   
+                    
+                        </form>  
+                    </div>
+                </div>
+            </div>         
+        </div>  
+</div>
+<div class="modal fade" id="myModalInformBankUpdate" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Actualizar informe bancario</h4>
+            </div>
+                <div class="modal-body">
+                    <div  class="container-fluid">
+                        <form id="formAPUpdateInformBank" action="">
+                            {% csrf_token %}
+                            {% bootstrap_form ByInformBankUpdateForm %}
+                            <div id="divCreateButtons"  class="form-group">
+                                <button id="btnCreate" type="submit" class="genric-btn success circle" >Actualizar informe bancario</button>
+                                <button type="button" class="genric-btn default circle" data-dismiss="modal">Cancelar</button>
+                            </div> 
+                            
+                        </form>  
+                    </div>
+                </div>
+            </div>         
+        </div>  
+</div>
+
+<div class="modal fade" id="myModalDetailInformBank" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content ">
+        <div class="modal-header">
+          <h4 class="modal-title">lista de detalles informes bancarios</h4>
+            </div>
+                <div class="modal-body">
+                    <div  class="container-fluid">
+                        <form id="formAPDetailInformBank" action="">
+                            <div id=divCreate class="container-fluid">
+                                <h1 class="mt-4">Detalles de informes bancarios</h1>
+                                <div class="card mb-4">
+                                    <div class="card-header"><i class="fas fa-table mr-1"></i>Detalles de informes bancarios</div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered dataTable" id="dataTableDetailInformBank" width="100%" cellspacing="0"
+                                                  role="grid" aria-describedby="dataTable_detailInformBank" style="width: 100%;">
+                                                
+                                                <thead>
+                                                    <tr>
+                                                        <th>Código</th>
+                                                        <th>Descripción</th>
+                                                        <th>Actividad</th>
+                                                      
+                                                    </tr>
+                                                </thead>
+                                                <tfoot>
+                                                    <tr>
+                                                        <th>Código</th>
+                                                        <th>Descripción</th>
+                                                        <th>Actividad</th>
+                                                       
+                                                    </tr>
+                                                </tfoot>
+                                                <tbody>
+                                                    {% if object_list %}
+                                                    {% for informDetail in object_list %}                        
+                                                        <tr>                          
+                                                            <td>{{informDetail.codeInfD}}</td>                        
+                                                            <td>{{informDetail.descriptionInfD}}</td>
+                                                            <td>{{informDetail.activity}}</td>
+                                                        </tr>
+                                                    </div>
+                                                  </div>
+                                                                                          
+                                                          
+                                                        {% endfor %}
+                                                        {% else %} 
+                                                        <h1 class="black-color">No hay detalles de informes bancarios registrados de esta empresa</h1>
+                                                        {% endif %}  
+                                                </tbody>
+                                            </table>
+                                    </div>
+                            </div>
+                            
+                        </form>  
+                    </div>
+                </div>
+            </div>         
+        </div>  
+</div>
+
+
+ 
+
+<script>
+
+$(document).ready(function() {
+		$('#dataTableInformBank').DataTable( {
+		  "destroy":true,
+		  "language": idioma_español,
+		  
+			dom: 'Bfrtip',
+			buttons: [
+				'copy', 'csv', 'excel', 'pdf', 'print'
+			]
+			
+		});	
+});
+$(document).ready(function() {
+		$('#dataTableDetailInformBank').DataTable( {
+		  "destroy":true,
+		  "language": idioma_español,
+		  
+			dom: 'Bfrtip',
+			buttons: [
+				'copy', 'csv', 'excel', 'pdf', 'print'
+			]
+			
+		});	
+});
+
+var informId;
+var informCurrentName
+
+function getInformBank(id){
+    informId =  id; 
+ 
+}
+function changeTypeUpdateInformBank(id, nameI, category, digitI){
+    informId =  id;
+    informCurrentName = nameI;
+    
+    var nameIUpdate = document.getElementById("id_nameIUpdate");
+    nameIUpdate.value = nameI;
+    var categoryUpdate = document.getElementById("id_categoryUpdate");
+    categoryUpdate.value = category;
+    var digitIUpdate = document.getElementById("id_digitIUpdate");
+    digitIUpdate.value = digitI;
+}
+function getDetailInformBank(id, codeInfD, descriptionInfD, activity){
+    informId =  id;
+    var codeInfD = $('input[name="codeInfD"]').val();
+    var descriptionInfD = $('textarea[name="descriptionInfD"]').val();
+    var activity = $('input[name="activity"]').val();
+	
+    $.ajax({
+		url: '{% url "changeWindowsInformDetailBank"  0 %}'.replace('0', localStorage.getItem('userID')),
+		data: {
+			'informId': informId,
+            'codeInfD': codeInfD,
+            'descriptionInfD': descriptionInfD,
+            'activity': activity,
+		},
+		dataType: 'json',
+		success: function (data) {
+
+			var tableIDB = $('#dataTableDetailInformBank').DataTable(); 
+            var rows = tableIDB.rows().remove().draw();
+            for (var i=0; i<data.IDB.length; i++){
+                tableIDB.row.add( [
+                data.IDB[i].codeInfD,
+                data.IDB[i].descriptionInfD,
+                data.IDB[i].activity,						
+                ])
+            }
+            tableIDB.draw( false );
+										
+		}
+	});
+}
+$("form#addInformDetailBank").submit(function() {
+
+    var codeInfD = $('input[name="codeInfD"]').val();
+    var descriptionInfD = $('textarea[name="descriptionInfD"]').val();
+    var activity = $('input[name="activity"]').val();
+
+    if (codeInfD,descriptionInfD,activity) {
+        // Create Ajax Call
+        $.ajax({
+            url: '{% url "settingsInfDetailBank"  0 %}'.replace('0', localStorage.getItem('userID')),
+            data: {
+                'informId': informId,
+                'codeInfD': codeInfD,
+                'descriptionInfD': descriptionInfD,
+                'activity': activity,
+
+            },
+            dataType: 'json',
+            success: function (data) {
+                console.log(data);
+                if(data.CREATE == "TRUE"){
+                    swal("Creado exitoso del detalle de informe bancario!", "Continua con tu proceso!", "success");
+                    $('#myModalInformDetailBank').modal('toggle');
+                }else{
+                    swal("No se puede crear el detalle del informe bancario", "Ya existe un detalle con este código", "error");
+                    $('#myModalInformDetailBank').modal('toggle');
+                }
+                
+            }
+        });
+    }else{
+        alert("Por favor llene todos los campos");
+    }
+    $('form#addInformDetailBank').trigger("reset");
+    return false;
+});
+
+$("form#addInformBank").submit(function() {
+
+    var nameI = $('input[name="nameI"]').val();
+    var category = $('input[name="category"]').val();
+    var digitI = $('input[name="digitI"]').val();
+
+    if (nameI,category,digitI) {
+        // Create Ajax Call
+        $.ajax({
+            url: '{% url "createInformBank"  0 %}'.replace('0', localStorage.getItem('userID')),
+            data: {
+                'bussines': localStorage.getItem('idBussines'),
+                'nameI': nameI,
+                'category': category,
+                'digitI': digitI,
+
+            },
+            dataType: 'json',
+            success: function (data) {
+                console.log(data);
+                $("#dataTableInformBank").load("#dataTableInformBank");
+                if(data.CREATE == "TRUE"){
+                    swal("Creado exitoso del nuevo informe bancario!", "Continua con tu proceso!", "success");
+                    $('#myModalInformBank').modal('toggle');
+                }else{
+                    swal("No se puede crear el informe bancario", "Ya existe un informe bancario con este nombre", "error");
+                    $('#myModalInformBank').modal('toggle');
+                }
+                
+            }
+        });
+    }else{
+        alert("Por favor llene todos los campos");
+    }
+    $('form#addInformBank').trigger("reset");
+    return false;
+});
+
+$("form#formAPUpdateInformBank").submit(function() {
+     
+    var nameIUpdate = $('input[name="nameIUpdate"]').val();
+    var categoryUpdate = $('input[name="categoryUpdate"]').val();
+    var digitIUpdate = $('input[name="digitIUpdate"]').val();
+    if (nameIUpdate, categoryUpdate, digitIUpdate) {
+ 
+        // Create Ajax Call
+        if(informCurrentName==nameIUpdate){
+            $.ajax({
+ 
+                url: '{% url "updateInformBank"  0 %}'.replace('0', localStorage.getItem('userID')),
+                data: {
+                    'bussinesId': localStorage.getItem('idBussines'),
+                    'equalName': 'TRUE',
+                    'id': informId,
+                    'nameI': nameIUpdate,
+                    'category': categoryUpdate,
+                    'digitI': digitIUpdate,
+                     
+                },
+                dataType: 'json',
+                success: function (data) {                   
+                    if(data.CREATE == "TRUE"){
+                        $("#dataTableInformBank").load(" #dataTableInformBank");
+                        swal("Actualización exitosa!", "Continua con tu proceso!", "success");
+                        $('#myModalInformBankUpdate').modal('toggle');
+                    }else{
+                        swal("No se puede actualizar el informe bancario", "Ya existe un informe bancario con este nombre", "error");
+                        $('#myModalInformBankUpdate').modal('toggle');
+                    } 
+                }
+            });
+        }else{
+            $.ajax({
+ 
+            url: '{% url "updateInformBank"  0 %}'.replace('0', localStorage.getItem('userID')),
+            data: {
+                'bussinesId': localStorage.getItem('idBussines'),
+                'equalName': 'FALSE',
+                'id': informId,
+                'nameI': nameIUpdate,
+                'category': categoryUpdate,
+                'digitI': digitIUpdate,
+                 
+            },
+            dataType: 'json',
+            success: function (data) {               
+                if(data.CREATE == "TRUE"){
+                    $("#dataTableInformBank").load(" #dataTableInformBank");
+                    swal("Actualización exitosa!", "Continua con tu proceso!", "success");
+                    $('#myModalInformBankUpdate').modal('toggle');
+                }else{
+                    swal("No se puede actualizar el informe bancario", "Ya existe un informe bancario con este nombre", "error");
+                    $('#myModalInformBankUpdate').modal('toggle');
+                } 
+            }
+            });
+        }
+        
+    }else{
+        alert("All fields must have a valid value.");
+    }
+    
+    return false;
+});
+  
+function deleteInformBank(id, nameI){
+ 
+    swal({
+    title: "Desea eliminar el informe bancario " + nameI + "?",
+    text: "Al confirmar esta acción, el informe bancario " + nameI + " sera eliminado.",
+    icon: "warning",
+    buttons: true,
+    dangerMode: true,
+    })
+    .then((willDelete) => {
+    if (willDelete) {
+ 
+        $.ajax({
+            url: '{% url "deleteAll"  0 %}'.replace('0', localStorage.getItem('userID')),
+            data: {
+                'id': id,
+                'option': '15'
+            },
+            dataType: 'json',
+            success: function (data) {   
+                $("#dataTableInformBank").load(" #dataTableInformBank");
+                swal("El informe bancario " + nameI + " se ha eliminado con éxito.", {
+                icon: "success",
+                });
+            }
+        });
+    }
+    });
+}
+                        
+</script>
+{% endblock %}

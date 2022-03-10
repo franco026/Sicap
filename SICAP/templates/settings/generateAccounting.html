@@ -1,0 +1,674 @@
+{% extends 'base/base.html' %}
+{% load bootstrap4 %}
+{% block main %}
+
+<body onload="loadTest()">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+        
+{% load bootstrap4 %}
+<div class="col-lg-8 posts-list" >
+	<form id="addAccount">
+		<h2>Seleccione el origen</h2>
+		<br>	
+			<div id="separatorOrigin">
+				
+			</div>
+			<br>		
+	</form>
+	<div id="separatorOriginButton" style="display:none">
+        <button  onclick="generateAccount()" id="generatorAccount" class="genric-btn primary small">GENERAR CUENTA CONTABLE DE</button>
+	</div>
+</div>
+<br>
+<div id=divCreateAccount class="container-fluid" style="display:none">
+	<div class="card mb-3">
+		<div class="card-header"><i class="fas fa-table mr-1"></i>Configuración Cuenta Contable</div>
+		<div class="card-body">
+                <br>
+                <form>
+                    <div class="form-row">
+                        <div class="col-6">
+                            <div  class="container-fluid mb-3" style="float:left">
+                                <div class="card" >
+                                <div class="card-header mb-3" ><i class="fas fa-table mr-1" ></i>Rubro Presupuesto</div>
+                                    <div class="card-body" >
+                                        <div class="table-responsive">
+                                            
+                                            <table class="table table-bordered dataTable" id="dataTableAccountRubro" cellspacing="0" 
+                                                role="grid" aria-describedby="dataTable_accountRubro">
+                                                
+                                                <thead>
+                                                    <tr>
+                                                        <th>ID</th>
+                                                        <th>Rubro</th>
+                                                        <th>Descripción</th>
+                                                        <th># de cuentas agregadas</th>
+                                                        <th>Tipo de rubro</th>
+                                                        <th>Acciones</th>
+                                                    </tr>
+                                                </thead>
+                                                <tfoot>
+                                                    <tr>
+                                                        <th>ID</th>
+                                                        <th>Rubro</th>
+                                                        <th>Descripción</th>
+                                                        <th># de cuentas agregadas</th>
+                                                        <th>Acciones</th>
+                                                    </tr>
+                                                </tfoot>
+                                                </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="divAccount" class="container-fluid col-6" style="display:block">
+                            <div class="card">
+                                <div class="card-header mb-4"><i class="fas fa-table mr-1"></i>Cuentas Contables-Operación-Tipo</div>
+                                <div  class="col-6  mb-4" style="display: none;" id="divRubroSelect">
+                                    <h6  id="rubroSelect" for="rubroSelect"></h6>	
+                                </div>
+                                <form id="createAccuont" class="col-6">
+                                    <div class="col-12">
+                                        <label style="color: rgb(0, 0, 0);">Buscar Cuenta:
+                                            <button id="searchAccountButton" type="button" onclick="searchAccountsButton()"  class='btn btn-primary btn-sm fa fa-search' title="Buscar Cuenta" data-toggle='modal' data-target='#myModalAccountButton'></button>
+                                        </label>
+                                    </div> 
+                                    <div class="form-row col-12">
+                                        <div class="col-7 mb-4" >
+                                            <label>Cuenta:</label>
+                                            <select class="form-control" id="accountSelect" name="accountSelect" >
+                                            </select>
+                                        </div>
+                                        <div class="col-5 mb-4" >
+                                            <label>Naturaleza:</label>
+                                            <select class="form-control" id="operationSelect" name="operationSelect" >
+                                                <option  hidden  selected> Selecciona una opción</option>
+                                                <option value="Debito">Débito</option>      
+                                                <option value="Credito">Crédito</option>
+                                            </select>
+                                        </div>	                                       
+                                    </div>
+                                    <div class="col-5 mb-4" >
+                                        <label>Operación Cuenta:</label>
+                                        <select class="form-control" id="operationAccountSelect" name="operationAccountSelect">
+                                            <option  hidden  selected> Selecciona una opción</option>
+                                            <option value="Obligacion">Obligación</option>      
+                                            <option value="Comprobante de Pago">Comprobante de pago</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-row col-5 mb-4">
+                                        <div>
+                                            <button onclick="createAccount()" type="button" id="addAccountOperation"class="btn btn-primary">Agregar</button>
+                                            <button onclick="cleanFields()"type="button" class="btn btn-secondary">Cancelar</button>
+                                            <button onclick="sendAccounts()" type="button" class="btn btn-primary">Guardar cuentas</button>
+                                        </div>					
+                                    </div>
+                                </form>   
+                                <div class="container-fluid mb-2" style="float:left">
+                                    <div class="card">
+                                    <div class="card-header mb-2" ><i class="fas fa-table mr-1" ></i>Cuenta</div>
+                                        <div class="card-body" >
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered dataTable" id="dataTableAccountingOp" cellspacing="0" 
+                                                    role="grid" aria-describedby="dataTable_accountOp">
+                                                    
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Rubro</th>
+                                                            <th>Cuenta</th>
+                                                            <th>Débito-Crédito</th>
+                                                            <th>Operacion</th>
+                                                            <th>Acciones</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tfoot>
+                                                        <tr>  
+                                                            <th>Rubro</th>
+                                                            <th>Cuenta</th>
+                                                            <th>Débito-Crédito</th>
+                                                            <th>Operacion</th>
+                                                            <th>Acciones</th>
+                                                        </tr>
+                                                    </tfoot>
+                                                    </table>
+                                            </div>    
+                                        </div>
+                                    </div>
+                                </div>  
+                            </div>
+                        </div>
+                    </div>
+                </form>	
+		</div>	
+	</div>
+</div>
+
+<div class="modal fade bd-example-modal-lg" id="myModalAccountButton" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Lista de cuentas para seleccionar</h4>
+            </div>
+                <div class="modal-body">
+					<div  class="container-fluid " >
+						<div class="card mb" >
+                            <div class="card-header " id="listAccountButton"><i class="fas fa-table mr-1" ></i>Seleccione la cuenta para remplazar</div>
+                                <div class="card-body" >
+                                    <div class="table-responsive">
+                                        <label for="id_name">Buscar por codigo</label>
+                                        <input type="text" name="search" class="form-control" placeholder="Buscar por codigo" title="" required="" id="id_search" >
+                                        <table class="table table-bordered dataTable" id="datatableAccountButton" cellspacing="0" 
+                                            role="grid" aria-describedby="dataTable_accountButton">	
+                                            <thead>
+                                                <tr>
+                                                    <th>Código</th>	
+                                                    <th>Descripción</th>
+                                                    <th>Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tfoot>
+                                                <tr>
+                                                    <th>Código</th>	
+                                                    <th>Descripción</th>
+                                                    <th>Acciones</th>
+                                                </tr>
+                                            </tfoot>
+                                                <tbody>
+                                                    <h1></h1> 
+                                    
+                                                </tbody>
+
+                                        </table>
+                                    </div>		
+                                </div>
+                        
+                            </div>  
+				    </div>  
+                </div>
+        </div>         
+    </div>  
+</div>
+<div class="modal fade" id="myModalACRubros" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Cuentas de rubros</h4>
+            </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                            <div class="card mb">
+                                <div class="card-header mb-2" ><i class="fas fa-table mr-1" ></i>Cuenta</div>
+                                    <div class="card-body" >
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered dataTable" id="datatableACRubro" 
+                                                role="grid" aria-describedby="dataTable_accountOp"> 
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Id</th>
+                                                            <th>Rubro</th>
+                                                            <th>Cuenta</th>
+                                                            <th>Doc. Presupuesto</th>
+                                                            <th>Débito-Crédito</th>
+                                                            <th>Acciones</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tfoot>
+                                                        <tr>
+                                                            <th>Id</th>
+                                                            <th>Rubro</th>
+                                                            <th>Cuenta</th>
+                                                            <th>Doc. Presupuesto</th>
+                                                            <th>Débito-Crédito</th>
+                                                            <th>Acciones</th>
+                                                        </tr>
+                                                    </tfoot>
+                                                    </table>
+                                        </div>    
+                                    </div>
+                                </div>
+                            </div>  
+                </div>
+            </div>         
+        </div>  
+</div>
+
+<script>
+
+var dataRow;
+var accountId;
+var originID=0;
+var accountRubro=[];
+var indexTable;
+var oTable;
+$(document).ready(function() {
+        $('#datatableACRubro').DataTable({
+            "destroy":true,
+		    "language": idioma_español,
+            "columnDefs": [
+            {
+                "targets": [0],
+                 "visible": false
+            }],
+		  
+			dom: 'Bfrtip',			
+		  }
+          
+		  );	
+		$('#dataTableAccountingOp').DataTable( {
+			
+		  "destroy":true,
+		  "language": idioma_español,
+		  
+			dom: 'Bfrtip',			
+		  }
+          
+		  );		 	
+
+		$('#dataTableAccountRubro').DataTable( {
+            "ordering": false,
+
+            "columnDefs": [
+            {
+                "targets": [0],
+                "visible": false
+            }
+        ],
+		  "destroy":true,
+		  "language": idioma_español,
+		  
+			dom: 'Bfrtip',			
+		  }
+		  );	       	 	
+
+    var table = $('#dataTableAccountRubro').DataTable();
+ 
+   /*  $('#dataTableAccountRubro tbody').on( 'click', 'tr', function () {
+        if ( $(this).hasClass('selected') ) {
+            $(this).removeClass('selected');
+        }
+        else {
+            table.$('tr.selected').removeClass('selected');
+            $(this).addClass('selected');
+            dataRow = table.row( this ).data();
+            console.log(dataRow)
+        }
+    } ); */
+
+ 
+} );
+$(document).ready(function() {
+    $('#datatableAccountButton').DataTable( {
+        
+        "bFilter": false,
+        "searching": true,
+        "columns": [
+				{ "type": "string" },
+				null,
+				null,
+			],
+        "language": idioma_español,
+        
+        dom: 'tp',			
+    }	 )	
+} );
+
+function rubroSelect(row) {	
+    var table = $('#dataTableAccountRubro').DataTable();
+    
+    dataRow = table.row(row.closest('tr')).data();
+
+    if(dataRow[4] == 'A'){
+        
+        $("#divRubroSelect").css('display', 'block ');
+        $("#rubroSelect").text("Rubro: "+ dataRow[1] + " " + dataRow[2]);
+
+    }else{
+        swal("Este rubro es MAYOR", "No se puede añadir cuenta", "error")
+    }
+
+}
+function loadTest() {	
+	$.ajax({
+		url: '{% url "getOriginBudget"  0 %}'.replace('0', localStorage.getItem('userID')),
+		data: {
+			'option': '1',
+			'nameAC': localStorage.getItem('nameAC'),
+			'idBussines': localStorage.getItem('idBussines'),
+
+		},
+		dataType: 'json',
+		success: function (data) {
+			
+		for (var i=0; i<data.OR.length; i++){
+			$('#separatorOrigin')
+			.append(`<div class="custom-control custom-radio custom-control-inline">
+			<input onclick="generateButton(1)" type="radio" class="custom-control-input" value="`+data.OR[i].nameOrigin+`" id="`+data.OR[i].nameOrigin+`"name="origins">
+			<label class="custom-control-label" for="`+data.OR[i].nameOrigin+`">`+data.OR[i].nameOrigin+`</label>
+			</div>`)
+			}
+		}			
+	});		
+}
+function generateButton(point){
+    
+	var nameOrigin = $('input[name=origins]:checked', '#addAccount').val();
+    if(point == 1){
+        $("#divCreateAccount").css("display", "none");	
+        $("#generatorAccount").text("GENERAR CUENTA CONTABLE DE "+ nameOrigin)															
+        $("#separatorOriginButton").css("display", "block");
+    }
+	
+    $.ajax({
+		url: '{% url "getBudget"  0 %}'.replace('0', localStorage.getItem('userID')),
+		data: {
+			'nameOrigin': nameOrigin,
+			'nameAC': localStorage.getItem('nameAC'),
+			'idBussines': localStorage.getItem('idBussines'),
+
+		},
+		dataType: 'json',
+		success: function (data) {
+            console.log(data)
+
+			var table = $('#dataTableAccountRubro').DataTable(); 
+ 			var rows = table.rows().remove().draw();
+			originID = data.ID;
+			for (var i=0; i<data.RUBRO.length; i++){
+                if(data.TRA[i].total>0){
+                    table.row.add( [
+                    data.RUBRO[i].id,
+                    data.RUBRO[i].rubro,
+                    data.RUBRO[i].description,
+                    "# cuentas agregadas "+data.TRA[i].total+ "<a  data-toggle='modal' data-target='#myModalACRubros' type='button'  id='ACRubrosSelect'  title='Ver cuentas'><button onclick=\'accountTyRubro(this)\' class='btn btn-primary btn-sm'><i class='fa fa-plus'></i></button></a>",	
+                    data.RUBRO[i].typeRubro,   
+                    "<a  title='Seleccionar rubro'><button type='button' onclick=\'rubroSelect(this)\' class='btn btn-primary btn-sm'><i class='fa fa-check' aria-hidden='true'></i></button></a>",	
+                    ])
+                }else{
+                    table.row.add( [
+                    data.RUBRO[i].id,
+                    data.RUBRO[i].rubro,
+                    data.RUBRO[i].description,
+                    "# cuentas agregadas "+data.TRA[i].total,	
+                    data.RUBRO[i].typeRubro,
+                     "<a title='Seleccionar rubro'><button type='button' onclick=\'rubroSelect(this)\' class='btn btn-primary btn-sm'><i class='fa fa-check' aria-hidden='true'></i></button></a>",	
+                    ])
+                }
+				
+			}
+
+			table.draw( false );
+										
+		}
+	});
+}
+function generateAccount(){
+    $("#divRubroSelect").css('display', 'none');
+    $("#rubroSelect").text("");
+    $("#divCreateAccount").css("display", "block");
+    $("#divCreateAccount").css("display", "block");
+    $("#divCreateAccount").css("display", "block");
+    nameAccount = $("#accountSelect option:selected").text();
+
+    $.ajax({
+        url: '{% url "getAccountSettings"  0 %}'.replace('0', localStorage.getItem('userID')),
+        data: {
+            'bussinesId': localStorage.getItem('idBussines'),
+            'idAC': localStorage.getItem('idAC'),
+
+        },
+        dataType: 'json',
+        success: function (data) {
+            const $select = document.querySelector("#accountSelect");
+        
+            for (let i = $select.options.length; i >= 0; i--) {
+                $select.remove(i);
+            }
+            $('#accountSelect').append(`<option  hidden  selected"> Selecciona una opción</option>`);
+            for (var i=0; i<data.ACC.length; i++){
+            $('#accountSelect').append(`<option value="${data.ACC[i].id}">${data.ACC[i].code}`+' '+ `${data.ACC[i].description} </option>`);
+            }						
+        }       
+    });
+}
+
+function createAccount(){
+
+    if(dataRow[4]=='M'){
+        swal("Este rubro es MAYOR", "No se puede añadir cuenta", "error")
+
+    }else{
+        var account = $("#accountSelect option:selected").text();
+        var operationAccount = $("#operationSelect option:selected").val();
+        var document = $("#operationAccountSelect option:selected").val();
+        console.log(account)
+        $.ajax({
+			url: '{% url "validateAccountsByRubro"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+                'bussinesId': localStorage.getItem('idBussines'),            
+			    'rubro': dataRow[0],
+                'document': document,
+                'account': $("#accountSelect option:selected").val(),
+                'operation': operationAccount
+			},
+			dataType: 'json',
+			success: function (data) {
+                if(data.VALIDATE == "FALSE"){
+                    if(data.TA == "Credito"){
+                        swal("No se ha podido añadir cuenta", "Esta cuenta le falta la contraoperación débito" , "error");
+                    }else{
+                        swal("No se ha podido añadir cuenta", "Esta cuenta le falta la contraoperación crédito" , "error");
+                    }
+                }else{
+                    if(data.VALIDATE == "PARTIDA"){
+                        swal("No se ha podido añadir cuenta", "Esta cuenta ya posee partida doble" , "error");
+                    }else{
+                        var tableAccountingOp = $('#dataTableAccountingOp').DataTable();
+                        tableAccountingOp.draw(false);
+                        var valueDouble = 0
+                        if (accountRubro.length == 0){
+                            accountRubro.push({"rubro": dataRow[0],"account": $("#accountSelect option:selected").val(),"document": document,"operationAccount":operationAccount})
+                            tableAccountingOp.row.add( [
+                                dataRow[1],
+                                account,
+                                operationAccount,
+                                document,                            
+                                "<a data-toggle='tooltip' type='button' id='deleteAccounting'title='Eliminar Cuenta'><button onclick=\'deleteAccounting(this)\' class='btn btn-primary btn-sm'><i class='fa fa-trash'></i></button></a>"
+                            ])
+                            tableAccountingOp.draw(false);
+                        }else{
+                            for(var i = 0; i<accountRubro.length; i++){
+                                if(accountRubro[i].account == $("#accountSelect option:selected").val() && accountRubro[i].rubro == dataRow[0] &&  accountRubro[i].document == document && accountRubro[i].operationAccount == operationAccount)
+                                {
+                                    valueDouble = 1
+                                }
+                            } 
+                            if(valueDouble == 1){
+                                swal("No se ha podido añadir cuenta", "Esta cuenta ya se agrego" , "error");
+                            }else{
+                                accountRubro.push({"rubro": dataRow[0],"account": $("#accountSelect option:selected").val(),"document": document,"operationAccount":operationAccount})
+                                tableAccountingOp.row.add( [
+                                    dataRow[1],
+                                    account,
+                                    operationAccount,
+                                    document,                            
+                                    "<a data-toggle='tooltip' type='button' id='deleteAccounting'title='Eliminar Cuenta'><button onclick=\'deleteAccounting(this)\' class='btn btn-primary btn-sm'><i class='fa fa-trash'></i></button></a>"
+                                ])
+                                tableAccountingOp.draw(false);
+                            }
+                        }
+                        
+                    }
+                }
+            }
+        })
+       
+    }
+
+    
+}
+
+function sendAccounts(){
+    var token = '{{csrf_token}}';
+    $.ajax({
+			headers: { "X-CSRFToken": token },
+			url: '{% url "createAccountRubro"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+				'accountRubro': JSON.stringify(accountRubro),
+				'bussines':localStorage.getItem('idBussines'),
+			},
+			type: 'POST',
+			dataType: 'json',
+			success: function (data) { 
+                if(data.CREATE=="TRUE"){
+                    swal("Se ha añadido cuenta", "Continua con tu proceso", "success");
+                    generateButton(0)
+                    cleanFields()   
+                }
+            }       
+    });
+
+}
+$('#dataTableAccountingOp tbody').on('click', 'tr', function () {
+	indexTable=$(this).index();
+    console.log(indexTable)
+} );
+
+$('#id_search').on('input', function() { 
+    console.log($(this).val())
+    var table = $("#datatableAccountButton").DataTable();
+    table.column(0).search("^" + $(this).val(), true, false, true).draw();
+});
+
+function deleteAccounting(row){
+    var table = $('#dataTableAccountingOp').DataTable()
+    indexTable = table.row(row.closest('tr')).index();
+    table.row(row.closest('tr')).remove().draw(false);
+	accountRubro.splice(indexTable, 1);
+}
+
+
+function searchAccountsButton(){
+
+    var nameOrigin = $('input[name=origins]:checked', '#addAccount').val();
+
+	$.ajax({
+			url: '{% url "getSearchAccountButton"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+                'bussinesId': localStorage.getItem('idBussines'),            
+			    'idAC': localStorage.getItem('idAC')
+
+			},
+			dataType: 'json',
+			success: function (data) {
+                console.log(data)
+
+				var table = $('#datatableAccountButton').DataTable(); 
+ 				var rows = table.rows().remove().draw();
+				for (var i=0; i<data.ACCOUNT.length; i++){
+
+				table.row.add( [
+				data.ACCOUNT[i].code,
+				data.ACCOUNT[i].description,
+				"<a data-toggle='tooltip' title='Seleccionar cuenta'><button id="+JSON.stringify(data.ACCOUNT[i].id)+" onclick=\'selectAccount("+JSON.stringify(data.ACCOUNT[i].id)+','+JSON.stringify(data.ACCOUNT[i].code)+','+JSON.stringify(data.ACCOUNT[i].description)+")\' class='btn btn-primary btn-sm'><i class='fa fa-check' aria-hidden='true'></i></button></a>"														
+				])
+				
+			}
+            table.order( [ 0, 'asc' ] )
+			table.draw( false );
+
+            $("#listAccountButton").text("Lista de cuentas de "+nameOrigin);
+
+			}
+		});
+}
+
+function deleteAccountByRubro(row){
+    swal({
+    title: "Desea eliminarla?",
+    text: "Al confirmar este acción, la cuenta sera eliminad.",
+    icon: "warning",
+    buttons: true,
+    dangerMode: true,
+    })
+    .then((willDelete) => {
+    if (willDelete) {
+            var table = $('#datatableACRubro').DataTable(); 
+            var currentRow = table.row(row.closest('tr'))
+            var data = $('#datatableACRubro').DataTable().row(currentRow).data();
+            $.ajax({
+                    url: '{% url "deleteAccountsByRubro"  0 %}'.replace('0', localStorage.getItem('userID')),
+                    data: {
+                        'id': JSON.parse(data[0])        
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.DT=="TRUE"){
+						swal("Se elemino correctamente","Continua con tu proceso", "success");		
+                        table.row(row.closest('tr')).remove().draw(false);
+                        generateButton(0)
+					    }
+                        table.draw( false );
+                    }
+                });
+            
+    }
+    })
+}
+
+function accountTyRubro(row){
+    console.log(row)
+    var table = $('#dataTableAccountRubro').DataTable(); 
+    var currentRow = table.row(row.closest('tr'))
+    var data = $('#dataTableAccountRubro').DataTable().row(currentRow).data();
+    console.log(data)
+    $.ajax({
+        url: '{% url "getAccountsByRubros"  0 %}'.replace('0', localStorage.getItem('userID')),
+        data: {
+            'rubro': JSON.parse(data[0])        
+        },
+        dataType: 'json',
+        success: function (data) {
+            console.log(data)
+            var table = $('#datatableACRubro').DataTable(); 
+            var rows = table.rows().remove().draw();
+            for (var i=0; i<data.AC.length; i++){
+            table.row.add( [
+            data.AC[i].id,
+            data.RC[0].rubro,
+            data.AC[i].account__code + " " + data.AC[i].account__description,
+            data.AC[i].document,
+            data.AC[i].typeAccount,	
+             "<a data-toggle='tooltip' type='button' id='deleteAccounting'title='Eliminar Cuenta'><button onclick=\'deleteAccountByRubro(this)\' class='btn btn-primary btn-sm'><i class='fa fa-trash'></i></button></a>"										
+            ]);
+            }
+            table.draw( false );
+            }
+        });
+}
+
+function cleanFields(){
+    $('#accountSelect').val('Selecciona una opción');
+    $('#operationSelect').val('Selecciona una opción');
+    $('#operationAccountSelect').val('Selecciona una opción');
+
+    $('#dataTableAccountingOp tbody tr td').each( function(){
+        var table = $('#dataTableAccountingOp').DataTable()
+        table.row(this.closest('tr')).remove().draw(false);
+        accountRubro = []
+    });
+}
+
+function selectAccount(id){
+    $("#accountSelect").val(id);
+    $('#myModalAccountButton').modal('toggle');
+}
+
+</script>
+
+{% endblock %}
+</body>

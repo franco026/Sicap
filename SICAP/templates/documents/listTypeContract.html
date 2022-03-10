@@ -1,0 +1,487 @@
+{% extends 'base/base.html' %}
+{% load bootstrap4 %}
+{% block main %}
+
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<div id=divCreate class="container-fluid">
+    <h1 class="mt-4">Lista de informaciones contratuales</h1>
+    <div class="card mb-4">
+        <div class="card-header"><i class="fas fa-table mr-1"></i>Lista de informaciones contratuales</div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <button data-toggle="modal" data-target="#myModalTypeContrct" type="button" class="genric-btn primary small">Añadir informacion contratual</button>              
+                <table class="table table-bordered dataTable" id="dataTableTypeContract" width="100%" cellspacing="0"
+                      role="grid" aria-describedby="dataTable_typeContract" style="width: 100%;">
+                    
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </tfoot> 
+                    <tbody>
+                        {% if object_list %}
+                        {% for typeContract in object_list %}                        
+                              <tr>                  
+                                       
+                                <td>{{typeContract.nameTC}}</td>                        
+                                <td>{{typeContract.description}}</td>
+                                <td>
+                        </div>
+                      </div>
+
+                      <a href="#" data-toggle="tooltip"   title="Registrar Detalle de Tipo de Contrato">
+                        <button data-toggle="modal" data-target="#myModalDetailTypeContract" class="btn btn-primary btn-sm"  onclick="getTypeContract('{{typeContract.id}}')">
+                        <i class="fa fa-info-circle"></i>
+                        </button>
+                      </a>
+                      <a href="#" data-toggle="tooltip"   title="Eliminar Tipo de Contrato">
+                        <button onclick="deleteTypeContract('{{typeContract.id}}','{{typeContract.nameTC}}')" class="btn btn-primary btn-sm"  >
+                        <i class="fa fa-trash"></i>
+                        </button>
+                      </a>
+                      <a href="#" data-toggle="tooltip" id="updateTContract"  title="Actualizar Tipo de Contrato">
+                        <button onclick="changeUpdateTypeContract('{{typeContract.id}}','{{typeContract.nameTC}}','{{typeContract.description}}','{{typeContract.categoryTC}}','{{typeContract.digitsTC}}')"data-toggle="modal" data-target="#myModalTypeContractUpdate" class="btn btn-primary btn-sm">
+                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                        </button>
+                      </a> 
+                      <a href="#" data-toggle="tooltip" id="explainTContract"  title="Gestionar Tipo de Contrato">
+                        <button onclick="manageTypeContract('{{typeContract.id}}','{{typeContract.nameTC}}','{{typeContract.description}}')"data-toggle="modal" data-target="#myModalTypeContractManager" class="btn btn-primary btn-sm">
+                        <i class="fa fa-pencil"></i>
+                        </button>
+                      </a> 
+                     
+                                </td>
+                              </tr>
+                            {% endfor %}
+                            {% else %}
+                            <h1 class="black-color">No hay tipo de contrato registrados de esta empresa</h1>
+                            {% endif %}  
+                    </tbody>
+                </table>
+        </div>
+</div>
+
+<div class="modal fade" id="myModalDetailTypeContract" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Registrar Detalles Tipo de Contrato </h4>
+            </div>
+                <div class="modal-body">
+                    <div  class="container-fluid">
+                        <form id="addDetailTypeContract" action="">
+                            {% csrf_token %}
+                            {% bootstrap_form typeContractDetailForm %}
+                            <div id="divCreateButtonsDetailTypeContract"  class="form-group">
+                                <button id="btnCreateDetailTypeContract" type="submit" class="genric-btn success circle" >Registrar Detalle de Tipo Contrato</button>
+                                <button type="button" class="genric-btn default circle" data-dismiss="modal">Cancelar</button>
+                            </div>   
+                    
+                        </form>  
+                    </div>
+                </div>
+            </div>         
+        </div>  
+</div>
+<div class="modal fade" id="myModalTypeContrct" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Añadir Nuevo Tipo de Contrato</h4>
+            </div>
+                <div class="modal-body">
+                    <div  class="container-fluid">
+                        <form id="addTypeContract" action="">
+                            {% csrf_token %}
+                            {% bootstrap_form typeContractForm %}
+                            <div id="divCreateTypeContract"  class="form-group">
+                                <button id="btnCreateTypeContract" type="submit" class="genric-btn success circle" >Registrar Tipo de Contrato</button>
+                                <button type="submit" class="genric-btn default circle" data-dismiss="modal">Cancelar</button>
+                            </div>   
+                    
+                        </form>  
+                    </div>
+                </div>
+            </div>    
+        </div>    
+</div>
+
+<div class="modal fade" id="myModalTypeContractUpdate" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Actualizar Tipo de Contrato</h4>
+            </div>
+                <div class="modal-body">
+                    <div  class="container-fluid">
+                        <form id="formAPUpdateTypeContract" action="">
+                            {% csrf_token %}
+                            {% bootstrap_form byTypeContractUpdateForm %}
+                            <div id="divCreateButtons"  class="form-group">
+                                <button id="btnCreate" type="submit" class="genric-btn success circle" >Actualizar Tipo de Contrato</button>
+                                <button type="button" class="genric-btn default circle" data-dismiss="modal">Cancelar</button>
+                            </div> 
+                            
+                        </form>  
+                    </div>
+                </div>
+            </div>         
+        </div>  
+</div>
+
+
+<div class="modal fade" id="myModalTypeContractManager" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Gestionar Tipo de Contrato</h4>
+            </div>
+                <div class="modal-body">
+                    <div  class="container-fluid">
+                        <form id="ManagerTypeContract">
+                            <div id="separato_typeContract">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>         
+        </div>  
+</div>
+<script>
+
+$(document).ready(function() {
+
+
+    $('#myModalTypeContractManager').on('hidden.bs.modal', function () {
+		$('#separato_typeContract').empty()
+        detallTypeContract = []
+	})
+
+    $('#dataTableTypeContract').DataTable( {
+        "destroy":true,
+        "language": idioma_español,
+        
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ]
+        
+        } );
+          
+} );
+
+var typeContractId;
+var typeContractCurrentName
+var detallTypeContract
+function getTypeContract(id){
+    typeContractId =  id; 
+ 
+}
+
+
+function manageTypeContract(id, nameTC, description, categoryTC, digitsTC){
+    typeContractId =  id;
+    typeContractCurrentName = nameTC;
+    $.ajax({
+            url: '{% url "manageTypeContract"  0 %}'.replace('0', localStorage.getItem('userID')),
+            data: {
+                'typeContractId': typeContractId,
+
+            },
+            dataType: 'json',
+            success: function (data) {
+                if(data.CREATE == "TRUE"){
+                    console.log(data.LT)
+                    detallTypeContract = Array.from(data.LT)
+                    $('#separato_typeContract')
+						.append(`<div  class="container-fluid col-12 mb-8">`)
+                   
+                    for (var i=0; i<data.LT.length; i++){
+                        $('#separato_typeContract')
+						.append(`<div class="form-row mb-4">
+							        <div class="col-4 mb-2" style="top: 27px">
+                                        <label for="`+data.LT[i].codeTypeC+`">`+data.LT[i].codeTypeC+`</label>
+                                    </div>
+                                    <div class="col-4">
+                                        <label for="`+data.LT[i].codeTypeC+`">Nombre</label>
+                                        <input style="width: 100%" type="text" value="`+data.LT[i].value+`" id="`+data.LT[i].id+"-"+data.LT[i].codeTypeC+`" required>
+                                    </div>
+                                    <div class="col-4">
+                                        <label for="`+data.LT[i].codeTypeC+`">Codigo</label>
+                                        <input style="width: 100%" type="text" value="`+data.LT[i].digitstc+`" id="`+data.LT[i].id+"-"+data.LT[i].codeTypeC+`dg" required>
+                                    </div>
+                                </div>`)
+                    }
+                    $('#separato_typeContract')
+						.append(`
+                        <div style="display: flex; justify-content: center;margin-top:15px" >
+                        <button type="button"  onclick=\'finishManage()\'" class="btn btn-primary">Guardar</button>
+                        </div>
+                        </div>`)
+                }else{
+                    console.log("no entro")
+                    swal({
+                    title: "No se puede gestionar el tipo de contrato",
+                    text: "Ya que no posee detalles de estel",
+                    icon: "warning",
+                    cancelButtonText: '<i class="fa fa-thumbs-down"></i>',
+
+                    }).then((willDelete) => {
+			            if (willDelete) {
+                            $('#myModalTypeContractManager').modal('toggle');
+
+                        }})
+                }
+                
+            }
+        });
+
+  
+}
+function finishManage(){
+    manageContract = []
+    for(var i =0; i< detallTypeContract.length; i++){
+        var valuedetall= document.getElementById(""+detallTypeContract[i]['id']+"-"+detallTypeContract[i]['codeTypeC'])
+        var digit= document.getElementById(""+detallTypeContract[i]['id']+"-"+detallTypeContract[i]['codeTypeC']+"dg")
+        if(valuedetall.value != ''){
+            manageContract.push({
+                idDetall: detallTypeContract[i]['id'],
+                value:valuedetall.value,
+                digit:digit.value
+            })
+        }else{
+            swal("Error","Por favor llene todos los campos","error");
+            manageContract = []
+            break;
+        }
+    }
+
+    if(manageContract.length != 0){
+        $.ajax({
+            url: '{% url "manageDetallTypeContract"  0 %}'.replace('0', localStorage.getItem('userID')),
+            data: {
+                'newData': JSON.stringify(manageContract),
+
+            },
+            dataType: 'json',
+            success: function (data) {
+                if(data.CREATE == "TRUE"){
+                    swal("Gestion completada!", "Continua con tu proceso!", "success");
+                    detallTypeContract = []
+                    $('#myModalTypeContractManager').modal('toggle');
+                    $('#separato_typeContract').empty()
+                }
+                
+            }
+        });
+
+    }
+
+
+}
+
+function changeUpdateTypeContract(id, nameTC, description, categoryTC, digitsTC){
+    
+    typeContractId =  id;
+    typeContractCurrentName = nameTC;
+
+    var nameTCUpdate = document.getElementById("id_nameTCUpdate");
+    nameTCUpdate.value = nameTC;
+    var descriptionUpdate = document.getElementById("id_descriptionUpdate");
+    descriptionUpdate.value = description;
+    var categoryTCUpdate = document.getElementById("id_categoryTCUpdate");
+    categoryTCUpdate.value = categoryTC;
+    var digitsTCUpdate = document.getElementById("id_digitsTCUpdate");
+    digitsTCUpdate.value = digitsTC;
+  
+}
+
+
+$("form#addDetailTypeContract").submit(function() {
+
+    var codeTypeC = $('input[name="codeTypeC"]').val();
+    var descriptionTypeC = $('textarea[name="descriptionTypeC"]').val();
+
+    if (codeTypeC,descriptionTypeC) {
+        // Create Ajax Call
+        $.ajax({
+            url: '{% url "createDetailTypeContract"  0 %}'.replace('0', localStorage.getItem('userID')),
+            data: {
+                'typeContractId': typeContractId,
+                'codeTypeC': codeTypeC,
+                'descriptionTypeC': descriptionTypeC,
+
+            },
+            dataType: 'json',
+            success: function (data) {
+                console.log(data);
+                if(data.CREATE == "TRUE"){
+                    swal("Creado exitoso del detalle de tipo de contrato!", "Continua con tu proceso!", "success");
+                    $('#myModalDetailTypeContract').modal('toggle');
+                }else{
+                    swal("No se puede crear el detalle del tipo de contrato", "Ya existe un detalle con este código", "error");
+                    $('#myModalDetailTypeContract').modal('toggle');
+                }
+                
+            }
+        });
+    } else {
+        alert("Por favor llene todos los campos");
+    }
+    $('form#addDetailTypeContract').trigger("reset");
+    return false;
+});
+ 
+$("form#addTypeContract").submit(function() {
+
+    var nameTC = $('input[name="nameTC"]').val();
+    var description = $('textarea[name="description"]').val();
+
+    if (nameTC,description) {
+        // Create Ajax Call
+        $.ajax({
+            url: '{% url "createTypeContract"  0 %}'.replace('0', localStorage.getItem('userID')),
+            data: {
+                'bussines': localStorage.getItem('idBussines'),
+                'nameTC': nameTC,
+                'description': description
+
+            },
+            dataType: 'json',
+            success: function (data) {
+                console.log(data);
+                $("#dataTableTypeContract").load(" #dataTableTypeContract");
+                if(data.CREATE == "TRUE"){
+                    swal("Creado exitoso del nuevo tipo de contrato!", "Continua con tu proceso!", "success");
+                    $('#myModalTypeContrct').modal('toggle');
+                }else{
+                    swal("No se puede crear el tipo de contrato", "Ya existe un tipo de contrato con este nombre", "error");
+                    $('#myModalTypeContrct').modal('toggle');
+                }
+                
+            }
+        });
+    } else {
+        alert("Por favor llene todos los campos");
+    }
+    $('form#addTypeContract').trigger("reset");
+    return false;
+});
+
+$("form#formAPUpdateTypeContract").submit(function() {
+     
+    var nameTCUpdate = $('input[name="nameTCUpdate"]').val();
+    var descriptionUpdate = $('textarea[name="description"]').val();
+    var categoryTCUpdate = $('input[name="categoryTCUpdate"]').val();
+    var digitsTCUpdate = $('input[name="digitsTCUpdate"]').val();
+    if (nameTCUpdate, descriptionUpdate, categoryTCUpdate, digitsTCUpdate) {
+
+        // Create Ajax Call
+        if(typeContractCurrentName==nameTCUpdate){
+            $.ajax({
+
+                url: '{% url "updateTypeContract"  0 %}'.replace('0', localStorage.getItem('userID')),
+                data: {
+                    'bussinesId': localStorage.getItem('idBussines'),
+                    'equalName': 'TRUE',
+                    'id': typeContractId,
+                    'nameTC': nameTCUpdate,
+                    'description': descriptionUpdate,
+                    'categoryTC': categoryTCUpdate,
+                    'digitsTC': digitsTCUpdate,      
+                    
+                },
+                dataType: 'json',
+                success: function (data) {                   
+                    if(data.CREATE == "TRUE"){
+                        $("#dataTableTypeContract").load(" #dataTableTypeContract");
+                        swal("Actualización exitosa!", "Continua con tu proceso!", "success");
+                        $('#myModalTypeContractUpdate').modal('toggle');
+                    }else{
+                        swal("No se puede actualizar el tipo de contrato", "Ya existe un tipo de contrato con este nombre", "error");
+                        $('#myModalTypeContractUpdate').modal('toggle');
+                    } 
+                }
+                });
+        }else{
+            $.ajax({
+
+            url: '{% url "updateTypeContract"  0 %}'.replace('0', localStorage.getItem('userID')),
+            data: {
+                'bussinesId': localStorage.getItem('idBussines'),
+                'equalName': 'FALSE',
+                'id': typeContractId,
+                'nameTC': nameTCUpdate,
+                'description': descriptionUpdate,
+                'categoryTC': categoryTCUpdate,
+                'digitsTC': digitsTCUpdate,
+            },
+            dataType: 'json',
+            success: function (data) {               
+                if(data.CREATE == "TRUE"){
+                    $("#dataTableTypeContract").load(" #dataTableTypeContract");
+                    swal("Actualización exitosa!", "Continua con tu proceso!", "success");
+                    $('#myModalTypeContractUpdate').modal('toggle');
+                }else{
+                    swal("No se puede actualizar el tipo de contrato", "Ya existe un tipo de contrato con este nombre", "error");
+                    $('#myModalTypeContractUpdate').modal('toggle');
+                } 
+            }
+            });
+        }
+       
+    } else {
+        alert("All fields must have a valid value.");
+    }
+    $('form#formAPUpdateTypeContract').trigger("reset");
+    return false;
+ });
+ 
+function deleteTypeContract(id, name){
+
+    swal({
+    title: "Desea eliminar el tipo de contrato " + name + "?",
+    text: "Al confirmar esta acción, el tipo de contrato " + name + " sera eliminado.",
+    icon: "warning",
+    buttons: true,
+    dangerMode: true,
+    })
+    .then((willDelete) => {
+    if (willDelete) {
+
+        $.ajax({
+            url: '{% url "deleteAll" 0 %}'.replace('0', localStorage.getItem('userID')),
+            data: {
+                'id': id,
+                'option': '6'
+            },
+            dataType: 'json',
+            success: function (data) {   
+                $("#dataTableTypeContract").load(" #dataTableTypeContract");
+                swal("El tipo de contrato " + name + "  se ha eliminado con éxito.", {
+                icon: "success",
+                });
+            }
+        });
+    }
+    });
+}
+
+</script>
+{% endblock %}

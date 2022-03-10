@@ -1,0 +1,320 @@
+{% extends 'base/base.html' %}
+{% load bootstrap4 %}
+{% block main %}
+
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<div id=divCreate class="container-fluid">
+    <h1 class="mt-4">Lista de comprobante</h1>
+    <div class="card mb-4">
+        <div class="card-header"><i class="fas fa-table mr-1"></i>Lista de comprobante</div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <button  data-toggle="modal" data-target="#myModalVoucher" type="button" class="genric-btn primary small">Añadir comprobante</button>              
+                <table class="table table-bordered dataTable" id="dataTableVoucher" width="100%" cellspacing="0"
+                      role="grid" aria-describedby="dataTable_voucher" style="width: 100%;">
+                    
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Orden</th>
+                            <th>Número</th>
+                            <th>Categoría</th>
+                            <th>Fecha de creación</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr> 
+                            <th>Código</th>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Orden</th>
+                            <th>Número</th>
+                            <th>Categoría</th>
+                            <th>Fecha de creación</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {% if object_list %}
+                        {% for voucher in object_list %}                        
+                              <tr>                          
+                                <td>{{voucher.code}}</td>                        
+                                <td>{{voucher.name}}</td>
+                                <td>{{voucher.description}}</td>
+                                <td>{{voucher.order}}</td>                        
+                                <td>{{voucher.number}}</td>
+                                <td>{{voucher.category}}</td>
+                                <td>{{voucher.dateCreation}}</td>
+                                <td>
+                        </div>
+                      </div>
+                   
+                      <a href="#" data-toggle="tooltip"   title="Eliminar Comprobante">
+                        <button onclick="deleteInform('{{voucher.id}}','{{voucher.name}}')" class="btn btn-primary btn-sm"  >
+                        <i class="fa fa-trash"></i>
+                        </button>
+                      </a>
+                      <a href="#" data-toggle="tooltip" id="updateVoucher"  title="Actualizar Comprobante">
+                        <button onclick="changeUpdateVoucher('{{voucher.id}}','{{voucher.code}}','{{voucher.name}}','{{voucher.description}}','{{voucher.order}}','{{voucher.number}}','{{voucher.category}}')"data-toggle="modal" data-target="#myModalVoucherUpdate" class="btn btn-primary btn-sm">
+                        <i class="fa fa-pencil"></i>
+                        </button>
+                      </a> 
+                                </td>
+                              </tr>
+                            {% endfor %}
+                            {% else %}
+                            <h1 class="black-color">No hay comprobante registrados de esta empresa</h1>
+                            {% endif %}  
+                    </tbody>
+                </table>
+        </div>
+</div>
+
+<div class="modal fade" id="myModalVoucher" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Añadir nuevo comprobante</h4>
+            </div>
+                <div class="modal-body">
+                    <div  class="container-fluid">
+                        <form id="addVoucher" action="">
+                            {% csrf_token %}
+                            {% bootstrap_form voucherForm %}
+
+                            <div id="divCreateVoucher"  class="form-group">
+                                <button id="btnCreatenVoucher" type="submit" class="genric-btn success circle" >Registrar Comprobante</button>
+                                <button type="submit" class="genric-btn default circle" data-dismiss="modal">Cancelar</button>
+                            </div>   
+                    
+                        </form>  
+                    </div>
+                </div>
+            </div>         
+        </div>  
+</div>
+
+<div class="modal fade" id="myModalVoucherUpdate" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Actualizar comprobante</h4>
+            </div>
+                <div class="modal-body">
+                    <div  class="container-fluid">
+                        <form id="formAPUpdateVoucher" action="">
+                            {% csrf_token %}
+                            {% bootstrap_form voucherUpdateForm %}
+                            <div id="divCreateButtons"  class="form-group">
+                                <button id="btnCreate" type="submit" class="genric-btn success circle" >Actualizar comprobante</button>
+                                <button type="button" class="genric-btn default circle" data-dismiss="modal">Cancelar</button>
+                            </div> 
+                            
+                        </form>  
+                    </div>
+                </div>
+            </div>         
+        </div>  
+</div>
+<script>
+
+$(document).ready(function() {
+		$('#dataTableVoucher').DataTable( {
+		  "destroy":true,
+		  "language": idioma_español,
+		  
+			dom: 'Bfrtip',
+			buttons: [
+				'copy', 'csv', 'excel', 'pdf', 'print'
+			]
+			
+		  } );
+		 
+	
+} );
+
+var voucherId;
+var codeVoucher;
+function CreateVoucher(id){
+    voucherId =  id;
+}
+
+function changeUpdateVoucher(id, code, name, description, order, number, category){
+    
+    voucherId =  id; 
+    codeVoucher = name;
+    var codeUpdate = document.getElementById("id_codeUpdate");
+    codeUpdate.value = code;
+    var nameUpdate = document.getElementById("id_nameUpdate");
+    nameUpdate.value = name;
+    var descriptionUpdate = document.getElementById("id_descriptionUpdate");
+    descriptionUpdate.value = description;
+    var orderUpdate = document.getElementById("id_orderUpdate");
+    orderUpdate.value = order;
+    var numberUpdate = document.getElementById("id_numberUpdate");
+    numberUpdate.value = number;
+    var categoryUpdate = document.getElementById("id_categoryUpdate");
+    categoryUpdate.value = category;
+   
+}
+
+$("form#addVoucher").submit(function() {
+
+    var code = $('input[name="code"]').val();
+    var name = $('input[name="name"]').val();
+    var description = $('textarea[name="description"]').val();
+    var order = $('input[name="order"]').val();
+    var number = $('input[name="number"]').val();
+    var category = $('input[name="category"]').val();   
+
+    if (code, name, description, order, number, category) {
+        // Create Ajax Call
+        $.ajax({
+            url: '{% url "createVoucher"  0 %}'.replace('0', localStorage.getItem('userID')),
+            data: {
+                'bussines': localStorage.getItem('idBussines'),
+                'code': code,
+                'name': name,
+                'description': description,
+                'order': order,
+                'number': number,
+                'category': category,
+            },
+            dataType: 'json',
+            success: function (data) {
+                console.log(data);
+                $("#dataTableVoucher").load(" #dataTableVoucher");
+                if (data.CREATE=="TRUE"){
+                    swal("Creado exitoso del nuevo comprobante!", "Continua con tu proceso!", "success");
+                    $('#myModalVoucher').modal('toggle');
+
+                }else{
+                    swal("No se puede crear un comprobante con el mismo nombre para este origen", "Verifique sus datos!", "error");
+                    $('#myModalVoucher').modal('toggle');
+                }
+                
+            }
+        });
+    } else {
+        alert("Por favor llene todos los campos");
+    }
+    $('form#addVoucher').trigger("reset");
+    return false;
+});
+
+$("form#formAPUpdateVoucher").submit(function() {
+
+     var codeUpdate = $('input[name="codeUpdate"]').val();
+     var nameUpdate = $('input[name="nameUpdate"]').val();
+     var descriptionUpdate = $('textarea[name="descriptionUpdate"]').val();
+     var orderUpdate = $('input[name="orderUpdate"]').val();
+     var numberUpdate = $('input[name="numberUpdate"]').val();
+     var categoryUpdate = $('input[name="categoryUpdate"]').val();
+    
+ 
+     if (codeUpdate, nameUpdate, descriptionUpdate, orderUpdate, numberUpdate, categoryUpdate) {
+         // Create Ajax Call
+         if(codeVoucher == codeUpdate){
+            $.ajax({
+             url: '{% url "updateVoucher"  0 %}'.replace('0', localStorage.getItem('userID')),
+             data: {
+                'bussinesId': localStorage.getItem('idBussines'),
+                'equalName': 'FALSE',
+                'id': voucherId,
+                'code': codeUpdate,
+                'name': nameUpdate,
+                'description': descriptionUpdate,
+                'order': orderUpdate,
+                'number': numberUpdate,
+                'category': categoryUpdate,                                 
+             },
+             dataType: 'json',
+             success: function (data) {
+                 if(data.CREATE == "TRUE"){
+                    $("#dataTableVoucher").load(" #dataTableVoucher");
+                    swal("Actualización exitosa!", "Continua con tu proceso!", "success");                 
+                    $('#myModalVoucherUpdate').modal('toggle');
+                }else{
+                    swal("No se puede actualizar el comprobante", "Ya existe un comprobante con este código", "error");
+                    $('#myModalVoucherUpdate').modal('toggle');
+                } 
+ 
+             }
+         });
+         }else{
+            $.ajax({
+             url: '{% url "updateVoucher"  0 %}'.replace('0', localStorage.getItem('userID')),
+             data: {
+                'bussinesId': localStorage.getItem('idBussines'),
+                'equalName': 'FALSE',
+                'id': voucherId,
+                'code': codeUpdate,
+                'name': nameUpdate,
+                'description': descriptionUpdate,
+                'order': orderUpdate,
+                'number': numberUpdate,
+                'category': categoryUpdate,                                  
+             },
+             dataType: 'json',
+             success: function (data) {
+                 if(data.CREATE == "TRUE"){
+                    $("#dataTableVoucher").load(" #dataTableVoucher");
+                    swal("Actualización exitosa!", "Continua con tu proceso!", "success");
+                    $('#myModalVoucherUpdate').modal('toggle');
+                }else{
+                    swal("No se puede actualizar el comprobante", "Ya existe un comprobante con este código", "error");
+                    $('#myModalVoucherUpdate').modal('toggle');
+                } 
+ 
+             }
+         });
+         }
+         
+       } else {
+         alert("All fields must have a valid value.");
+     }
+     return false;
+ });
+ 
+function deleteInform(id, name){
+
+    swal({
+    title: "Desea eliminar el comprobante " + name + "?",
+    text: "Al confirmar esta acción, el comprobante " + name + " sera eliminado.",
+    icon: "warning",
+    buttons: true,
+    dangerMode: true,
+    })
+    .then((willDelete) => {
+    if (willDelete) {
+
+        $.ajax({
+            url: '{% url "deleteAll"  0 %}'.replace('0', localStorage.getItem('userID')),
+            data: {
+                'id': id,
+                'option': '4'
+            },
+            dataType: 'json',
+            success: function (data) {   
+                $("#dataTableVoucher").load(" #dataTableVoucher");
+                swal("El comprobante " + name + "  se ha eliminado con éxito.", {
+                icon: "success",
+                });
+            }
+        });
+    }
+    });
+}
+
+</script>
+{% endblock %}

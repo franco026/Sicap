@@ -1,0 +1,326 @@
+{% extends 'base/base.html' %}
+{% load bootstrap4 %}
+{% block main %}
+
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<div id=divCreate class="container-fluid">
+    <h1 class="mt-4">Lista de terceros</h1>
+    <div class="card mb-4">
+        <div class="card-header"><i class="fas fa-table mr-1"></i>Lista de terceros</div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <button  data-toggle="modal" data-target="#myModalThird" type="button" class="genric-btn primary small">Añadir tercero</button>              
+                <table class="table table-bordered dataTable" id="dataTableThird" width="100%" cellspacing="0"
+                      role="grid" aria-describedby="dataTable_third" style="width: 100%;">
+                    
+                    <thead>
+                        <tr>
+                            <th>Tipo de Identificación</th>
+                            <th>Identificación</th>
+                            <th>Nombre</th>
+                            <th>Apellidos</th>
+                            <th>Razón</th>
+                            <th>Teléfono</th>
+                            <th>Ciudad</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr> 
+                            <th>Tipo de Identificación</th>
+                            <th>Identificación</th>
+                            <th>Nombre</th>
+                            <th>Apellidos</th>
+                            <th>Razón</th>
+                            <th>Teléfono</th>
+                            <th>Ciudad</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {% if object_list %}
+                        {% for third in object_list %}                        
+                              <tr>                          
+                                <td>{{third.typeIdentification}}</td>                        
+                                <td>{{third.identification}}</td>
+                                <td>{{third.name}}</td>
+                                <td>{{third.surnames}}</td>                        
+                                <td>{{third.reason}}</td>
+                                <td>{{third.phone}}</td>
+                                <td>{{third.city}}</td>
+                                <td>
+                        </div>
+                      </div>
+                   
+                      <a href="#" data-toggle="tooltip"   title="Eliminar tercero">
+                        <button onclick="deleteThird('{{third.id}}','{{third.name}}')" class="btn btn-primary btn-sm"  >
+                        <i class="fa fa-trash"></i>
+                        </button>
+                      </a>
+                      <a href="#" data-toggle="tooltip" id="updateThird"  title="Actualizar tercero">
+                        <button onclick="changeUpdateThird('{{third.id}}','{{third.typeIdentification}}','{{third.identification}}','{{third.name}}','{{third.surnames}}','{{third.reason}}','{{third.phone}}','{{third.city}}')"data-toggle="modal" data-target="#myModalThirdUpdate" class="btn btn-primary btn-sm">
+                        <i class="fa fa-pencil"></i>
+                        </button>
+                      </a> 
+                                </td>
+                              </tr>
+                            {% endfor %}
+                            {% else %}
+                            <h1 class="black-color">No hay terceros registrados en esta empresa</h1>
+                            {% endif %}  
+                    </tbody>
+                </table>
+        </div>
+</div>
+
+<div class="modal fade" id="myModalThird" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Añadir nuevo tercero</h4>
+            </div>
+                <div class="modal-body">
+                    <div  class="container-fluid">
+                        <form id="addThird" action="">
+                            {% csrf_token %}
+                            {% bootstrap_form thirdForm %}
+
+                            <div id="divCreateThird"  class="form-group">
+                                <button id="btnCreatenThird" type="submit" class="genric-btn success circle" >Registrar Tercero</button>
+                                <button type="submit" class="genric-btn default circle" data-dismiss="modal">Cancelar</button>
+                            </div>   
+                    
+                        </form>  
+                    </div>
+                </div>
+            </div>         
+        </div>  
+</div>
+
+<div class="modal fade" id="myModalThirdUpdate" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Actualizar tercero</h4>
+            </div>
+                <div class="modal-body">
+                    <div  class="container-fluid">
+                        <form id="formAPUpdateThird" action="">
+                            {% csrf_token %}
+                            {% bootstrap_form byThirdUpdateForm %}
+                            <div id="divCreateButtons"  class="form-group">
+                                <button id="btnCreate" type="submit" class="genric-btn success circle" >Actualizar tercero</button>
+                                <button type="button" class="genric-btn default circle" data-dismiss="modal">Cancelar</button>
+                            </div> 
+                            
+                        </form>  
+                    </div>
+                </div>
+            </div>         
+        </div>  
+</div>
+<script>
+
+$(document).ready(function() {
+		$('#dataTableThird').DataTable( {
+		  "destroy":true,
+		  "language": idioma_español,
+		  
+			dom: 'Bfrtip',
+			buttons: [
+				'copy', 'csv', 'excel', 'pdf', 'print'
+			]
+			
+		  } );
+		 
+	
+} );
+
+var thirdId;
+var codeThird;
+
+function changeUpdateThird(id, typeIdentification, identification, name, surnames, reason, phone, city){
+    
+    thirdId =  id;
+    codeThird = identification; 
+    
+    var typeIdentificationUpdate = document.getElementById("id_typeIdentificationUpdate");
+    typeIdentificationUpdate.value = typeIdentification;
+    var identificationUpdate = document.getElementById("id_identificationUpdate");
+    identificationUpdate.value = identification;
+    var nameUpdate = document.getElementById("id_nameUpdate");
+    nameUpdate.value = name;
+    var surnamesUpdate = document.getElementById("id_surnamesUpdate");
+    surnamesUpdate.value = surnames;
+    var reasonUpdate = document.getElementById("id_reasonUpdate");
+    reasonUpdate.value = reason;
+    var phoneUpdate = document.getElementById("id_phoneUpdate");
+    phoneUpdate.value = phone;
+    var cityUpdate = document.getElementById("id_cityUpdate");
+    cityUpdate.value = city;
+   
+}
+
+$("form#addThird").submit(function() {
+
+    var typeIdentification = $("#id_typeIdentification option:selected").text();
+    var identification = $('input[name="identification"]').val();
+    var name = $('input[name="name"]').val();
+    var surnames = $('input[name="surnames"]').val();
+    var reason = $('input[name="reason"]').val();
+    var phone = $('input[name="phone"]').val();
+    var city = $('input[name="city"]').val();   
+
+    if (typeIdentification, identification, name, surnames, reason, phone, city) {
+        // Create Ajax Call
+        $.ajax({
+            url: '{% url "createThird"  0 %}'.replace('0', localStorage.getItem('userID')),
+            data: {
+                'bussines': localStorage.getItem('idBussines'),
+                'typeIdentification': typeIdentification,
+                'identification': identification,
+                'name': name,
+                'surnames': surnames,    
+                'reason': reason,
+                'phone': phone,
+                'city': city, 
+            },
+            dataType: 'json',
+            success: function (data) {
+                console.log(data);
+                $("#dataTableThird").load(" #dataTableThird");
+                if (data.CREATE=="TRUE"){
+                    swal("Creado exitoso del nuevo tercero!", "Continua con tu proceso!", "success");
+                    $('#myModalThird').modal('toggle');
+
+                }else{
+                    swal("No se puede crear un tercero con la misma identificación para esta empresa", "Verifique sus datos!", "error");
+                    $('#myModalThird').modal('toggle');
+                }
+                
+            }
+        });
+    } else {
+        alert("Por favor llene todos los campos");
+    }
+    $('form#addThird').trigger("reset");
+    return false;
+});
+
+$("form#formAPUpdateThird").submit(function() {
+
+     var typeIdentificationUpdate = $("#id_typeIdentificationUpdate option:selected").text();
+     var identificationUpdate = $('input[name="identificationUpdate"]').val();
+     var nameUpdate = $('input[name="nameUpdate"]').val();
+     var surnamesUpdate = $('input[name="surnamesUpdate"]').val();
+     var reasonUpdate = $('input[name="reasonUpdate"]').val();
+     var phoneUpdate = $('input[name="phoneUpdate"]').val();
+     var cityUpdate = $('input[name="cityUpdate"]').val();
+    
+ 
+     if (typeIdentificationUpdate,identificationUpdate, nameUpdate, surnamesUpdate, reasonUpdate, phoneUpdate, cityUpdate) {
+         // Create Ajax Call
+         if(codeThird == identificationUpdate){
+            $.ajax({ 
+             url: '{% url "updateThird"  0 %}'.replace('0', localStorage.getItem('userID')),
+             data: {
+                'bussinesId': localStorage.getItem('idBussines'),
+                'equalName': 'TRUE',
+                'id': thirdId,
+                'typeIdentification': typeIdentificationUpdate,
+                'identification': identificationUpdate,
+                'name': nameUpdate,
+                'surnames': surnamesUpdate,
+                'reason': reasonUpdate,
+                'phone': phoneUpdate,
+                'city': cityUpdate,                                 
+             },
+             dataType: 'json',
+             success: function (data) {
+                 if(data.UPDATE == "TRUE"){
+                    $("#dataTableThird").load(" #dataTableThird");
+                    swal("Actualización exitosa!", "Continua con tu proceso!", "success");                 
+                    $('#myModalThirdUpdate').modal('toggle');
+                }else{
+                    swal("No se puede actualizar el tercero", "Ya existe un tercero con esta identificación", "error");
+                    $('#myModalThirdUpdate').modal('toggle');
+                } 
+ 
+             }
+         });
+         }else{
+            $.ajax({
+             url: '{% url "updateThird"  0 %}'.replace('0', localStorage.getItem('userID')),
+             data: {
+                'bussinesId': localStorage.getItem('idBussines'),
+                'equalName': 'FALSE',
+                'id': thirdId,
+                'typeIdentification': typeIdentificationUpdate,
+                'identification': identificationUpdate,
+                'name': nameUpdate,
+                'surnames': surnamesUpdate,
+                'reason': reasonUpdate,
+                'phone': phoneUpdate,
+                'city': cityUpdate,                                    
+             },
+             dataType: 'json',
+             success: function (data) {
+                 if(data.UPDATE == "TRUE"){
+                    $("#dataTableThird").load(" #dataTableThird");
+                    swal("Actualización exitosa!", "Continua con tu proceso!", "success");
+                    $('#myModalThirdUpdate').modal('toggle');
+                }else{
+                    swal("No se puede actualizar el tercero", "Ya existe un tercero con esta identificación", "error");
+                    $('#myModalThirdUpdate').modal('toggle');
+                } 
+ 
+             }
+         });
+         }
+         
+       } else {
+         alert("All fields must have a valid value.");
+     }
+     $('form#formAPUpdateThird').trigger("reset");
+     return false;
+ });
+ 
+function deleteThird(id, name){
+
+    swal({
+    title: "Desea eliminar el tercero " + name + "?",
+    text: "Al confirmar esta acción, el tercero " + name + " sera eliminado.",
+    icon: "warning",
+    buttons: true,
+    dangerMode: true,
+    })
+    .then((willDelete) => {
+    if (willDelete) {
+
+        $.ajax({
+            url: '{% url "deleteAll"  0 %}'.replace('0', localStorage.getItem('userID')),
+            data: {
+                'id': id,
+                'option': '5'
+            },
+            dataType: 'json',
+            success: function (data) {   
+                $("#dataTableThird").load(" #dataTableThird");
+                swal("El tercero " + name + "  se ha eliminado con éxito.", {
+                icon: "success",
+                });
+            }
+        });
+    }
+    });
+}
+
+</script>
+{% endblock %}

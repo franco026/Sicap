@@ -1,0 +1,582 @@
+{% extends 'base/base.html' %}
+{% load bootstrap4 %}
+{% block main %}
+<style>
+    .swal-content__textarea{
+		height: 300px;
+	}
+   .loader-page {
+    position: fixed;
+    z-index: 25000;
+    background: rgb(255, 255, 255);
+    left: 0px;
+    top: 0px;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition:all .3s ease;
+  }
+  .loader-page::before {
+    content: "";
+    position: absolute;
+    border: 2px solid rgb(50, 150, 176);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    box-sizing: border-box;
+    border-left: 2px solid rgba(50, 150, 176,0);
+    border-top: 2px solid rgba(50, 150, 176,0);
+    animation: rotarload 1s linear infinite;
+    transform: rotate(0deg);
+  }
+  @keyframes rotarload {
+      0%   {transform: rotate(0deg)}
+      100% {transform: rotate(360deg)}
+  }
+  .loader-page::after {
+    content: "";
+    position: absolute;
+    border: 2px solid rgba(50, 150, 176,.5);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    box-sizing: border-box;
+    border-left: 2px solid rgba(50, 150, 176, 0);
+    border-top: 2px solid rgba(50, 150, 176, 0);
+    animation: rotarload 1s ease-out infinite;
+    transform: rotate(0deg);
+  }
+ 
+</style>
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+<div id="accountsDivs" class="container-fluid">
+    <h1 class="mt-4">Lista de cuentas CCPET</h1>
+    <div class="card mb-4">
+        <div class="card-header"><i class="fas fa-table mr-1"></i>Lista de cuentas CCPET</div>
+        <div class="card-body">
+            <div class="table-responsive">           
+                <button class="genric-btn primary small" data-toggle='modal'id="buttonImportCCPET" data-target='#MyModalImport'>Importar cuentas</button> 
+                <button class="genric-btn primary small" id="buttonDeleteCCPET" style="display: none;" onclick="DeleteCCPET()">Borrar Cuentas</button> 
+                <label for="id_name">Buscar por codigo</label>
+                <input type="text" class="form-control" placeholder="Buscar por codigo" title="" required="" id="id_search">
+                <table class="table table-bordered dataTable" id="dataTableAccount" width="100%" cellspacing="0"
+                      role="grid" aria-describedby="dataTable_Account" style="width: 100%;">
+                    
+                    <thead>
+                        <tr>           
+                            <th>Código</th>
+                            <th>Tipo cuenta</th>
+                            <th>Descripción</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Código</th>
+                            <th>Tipo cuenta</th>
+                            <th>Descripción</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade bd-example-modal-lg" id="MyModalImport" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Importar cuentas</h4>
+            </div>
+                <div class="modal-body">
+					
+						<form enctype="multipart/form-data">
+							<input id="upload" type=file  name="files[]">
+						</form>
+
+						<div  class="container-fluid col-12" >
+							<div class="card mb-12" >
+							<div class="card-header " ><i class="fas fa-table mr-1" ></i>Importar plan de cuentas</div>
+							<div class="card-body" >
+								<div class="table-responsive">
+                                    <div>
+                                        <h4>Localidad</h4>
+                                        <label style="font-size: 20px;">
+                                            <input type="checkbox" class="radio" checked="true""" value="1" name="location" />Departamento</label>
+                                        <label style="font-size: 20px;"> 
+                                            <input type="checkbox" class="radio" value="2" name="location" />Municipio</label>
+                                        <label style="font-size: 20px;">
+                                            <input type="checkbox" class="radio" value="3" name="location" />Resguardo</label>
+                                        <label style="font-size: 20px;">
+                                            <input type="checkbox" class="radio" value="4" name="location" />Emp.Terr.Dcto.115</label>
+                                        <label style="font-size: 20px;">
+                                            <input type="checkbox" class="radio" value="5" name="location" />Particular</label>
+                                    </div>
+                                    
+									<button onclick="sendDataToBD()"  class="genric-btn primary small" >Importar</button>  
+									<button onclick="cancels(4)" class="genric-btn primary small">Cancelar</button>  
+
+									<font size="2" face="Arial" >
+									<table class="table table-bordered dataTable" id="dataTableImports" cellspacing="0" 
+										role="grid" aria-describedby="dataTable_informDetailRubro">	
+										<thead>
+											<tr>
+												<th>Código</th>
+                                                <th>Tipo cuenta</th>
+                                                <th>Descripción</th>																																									
+											</tr>
+										</thead>
+										<tfoot>
+											<tr>
+												<th>Código</th>
+                                                <th>Tipo cuenta</th>
+                                                <th>Descripción</th>
+											</tr>
+										</tfoot>
+											<tbody>
+												<h1></h1>
+											</tbody>
+										</table>
+									</font>
+								</div>	
+								</div>
+							</div>
+						</div> 
+                </div>
+            </div>         
+        </div>  
+</div>
+</div>
+<style>
+    #MyModalCarga {
+        width: 300px;
+        height: 300px;
+        position: absolute;
+        left: 50%;
+        top: 50%; 
+        margin-left: -150px;
+        margin-top: -150px;
+    }
+    *,*:after,*:before{
+	margin: 0;
+	padding: 0;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+#contenedor_carga{
+    display:none;  
+	width: 100%;
+	position: fixed;
+	-webkit-transition: all  1s ease;
+	-o-transition: all  1s ease;
+	transition: all  1s ease;
+	z-index: 10000;
+    background-color: rgb(0 0 0 / 50%);
+    height: 100%;
+    top: -1px;
+    left: -1px;
+}
+#carga{
+	border: 15px solid #ccc;
+	border-top-color: #46dbf9;
+	border-top-style: groove;
+	height: 100px;
+	width:  100px;
+	border-radius: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	margin: auto;
+	-webkit-animation: girar 1.5s linear infinite;
+	-o-animation: girar 1.5s linear infinite;
+	animation: girar 1.5s linear infinite;
+}
+@keyframes girar{
+	from{transform: rotate(0deg);}
+	to {transform: rotate(360deg);}
+}
+</style>
+<div id="contenedor_carga">
+    <div id="carga">
+    </div>
+</div>  
+<script>
+
+$("input:checkbox").on('click', function() {
+  // in the handler, 'this' refers to the box clicked on
+  var $box = $(this);
+  if ($box.is(":checked")) {
+
+    var table = $('#dataTableImports').DataTable(); 
+    var rows = table.rows().remove().draw();
+    
+	$("#upload").val('');
+    jsonImport = []
+    // the name of the box is retrieved using the .attr() method
+    // as it is assumed and expected to be immutable
+    var group = "input:checkbox[name='" + $box.attr("name") + "']";
+    // the checked state of the group/box on the other hand will change
+    // and the current value is retrieved using .prop() method
+    $(group).prop("checked", false);
+    $box.prop("checked", true);
+  } else {
+    $box.prop("checked", false);
+  }
+});
+
+
+$(document).ready(function() {
+    $('#dataTableAccount').DataTable( {
+		"destroy":true,
+		"language": idioma_español,
+		"paging":   true,
+        
+        "bFilter": false,
+        "searching": true,
+        "columns": [ 
+			{ "type": "string" },
+				null,
+				null,
+			],
+        "columnDefs":[
+            {"type":"string", "width": "20%","targets": 0},
+            {"type":"string", "width": "10%", "targets": 1}
+            ],
+		dom: 'tp',
+			
+    });
+
+	
+    
+    $('#dataTableImports').DataTable( {
+            "destroy":true,
+            "paging": true,
+            "ordering": false,
+		    "language": idioma_español,
+		  
+    dom: 'Bfrtip',			
+	} );		 
+
+   getListAccount()
+})
+
+$('#id_search').on('input', function() { 
+    console.log( $(this).val())
+    var table = $("#dataTableAccount").DataTable();
+    table.column(0).search("^" + $(this).val(), true, false, true).draw();
+});
+
+function DeleteCCPET(){
+    swal({
+			title: "Desea eliminar las cuentas previas? ",
+			text: "Al confirmar este acción, todos las cuentas previas seran eliminado.",
+			icon: "warning",
+			buttons: true,
+			dangerMode: true,
+	})
+	.then((willDelete) => {
+		if (willDelete) {	
+			confirmatePassword();					
+		}
+	});	
+}
+
+function confirmatePassword(){
+	swal({
+		
+		buttons: true,
+		content: {
+			element: "input",
+			attributes: {
+			placeholder: "Por favor ingrese su contraseña:",
+			type: "password",
+			},
+		}
+	})
+	.then((value) => {
+		$.ajax({
+			url: '{% url "getValidatePassword"  0 %}'.replace('0', localStorage.getItem('userID')),
+			data: {
+				'password': value,
+				'user':localStorage.getItem('userID')
+			},
+			dataType: 'json',
+			success: function (data) {
+				if(data.EQUALS== "TRUE"){
+                    $('#contenedor_carga').show();
+					var token = '{{csrf_token}}';
+					$.ajax({
+							headers: { "X-CSRFToken": token },
+							url: '{% url "deleteCCPETImported"  0 %}'.replace('0', localStorage.getItem('userID')),
+							data: {
+								'period':localStorage.getItem('idAC'),
+							},	
+							type: 'POST',
+							dataType: 'json',
+							success: function (data) {
+                                console.log(data)
+								if(data.DELETE== "TRUE"){
+									var table = $('#dataTableAccount').DataTable(); 
+									var rows = table.rows().remove().draw();
+									$('#contenedor_carga').hide();
+                                    $('#buttonImportCCPET').css('display','block')
+                                    $('#buttonDeleteCCPET').css('display','none')
+									swal("Se han borrado los  rubros", "Vuelve a importar", "success");
+								}else{
+									$('#contenedor_carga').hide();
+									swal("Error","Por favor eliminar primero los rubros", "error");
+								}
+						}
+					});		
+				}
+			}
+	});
+	});
+}
+
+function getListAccount(){
+    $('#contenedor_carga').show();
+    $.ajax({
+        url: '{% url "getListAccountCCPET"  0 %}'.replace('0', localStorage.getItem('userID')),
+        data: {
+            'accountId': localStorage.getItem('idAC'),
+        },
+        dataType: 'json',
+        success: function (data) {
+            if(data.ac.length > 0){
+                $('#buttonImportCCPET').css('display','none')
+                $('#buttonDeleteCCPET').css('display','block')
+            }else{
+                $('#buttonImportCCPET').css('display','block')
+                $('#buttonDeleteCCPET').css('display','none')
+            }
+            var tableRubro = $('#dataTableAccount').DataTable(); 
+            var rowsRubro = tableRubro.rows().remove().draw();
+            'id', 'code', 'description','type','dpto','mpio','guard','ips','particu'
+            for (var i=0; i<data.ac.length; i++){
+                tableRubro.row.add( [
+                data.ac[i].code,
+                data.ac[i].type,
+                data.ac[i].description,
+                ])
+            }
+            tableRubro
+            .order( [ 0, 'asc' ] )
+            .draw();
+            tableRubro.draw(false);
+            
+            $('#contenedor_carga').hide();
+        }
+    });
+}
+
+var searchRubro;
+var accountId;
+var accountCurrentCode
+var patronArray = [];
+var typeRubroCreate;
+var multiDescription;
+var jsonImport=[]
+
+
+function getAccount(id){
+    accountId =  id; 
+ 
+}
+
+
+var ExcelToJSON = function() {
+
+    this.parseExcel = function(file) {
+    var reader = new FileReader();
+    var table = $('#dataTableImports').DataTable(); 
+    var rows = table.rows().remove().draw();
+    jsonImport = []
+    arrayVa = []
+    reader.onload = function(e) {
+        var data = e.target.result;
+        var workbook = XLSX.read(data, {
+        type: 'binary'
+        });
+        workbook.SheetNames.forEach(function(sheetName) {
+        // Here is your object
+        var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+        var json_object = JSON.stringify(XL_row_object);
+        
+        switch($("input[type=checkbox]:checked").val()){
+            case "1":
+                
+                JSON.parse(json_object).map(function(num) {
+                    if (num.DPTO =='1'){
+                        jsonImport.push({
+                            
+                            "RB": num.rubro,
+                            "TC": num.tipocu,
+                            "DC": num.descrip,
+                        })
+        
+                        table.row.add( [
+                            num.rubro,
+                            num.tipocu,
+                            num.descrip,
+                        ])
+                    }
+                })
+                
+                break;
+            case "2":
+                JSON.parse(json_object).map(function(num) {
+                    if (num.MPIO =='1'){
+                        jsonImport.push({
+                            
+                            "RB": num.rubro,
+                            "TC": num.tipocu,
+                            "DC": num.descrip,
+                        })
+        
+                        table.row.add( [
+                            num.rubro,
+                            num.tipocu,
+                            num.descrip,
+                        ])
+                    }
+                })
+                break;
+            case "3":
+
+                JSON.parse(json_object).map(function(num) {
+                    if (num.Resguardos =='1'){
+                        jsonImport.push({
+                            
+                            "RB": num.rubro,
+                            "TC": num.tipocu,
+                            "DC": num.descrip,
+                        })
+        
+                        table.row.add( [
+                            num.rubro,
+                            num.tipocu,
+                            num.descrip,
+                        ])
+                    }
+                })
+                
+                break;
+            case "4":
+                JSON.parse(json_object).map(function(num) {
+                    if (num.IPS =='1'){
+                        jsonImport.push({
+                            
+                            "RB": num.rubro,
+                            "TC": num.tipocu,
+                            "DC": num.descrip,
+                        })
+        
+                        table.row.add( [
+                            num.rubro,
+                            num.tipocu,
+                            num.descrip,
+                        ])
+                    }
+                })
+                
+                break;
+            case "5":
+                JSON.parse(json_object).map(function(num) {
+                    if (num.PARTICU =='1'){
+                        jsonImport.push({
+                            
+                            "RB": num.rubro,
+                            "TC": num.tipocu,
+                            "DC": num.descrip,
+                        })
+        
+                        table.row.add( [
+                            num.rubro,
+                            num.tipocu,
+                            num.descrip,
+                        ])
+                    }
+                })
+                
+                break;
+        }
+        
+        table.draw(false);
+        $('#contenedor_carga').hide();
+        })
+    };
+
+    reader.onerror = function(ex) {
+        console.log(ex);
+    };
+
+    reader.readAsBinaryString(file);
+    };
+};
+
+document.getElementById('upload').addEventListener('change', handleFileSelect, false);
+
+function handleFileSelect(evt) {
+
+    var files = evt.target.files; // FileList object
+    $('#contenedor_carga').show();
+    var xl2json = new ExcelToJSON();
+    xl2json.parseExcel(files[0]);
+}
+
+function sendDataToBD(){
+    if(jsonImport.length > 0){
+        $('#contenedor_carga').show();
+		var token = '{{csrf_token}}';
+		$.ajax({
+				headers: { "X-CSRFToken": token },
+				url: '{% url "importAccountsCCPETBD"  0 %}'.replace('0', localStorage.getItem('userID')),
+				data: {
+					'accounts': JSON.stringify(jsonImport),
+					'accountPeriod': localStorage.getItem('idAC'),
+				},	
+				type: 'POST',
+				dataType: 'json',	
+				success: function (data) {
+					if(data.IMPORT=="TRUE"){
+						$('#MyModalImport').modal('toggle');
+						swal("Importacion completa ","", "success");
+						getListAccount()
+						jsonImport.length=0;
+                        $('#contenedor_carga').hide();
+					}else{
+						swal("Existen datos repetidos ","Verifique por favor", "error");
+					}
+					
+			}
+		});
+
+    }
+	 
+	
+}
+
+function cancels(option){	
+	if(option==4){
+		$("#upload").val('');
+		$('#MyModalImport').modal('toggle');
+		var table = $('#dataTableImports').DataTable(); 
+ 		var rows = table.rows().remove().draw();
+		jsonImport.length=0;
+	}
+}
+</script>
+{% endblock %}

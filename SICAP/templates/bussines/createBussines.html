@@ -1,0 +1,28 @@
+{% extends 'base/base.html' %}
+
+
+{% block main %}
+<br>
+<br>
+<br>
+<br>
+<br>
+	
+{% load bootstrap4 %}
+<div class="container">
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <div class="Row">
+            {% bootstrap_form form %}
+        </div>
+        <div class="Row">
+            <button type="submit" class="primary-btn">Crear empresa</button>
+        </div>
+    </form>
+</div>
+    <!-- Poder añadir logo de la empresa y foto del usuario }
+    estados inactivo y activo
+    -->
+{% endblock %}
