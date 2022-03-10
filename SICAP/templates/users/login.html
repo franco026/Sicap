@@ -144,15 +144,15 @@ $("form#formLogin").submit(function() {
 			dataType: 'json',
 			success: function (data) {
 				console.log(data)
-				if(data.usuario == "admin"){
+				/* if(data.usuario == "admin"){
 					localStorage.setItem('admin', true);
 					window.location.href = "http://localhost:8000/settings/"+0+"/"+ data.id;
-				}else{
+				}else{ */
 
 					$("#charge").css('display', 'none');
 					$("#id_bussinesD").css('visibility', 'visible');
 					$(".container-d").insertAfter(".login100-pic js-tilt");
-				}
+				/* } */
 
 			},error: function(data){
 				$("#charge").css('display', 'none');
