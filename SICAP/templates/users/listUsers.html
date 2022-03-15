@@ -1,0 +1,336 @@
+{% extends 'base/baseAdmin.html' %}
+{% load bootstrap4 %}
+{% block main %}
+<style>
+    .swal-content__textarea{
+		height: 300px;
+	}
+   .loader-page {
+    position: fixed;
+    z-index: 25000;
+    background: rgb(255, 255, 255);
+    left: 0px;
+    top: 0px;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition:all .3s ease;
+  }
+  .loader-page::before {
+    content: "";
+    position: absolute;
+    border: 2px solid rgb(50, 150, 176);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    box-sizing: border-box;
+    border-left: 2px solid rgba(50, 150, 176,0);
+    border-top: 2px solid rgba(50, 150, 176,0);
+    animation: rotarload 1s linear infinite;
+    transform: rotate(0deg);
+  }
+  @keyframes rotarload {
+      0%   {transform: rotate(0deg)}
+      100% {transform: rotate(360deg)}
+  }
+  .loader-page::after {
+    content: "";
+    position: absolute;
+    border: 2px solid rgba(50, 150, 176,.5);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    box-sizing: border-box;
+    border-left: 2px solid rgba(50, 150, 176, 0);
+    border-top: 2px solid rgba(50, 150, 176, 0);
+    animation: rotarload 1s ease-out infinite;
+    transform: rotate(0deg);
+  }
+ 
+</style>
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+<div id="accountsDivs" class="container-fluid">
+    <h1 class="mt-4">Lista de Usuarios</h1>
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table mr-1"></i>Lista de Usuarios
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">           
+                <button class="genric-btn primary small" onclick="AddUsers()">Agregar Usuario</button> 
+                <div>
+                    <label for="id_name">Buscar por usuario</label>
+                    <input type="text" class="form-control" placeholder="Buscar por usuario" title="" required="" id="id_search">
+                </div>
+                <table class="table table-bordered dataTable" id="dataTableUsers" width="100%" cellspacing="0" role="grid" aria-describedby="dataTable_Users" style="width: 100%;">
+                    <thead>
+                        <tr>           
+                            <th>Código</th>
+                            <th>Usuario</th>
+                            <th>Correo</th>
+                            <th>Accionnes</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Código</th>
+                            <th>Usuario</th>
+                            <th>Correo</th>
+                            <th>Accionnes</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {% if object_list %}
+                            {% for User in object_list %}                        
+                                <tr>                          
+                                    <td>{{User.id}}</td>
+                                    <td>{{User.username}}</td>
+                                    <td>{{User.email}}</td>
+                                    <td>
+                                        <a href="#" data-toggle="tooltip" id="delete"  title="Eliminar Usuario">
+                                            <button onclick="deleteAccount('{{User.id}}', '{{User.username}}')" class="btn btn-primary btn-sm">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </a>
+                                        <a href="#" data-toggle="tooltip" id="delete"  title="Vincular Usuario">
+                                            <button onclick="linkUser('{{User.id}}')" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModalBussines">
+                                                <i class="fa fa-cogs" aria-hidden="true"></i>
+                                            </button>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <h1 class="black-color">No hay períodos contables registrados</h1>
+                        {% endif %}  
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myModalBussines" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Lista de Empresas</h4>
+            </div>
+            <div class="modal-body">
+                <div  class="container-fluid">
+                    <form id="listBussines">
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <div class="form-group">
+                                    <select name="id_BussinesnSelect" class="form-control" title="" id="id_BussinesnSelect" multiple="">
+                                    </select>
+                                </div>
+                                                            
+                                <div id="divButtonsLinkBussines"  class="form-group">
+                                    <button id="btnButtonsLinkBussines" type="button" onclick="SaveSelectbusiness()" class="genric-btn success circle" >Guardar</button>
+                                    <button type="button" class="genric-btn default circle" data-dismiss="modal">Cancelar</button>
+                                </div>  
+                            </div>                                
+                        </div>                   
+                    </form> 
+                </div>
+            </div>
+        </div>         
+    </div>  
+</div>
+<style>
+    #MyModalCarga {
+        width: 300px;
+        height: 300px;
+        position: absolute;
+        left: 50%;
+        top: 50%; 
+        margin-left: -150px;
+        margin-top: -150px;
+    }
+    *,*:after,*:before{
+	margin: 0;
+	padding: 0;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+#contenedor_carga{
+    display:none;  
+	width: 100%;
+	position: fixed;
+	-webkit-transition: all  1s ease;
+	-o-transition: all  1s ease;
+	transition: all  1s ease;
+	z-index: 10000;
+    background-color: rgb(0 0 0 / 50%);
+    height: 100%;
+    top: -1px;
+    left: -1px;
+}
+#carga{
+	border: 15px solid #ccc;
+	border-top-color: #46dbf9;
+	border-top-style: groove;
+	height: 100px;
+	width:  100px;
+	border-radius: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	margin: auto;
+	-webkit-animation: girar 1.5s linear infinite;
+	-o-animation: girar 1.5s linear infinite;
+	animation: girar 1.5s linear infinite;
+}
+@keyframes girar{
+	from{transform: rotate(0deg);}
+	to {transform: rotate(360deg);}
+}
+</style>
+<div id="contenedor_carga">
+    <div id="carga">
+    </div>
+</div>  
+<script>
+
+
+
+$(document).ready(function() {
+    $('#dataTableUsers').DataTable( {
+		"destroy":true,
+		"language": idioma_español,
+		"paging":   true,
+        "order": [[ 2, "asc" ]],
+        "ordering": false,
+        "bFilter": false,
+        "searching": true,
+        "columns": [ 
+            null,
+			{ "type": "string" },
+            null,
+            null
+			],
+		dom: 'tp',
+			
+    });
+
+})
+
+$('#id_search').on('input', function() { 
+    var table = $("#dataTableUsers").DataTable();
+    table.column(1).search("^" + $(this).val(), true, false, true).draw();
+});
+
+
+function AddUsers(){
+    window.location.href = "http://localhost:8000/users/createUser/"
+}
+
+UserIDG
+function linkUser(id){
+    UserIDG = id
+    $.ajax({
+        url: '{% url "getListBussines" 0 %}'.replace('0', localStorage.getItem('userID')),
+        data: {
+            'userID': id
+        },
+        dataType: 'json',
+        success: function (data) {
+                const $select = document.querySelector("#id_BussinesnSelect");
+        
+                for (let i = $select.options.length; i >= 0; i--) {
+                        $select.remove(i);
+                }
+
+                for (var i=0; i<data.LB.length; i++){
+                    $('#id_BussinesnSelect').append(`<option value="${data.LB[i].id}">${data.LB[i].name} </option>`);
+                }	
+                    
+                if (data.SL.length>0) {
+                    
+                    $('#id_BussinesnSelect').val(data.SL[0].bussines_id);
+                }
+            }  
+        });
+}
+
+
+function SaveSelectbusiness() {
+    
+    if($('#id_BussinesnSelect').val()){
+        $.ajax({
+        url: '{% url "linkBussines" 0 %}'.replace('0', localStorage.getItem('userID')),
+        data: {
+            'userID': UserIDG,
+            'businessID': parseInt($('#id_BussinesnSelect').val())
+        },
+        dataType: 'json',
+        success: function (data) {
+                $('#myModalBussines').modal('toggle');
+                swal("Guardado exitoso!", "Continua con tu proceso!", "success");
+            }  
+        });
+    }
+}
+
+
+function deleteAccount(id,name){
+    swal({
+        title: "Desea eliminar al usuario " + name + "?",
+        text: "Al confirmar esta acción, el usuario " + name + " sera eliminado.",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+                $.ajax({
+                    url: '{% url "deleteUsers"  0 %}'.replace('0', localStorage.getItem('userID')),
+                    data: {
+                        'userId': id,
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        if(data.DELETE){
+                            $("#dataTableUsers").load(" #dataTableUsers");
+                        }
+                    }
+                 });
+            }
+        })
+}
+
+
+var searchRubro;
+var accountId;
+var accountCurrentCode
+var patronArray = [];
+var typeRubroCreate;
+var multiDescription;
+var jsonImport=[]
+
+
+function cancels(option){	
+	if(option==4){
+		$("#upload").val('');
+		$('#MyModalImport').modal('toggle');
+		var table = $('#dataTableImports').DataTable(); 
+ 		var rows = table.rows().remove().draw();
+		jsonImport.length=0;
+	}
+}
+</script>
+{% endblock %}

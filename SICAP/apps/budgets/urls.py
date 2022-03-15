@@ -2,15 +2,19 @@ from django.conf.urls import url, include
 from apps.budgets.views import *
 
 urlpatterns = [
-
-    url(r'bussines/base', base , name='index'),
     url(r'budget/createBudget/(?P<pkUser>\d+)/', mainBudget , name='menu'),
     url(r'bussines/createBussines', CreateBussines.as_view(), name='createBussines'), 
-    url(r'bussines/listBussines', ListBussines.as_view(), name='listBussines'),
+
+    url(r'bussines/listBussines/(?P<pkUser>\d+)/', ListBussines.as_view(), name='listBussines'),
+
     url(r'ajax/createAC/(?P<pkUser>\d+)/', CreateAccountPeriod.as_view(), name='createAccountPeriod'),
     url(r'ajax/createOriginAC/(?P<pkUser>\d+)/', GetAccountPeriodOrigin.as_view(), name='getAccountPeriodOrigin'),
     url(r'ajax/createBudget/(?P<pkUser>\d+)/', GetOriginBudget.as_view(), name='getOriginBudget'),
-    url(r'bussines/createOperation', CreateOperation.as_view(), name='createOperation'),
+
+    url(r'ajax/deleteBussines/(?P<pkUser>\d+)/', DeleteBussines.as_view(), name='deleteBussines'),
+    #url(r'bussines/createOperation', CreateOperation.as_view(), name='createOperation'),
+
+
     url(r'ajax/createAccountPeriodOp/(?P<pkUser>\d+)/', GetAccountPeriodOperation.as_view(), name='getAccountPeriodOperation'),
     url(r'ajax/createAccounPeriodOriginOp/(?P<pkUser>\d+)/', GetAccountPeriodOriginOperation.as_view(), name='getAccountPeriodOriginOperation'),   
     url(r'ajax/createOrigin/(?P<pkUser>\d+)/', CreateOrigin.as_view(), name='createOrigin'),

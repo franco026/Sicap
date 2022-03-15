@@ -66,7 +66,7 @@ class AccountPeriodForm(forms.ModelForm):
                 'Nombre':forms.TextInput(),
                 'Estado':forms.TextInput(),
                 'Fecha inicial':forms.DateInput(attrs={'class':'form-control  form-control-user', 'type':'date','id':'myDate','value':'aaaa-mm-dd'}),
-                'Fecha final':forms.DateInput(format=('%d-%m-%Y'),attrs={'class':'myDateClass','placeholder':'Select a date'}),
+                'Fecha final':forms.DateInput(attrs={'class':'form-control  form-control-user', 'type':'date','id':'myDate','value':'aaaa-mm-dd'}),
                 
         }
 

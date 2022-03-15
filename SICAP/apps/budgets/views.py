@@ -27,7 +27,9 @@ class CreateBussines(CreateView):
     model = Bussines
     form_class = BussinesForm
     template_name = 'bussines/createBussines.html'
-    success_url = reverse_lazy('listBussines')
+
+    def get_success_url(self,**kwargs):
+        return reverse_lazy("listBussines",  kwargs={'pkUser': self.request.user.id})
 
 class ListBussines(LoginRequiredMixin,ListView):
 
@@ -43,13 +45,21 @@ class ListBussines(LoginRequiredMixin,ListView):
         context['Operationform'] = OperationForm
         return context
 
-def base(request):
-    print(request.user.typeUser,"aqui")
-    if request.user.typeUser != "admin":
-       base_template_name = 'base/base.html'
-    else:
-       base_template_name = 'base/baseAdmin.html'
-    return render(request, base_template_name)
+    def get_queryset(self):
+        queryset = super(ListBussines, self).get_queryset()
+        return Bussines.objects.all()
+
+class DeleteBussines(LoginRequiredMixin, ListView):
+
+    login_url = '/login/'
+    redirect_field_name = '/login/'
+
+    def  get(self, request, *args, **kwargs):
+
+        bussinesDelete = Bussines.objects.get(id=request.GET.get('bussinesID'))
+        bussinesDelete.delete()
+        return JsonResponse({'DELETE':True})
+
 
 ###################### Vistas relacionadas con periodos contables ####################
 class CreateAccountPeriod(LoginRequiredMixin, View):
@@ -83,7 +93,7 @@ class CreateAccountPeriod(LoginRequiredMixin, View):
                     accountPeriod_id = newAccountPeriod.id
                 )
             accountPeriod = {'id':newAccountPeriod.id,'name':newAccountPeriod.name}
-            return JsonResponse({'CREATE':"TRUE"})
+            return JsonResponse({'CREATE':"TRUE", 'ACID':newAccountPeriod.id, 'ACName':newAccountPeriod.name})
         else:
             return JsonResponse({'CREATE':"FALSE"})
 
@@ -132,7 +142,7 @@ def mainBudget(request,pkUser):
     context = {'informForm':informForm, 'updateForm': updateForm, 'typeAgreement':typeAgreement }
     return render(request, 'budget/budget.html', context)
 
-class CreateOperation(LoginRequiredMixin,View):
+""" class CreateOperation(LoginRequiredMixin,View):
 
     login_url = '/login/'
     redirect_field_name = '/login/'
@@ -162,7 +172,7 @@ class CreateOperation(LoginRequiredMixin,View):
                 return JsonResponse({'CREATE':"TRUE"})
             else:
                 return JsonResponse({'CREATE':"FALSE"})
-
+ """
         
 class GetAccountPeriodOperation(LoginRequiredMixin,View): # funcion para cargar el periodo contable
 
@@ -238,7 +248,7 @@ class GetOriginBudget(LoginRequiredMixin,View):
        
         option =request.GET.get('option')
         if option =='1':
-            nameAC = request.GET.get('nameAC')[:-1]
+            nameAC = request.GET.get('nameAC')### Cambio
             accountPeriod = AccountPeriod.objects.get(name=nameAC, bussines_id=request.GET.get('idBussines'))
             origintest = Origin.objects.filter(accountPeriod_id=accountPeriod.id).values('nameOrigin','id','pattern')
             return JsonResponse({"OR": list(origintest)})
@@ -272,7 +282,7 @@ class GetOperationBudget(LoginRequiredMixin,View):
     def  get(self, request, *args, **kwargs):
         typeagreement = []
         nameOrigin = request.GET.get('nameOrigin')
-        accountPeriod = AccountPeriod.objects.get(name=request.GET.get('nameAC')[:-1])
+        accountPeriod = AccountPeriod.objects.get(name=request.GET.get('nameAC')) ###
         origin = Origin.objects.get(nameOrigin=nameOrigin, accountPeriod=accountPeriod.id)
         operations = Operation.objects.filter(origin=origin.id).values('nameOp')
         rubro = Rubro.objects.filter(origin_id=origin.id, bussines_id=request.GET.get('idBussines')).values('id','rubro','rubroFather','typeRubro','description','dateCreation','initialBudget','realBudget','budgetEject').order_by('rubro')
@@ -1196,6 +1206,7 @@ class GetAgreement(LoginRequiredMixin,View):
     redirect_field_name = '/login/'
 
     def  get(self, request, *args, **kwargs):
+        print(request.GET.get('typeAgreement'),request.GET.get('bussines'))
         typeAgreement = TypeAgreement.objects.get(nameTA=request.GET.get('typeAgreement'), bussines_id=request.GET.get('bussines'))
         agreement =  Agreement.objects.filter(numberAg=request.GET.get('number'),origin_id = request.GET.get('origin'),typeAgreement_id = typeAgreement).exists()
         
@@ -1245,8 +1256,8 @@ class ImportRubrosBD(LoginRequiredMixin,View):
         today = datetime.now()
 
         ccpet = CCPET.objects.all();
-        print(list(request.POST.get('period')))
-        if len(list(ccpet)) > 1:
+
+        if len(list(ccpet)) > 0:
             for x in range(0,len(rubros)):
                 rubroExists = Rubro.objects.filter(rubro=rubros[x]['RB'],bussines_id=bussines,origin_id=origin).exists()
                 if rubroExists == False:
@@ -1347,7 +1358,6 @@ class ImportRubrosBD(LoginRequiredMixin,View):
                 else:
                     return JsonResponse({"IMPORT": "FALSE"})
                     break
-
             rubros = Rubro.objects.filter(bussines_id=bussines,origin_id=origin).values('id','rubro','description','initialBudget','budgetEject','typeRubro','realBudget').order_by('rubro')
             return JsonResponse({"IMPORT": "TRUE","RUBRO": list(rubros)})
         else:

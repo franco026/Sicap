@@ -1,4 +1,4 @@
-{% extends 'base/base.html' %}
+{% extends 'base/baseAdmin.html' %}
 
 
 {% block main %}
@@ -10,10 +10,8 @@
 	
 {% load bootstrap4 %}
 <div class="container">
-    <form method="POST">
-
+    <form method="POST" id="formAddUser" >
         {% csrf_token %}
-
         <div class="Row">
             {% bootstrap_form form %}
         </div>
@@ -22,5 +20,12 @@
         </div>
     </form>
 </div>
+<!-- <script>
+$("form#formAddUser").submit(function() {
+	window.location.href = "http://localhost:8000/admin/"+localStorage.getItem('userID')+"/";
+    $('form#formAddUser').trigger("reset");
+    return false;
+});
+</script> -->
     
 {% endblock %}

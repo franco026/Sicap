@@ -11,7 +11,11 @@ urlpatterns = [
     url(r'ajax/settingsCreateOP/(?P<pkUser>\d+)/', CreateOperationSettings.as_view(), name='settingsCreateOP'),
     url(r'ajax/settingsInfDetall/(?P<pkUser>\d+)/', CreateInformDetall.as_view(), name='settingsInfDetall'),
     url(r'ajax/createInform/(?P<pkUser>\d+)/$', CreateInform.as_view(), name='createInform'), 
+    
     url(r'settings/(?P<pk>\d+)/(?P<pkUser>\d+)/$', ListAccountPeriod.as_view() , name='settings'),
+
+
+
     url(r'settings/listInform/(?P<pk>\d+)/(?P<pkUser>\d+)/$', ListInform.as_view() , name='listInform'),
     url(r'settings/createTypeAgreement/(?P<pkUser>\d+)/', CreateTypeAgreement.as_view(), name='createTypeAgreement'), 
     url(r'settings/listTypeAgreement/(?P<pk>\d+)/(?P<pkUser>\d+)/$', ListTypeAgreement.as_view() , name='listTypeAgreement'),

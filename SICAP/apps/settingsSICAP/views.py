@@ -23,15 +23,6 @@ class ListAccountPeriod(ListView):
     queryset= model.objects.order_by('name')
     template_name = 'settings/mainCreation.html'
 
-    def base(request):
-
-        if request.user.typeUser != "admin":
-            base_template_name = 'base/base.html'
-        else:
-            base_template_name = 'base/baseAdmin.html'
-
-        return render('settings/mainCreation.html', {'base_template_name':base_template_name})
-
     def get_context_data(self):
         context = super(ListAccountPeriod, self).get_context_data()
         context['OriginformS'] = OriginFormSetting

@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.admin.widgets import AdminDateWidget
 
+from ..budgets.models import Bussines
+
 class User(AbstractUser):
     # Options for types of id
 
@@ -22,5 +24,11 @@ class User(AbstractUser):
         self.title = (self.title).upper()
         self.observation = (self.observation).upper()
         return User(User, self).saveUser(*args, **kwargs)
+
+
+class BussinesUsers(models.Model):
+
+    bussines = models.ForeignKey(Bussines, null=True, blank=True, on_delete=models.CASCADE)
+    user = models.ForeignKey(User,null=True, blank=True, on_delete=models.CASCADE)
 
         

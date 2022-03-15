@@ -66,40 +66,15 @@
 					
 				<nav id="nav-menu-container">
 					<ul  class="nav-menu">
-						<li class="menu-has-children"><a href="#" style="color:rgb(0,0,0);">Configuraciones</a>
-							<ul>
-								<li Fs><a id="accountPeriodBase " href="#" style="color:rgb(0,0,0);" onclick="redirect(1)" >Períodos contables</a></li>
-								<li><a id="createAggrementID" href="#" style="color:rgb(0,0,0);" onclick="redirect(2)" >Acuerdos</a></li>
-								<li><a id="createPC " href="#" style="color:rgb(0,0,0);" onclick="redirect(12)" >Descuentos</a></li>	
-								<li><a id="createInform" href="#" style="color:rgb(0,0,0);" onclick="redirect(3)" >Tipos de informes</a></li>	
-								<li><a id="createTypeContract " href="#" style="color:rgb(0,0,0);" onclick="redirect(8)" >Tipo de Contrato</a></li>
-								<li><a id="createTypeDocument " href="#" style="color:rgb(0,0,0);" onclick="redirect(13)" >Tipos de Documentos</a></li>
-								<li><a id="createTypeDocument " href="#" style="color:rgb(0,0,0);" onclick="redirect(14)" >Cuentas CCPET</a></li>								
-							</ul>
+						<li class="menu-has-children">
+							<a id="accountPeriodBase " href="#" style="color:rgb(0,0,0);" onclick="redirect(1)" >Usuarios</a>
 						</li>
-						<li><a href="#" style="color:rgb(0,0,0);">Contabilidad</a>
-							<ul>
-								<li><a id="createAccount " href="#" style="color:rgb(0,0,0);" onclick="redirect(9);" >Cuenta</a></li>
-								<li><a id="createPC " href="#" style="color:rgb(0,0,0);" onclick="redirect(10)" >Parametrización Ppto Contable</a></li>	
-								<li><a id="createPC " href="#" style="color:rgb(0,0,0);" onclick="redirect(11)" >Informes bancarios</a></li>	
-							</ul>
+						<li class="menu-has-children">
+							<a id="accountPeriodBase " href="#" style="color:rgb(0,0,0);" onclick="redirect(2)" >Empresas</a>
 						</li>
-						<li><a href="#" style="color:rgb(0,0,0);">Movimientos</a>
-							<ul>
-								<li><a id="createVoucher " href="#" style="color:rgb(0,0,0);" onclick="redirect(5)" >Comprobantes</a></li>								
-								<li><a id="documents" href="#" style="color:rgb(0,0,0);" onclick="redirect(6)">Documentos Presupuestales</a></li>
-								<li><a id="createThird " href="#" style="color:rgb(0,0,0);" onclick="redirect(7)" >Terceros</a></li>
-							</ul>
+						<li>
+							<a href="{% url 'userLogout' %}" style="color:rgb(0,0,0);">Finalizar</a>
 						</li>
-						<li class="menu-has-children" onclick="redirect(4)" ><a  href="#" style="color:rgb(0,0,0);">Presupuestos</a>
-						</li>
-						<li class="menu-has-children"><a href="" style="color:rgb(0,0,0);">Reportes</a>
-							<ul>
-								<li><a href="blog-home.html" style="color:rgb(0,0,0);">Contabilidad</a></li>								
-								<li><a href="blog-single.html" style="color:rgb(0,0,0);">Blog Single</a></li>
-							</ul>
-						</li>
-						<li><a href="{% url 'userLogout' %}" style="color:rgb(0,0,0);">Finalizar</a></li>
 					</ul>
 				</nav>	
 			</div>
@@ -330,48 +305,11 @@
 
 		function redirect(option){
 			if(option==1){
-				window.location.href = "http://localhost:8000/settings/"+localStorage.getItem('idBussines')+"/"+localStorage.getItem('userID');
+				window.location.href = "http://localhost:8000/admin/"+localStorage.getItem('userID')+"/";
 			}
 			if(option==2){
-				window.location.href = "http://localhost:8000/settings/listTypeAgreement/"+localStorage.getItem('idBussines')+"/"+localStorage.getItem('userID');	
+				window.location.href = "http://localhost:8000/bussines/listBussines/"+localStorage.getItem('userID')+"/";	
 			}
-			if(option==3){
-				window.location.href = "http://localhost:8000/settings/listInform/"+localStorage.getItem('idBussines')+"/"+localStorage.getItem('userID');
-			}
-			if(option==4){
-				window.location.href = "http://localhost:8000/budget/createBudget/"+localStorage.getItem('userID');
-			}
-			if(option==5){
-				window.location.href = "http://localhost:8000/documents/listVoucher/"+localStorage.getItem('idBussines')+"/"+localStorage.getItem('userID');	
-			}			
-			if(option==6){
-				window.location.href = "http://localhost:8000/documents/generateDocuments/"+localStorage.getItem('userID');
-			}
-			if(option==7){
-				window.location.href = "http://localhost:8000/documents/documents/listThird/"+localStorage.getItem('idBussines')+"/"+localStorage.getItem('userID');	
-			}
-			if(option==8){
-				window.location.href = "http://localhost:8000/documents/documents/listTypeContract/"+localStorage.getItem('idBussines')+"/"+localStorage.getItem('userID');	
-			}
-			if(option==9){
-				window.location.href = "http://localhost:8000/settings/listAccount/"+localStorage.getItem('idAC')+"/"+localStorage.getItem('userID');	
-			}
-			if(option==10){
-				window.location.href = "http://localhost:8000/settings/generateAccounting/"+localStorage.getItem('idBussines')+"/"+localStorage.getItem('userID');	
-			}	
-			if(option==11){
-				window.location.href = "http://localhost:8000/settings/listInformBank/"+localStorage.getItem('idBussines')+"/"+localStorage.getItem('userID');	
-			}	
-			if(option==12){
-				window.location.href = "http://localhost:8000/settings/listDiscount/"+localStorage.getItem('idBussines')+"/"+localStorage.getItem('userID');	
-			}
-			if(option==13){
-				window.location.href = "http://localhost:8000/settings/typeDocument/"+localStorage.getItem('idBussines')+"/"+localStorage.getItem('userID');	
-			}
-			if(option==14){
-				window.location.href = "http://localhost:8000/settings/CCPET/"+localStorage.getItem('idBussines')+"/"+localStorage.getItem('userID');	
-			}
-			
 		}
 
 

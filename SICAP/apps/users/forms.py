@@ -65,7 +65,10 @@ class ByBussinesForms(forms.Form):
     accountsP = forms.ChoiceField()
 
     def __init__(self, *args, **kwargs):
-        super(ByBussinesForms, self).__init__(*args, **kwargs)
-        
+        super(ByBussinesForms, self).__init__(*args,**kwargs)
+		
         self.fields['bussines'].label = 'Seleccione la empresa a trabajar'
         self.fields['accountsP'].label = 'Seleccione el período contable'
+		
+		
+

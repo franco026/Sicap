@@ -35,11 +35,11 @@
 		<div class="container-login100" >
 			<div class="wrap-login100">
 				<div class="login100-pic js-tilt" data-tilt>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
+					<br>
+					<br>
+					<br>
+					<br>
+					<br>
 					<img src="{% static 'login/images/SICAP2.png' %}" alt="IMG">
 				</div>
 				<div id="charge"  style="display:none">
@@ -94,20 +94,66 @@
 					<br>
 					<br>
 					<br>
+								
+					<div class="form-row">
+						<div class="form-group col-md-12">
+							<div class="form-group">
+								<select name="id_bussinesnSelect" class="form-control" title="" id="id_BussinesnSelect">
+								</select>
+							</div>
+														
+							<div class="form-group">
+								<select name="id_accountPeriodSelect" class="form-control" title="" id="id_accountPeriodSelect">
+								</select>
+							</div>
+							<div class="form-group">
+								<button type="submit" class="login100-form-btn">
+									Guardar
+								</button>
+							</div>
+						</div>                                
+					</div>   
 					
-					{% csrf_token %}			
-					<div class="Row">
-						{% bootstrap_form form %}
-					</div>
-					<button type="submit" class="login100-form-btn">
-						Guardar
-					</button>
 				</form>
 
 				</div>
 
 			</div>
 		</div>
+	</div>
+
+
+	<div class="modal fade" id="myModalAP" role="dialog">
+		<div class="modal-dialog">
+		  <div class="modal-content">
+			<div class="modal-header">
+			  <h4 class="modal-title">Registrar período contable</h4>
+				</div>
+					<div class="modal-body">
+						<div  class="container-fluid">
+							<form id="addAP" action="">
+								<input type="hidden" name="csrfmiddlewaretoken" value="QrnNkzAwfywl1D80AQwVmrnDXYtvpIAPF2vwtdMefSbH59YdMAgGsVkC9w8tz5z1">			
+								<div class="form-group"><label for="id_name">Nombre</label><input type="text" name="name" maxlength="100" class="form-control" placeholder="Nombre" title="" required="" id="id_name"></div>
+								<div class="form-group"><label for="id_state">Estado</label><select name="state" class="form-control" title="" required="" id="id_state">
+									<option value="" selected="">---------</option>
+									
+									<option value="Activo">Activo</option>
+									
+									<option value="Inactivo">Inactivo</option>
+									
+									</select>
+								</div>
+								<div class="form-group"><label for="id_initialDate">Fecha inicial</label><input type="date" name="initialDate" class="form-control" placeholder="Fecha inicial" title="" required="" id="id_initialDate"></div>
+								<div class="form-group"><label for="id_finalDate">Fecha final</label><input type="date" name="finalDate" class="form-control" placeholder="Fecha final" title="" required="" id="id_finalDate"></div>
+
+								<div id="divCreateButtons"  class="form-group">
+									<button id="btnCreate" type="button"  onclick="addAccout()"  class="login100-form-btn" >Registrar  Período contable</button>
+								</div> 
+							</form>  
+						</div>
+					</div>
+				</div>         
+			</div>  
 	</div>
 
 
@@ -128,7 +174,14 @@
 			scale: 1.1
 		})
 
-
+$(document).ready(function() {
+	$('#myModalAP').on('hidden.bs.modal', function () {
+        $('#id_accountPeriodSelect').val(-1)
+		$('form#addAP').trigger("reset");
+   		 return false;
+    })
+})
+    
 $("form#formLogin").submit(function() {
 	var usernameInput = $('input[name="username"]').val();
 	var passwordInput = $('input[name="password"]').val();
@@ -144,15 +197,42 @@ $("form#formLogin").submit(function() {
 			dataType: 'json',
 			success: function (data) {
 				console.log(data)
-				/* if(data.usuario == "admin"){
+				if(data.usuario == "admin"){
 					localStorage.setItem('admin', true);
-					window.location.href = "http://localhost:8000/settings/"+0+"/"+ data.id;
-				}else{ */
+					localStorage.setItem('userID', data.id);
+					window.location.href = "http://localhost:8000/admin/"+data.id+"/";
+				}else{
 
 					$("#charge").css('display', 'none');
 					$("#id_bussinesD").css('visibility', 'visible');
 					$(".container-d").insertAfter(".login100-pic js-tilt");
-				/* } */
+
+					const $select = document.querySelector("#id_BussinesnSelect");
+        
+					for (let i = $select.options.length; i >= 0; i--) {
+							$select.remove(i);
+					}
+
+					for (var i=0; i<data.listB.length; i++){
+						$('#id_BussinesnSelect').append(`<option value="${data.listB[i].bussines__id}">${data.listB[i].bussines__name}</option>`);
+					}
+					
+					const $selectA = document.querySelector("#id_accountPeriodSelect");
+        
+					for (let i = $selectA.options.length; i >= 0; i--) {
+							$selectA.remove(i);
+					}
+
+
+					if(data.listP.length>0){
+						for (var i=0; i<data.listP.length; i++){
+							$('#id_accountPeriodSelect').append(`<option value="${data.listP[i].id}">${data.listP[i].name}</option>`);
+						}
+					}else{
+						$('#id_accountPeriodSelect').append(`<option value="-1" selected disabled hidden>Selecciona una opcion</option>`);
+						$('#id_accountPeriodSelect').append(`<option value="0">Crear Periodo</option>`);
+					}
+				}
 
 			},error: function(data){
 				$("#charge").css('display', 'none');
@@ -166,54 +246,108 @@ $('form#formLogin').trigger("reset");
 	return false;
 });
 
+function monthDiff(dateFrom, dateTo) {
+ return dateTo.getMonth() - dateFrom.getMonth() + 
+   (12 * (dateTo.getFullYear() - dateFrom.getFullYear()))
+}
 
-		$(document).on('change', '#id_bussines', function(event) {
-			nameBussines = $("#id_bussines option:selected").text();
-			$.ajax({
-					url: '{% url "getAcccountPeriod" %}',
-					data: {
-						'nameBussines': nameBussines,
-					},
-					dataType: 'json',
-					success: function (data) {
-						console.log(data.AC);
-						const $select = document.querySelector("#id_accountsP");
-						for (let i = $select.options.length; i >= 0; i--) {
-								$select.remove(i);
-						}
-						$('#id_accountsP').append(`<option  hidden  selected"> Selecciona una opción</option>`);
-						for (var i=0; i<data.AC.length; i++){
-							$('#id_accountsP').append(`<option value="${data.AC[i].name}">${data.AC[i].name} </option>`);
-						}
-												
-					}
-				});
-		});
+$(document).on('change', '#id_accountPeriodSelect', function(event) {
+	if(parseInt($("#id_accountPeriodSelect option:selected").val()) == 0){
+		$('#myModalAP').modal('show')
+	}
+});
 
-		$("form#formStart").submit(function() {
-			var nameAC = $("#id_accountsP option:selected").text();
-			$.ajax({
-					url: '{% url "getStartApp" %}',
-					data: {
-						'nameAC': nameAC,
-						'nameBussines': nameBussines,
-					},
-					dataType: 'json',
-					success: function (data) {
-						var id = data.idBussines;
-						localStorage.setItem('nameBussines', nameBussines);
-						localStorage.setItem('nameAC', nameAC);
-						localStorage.setItem('idAC', data.idAC);
-						localStorage.setItem('idBussines', id);
-						localStorage.setItem('patron', data.patron);
-						localStorage.setItem('userID', data.userID);
-						localStorage.setItem('patronAccount', data.patronAccount);
-						window.location.href = "http://localhost:8000/settings/"+id+"/"+ data.userID;
+
+function addAccout() {
+    var nameInput = $('input[name="name"]').val();
+    var stateInput = $("#id_state option:selected").text();
+    var initialDateInput = $('input[name="initialDate"]').val().split('-');
+    var finalDateInput = $('input[name="finalDate"]').val().split('-');
+    var amount =  monthDiff(new Date(initialDateInput[0], initialDateInput[1] - 1, initialDateInput[2]), new Date(finalDateInput[0], finalDateInput[1] - 1, finalDateInput[2])) + 1
+    var formatDateInitial = new Date(initialDateInput[0], initialDateInput[1] - 1, initialDateInput[2])
+
+    var listDates = []
+    for (var i=0; i< amount; i++){
+        if(i == 0){
+            listDates.push({
+                "mount": formatDateInitial.getMonth() + 1, 
+                "year": formatDateInitial.getFullYear(),
+                "activate": true
+            }) 
+        }else{
+            var f = new Date(formatDateInitial.setMonth(formatDateInitial.getMonth() + 1))
+            listDates.push({
+                "mount": f.getMonth()+1,
+                "year": formatDateInitial.getFullYear(),
+                "activate":  true
+            })
+        }
+    }
+    if (nameInput) {
+        // Create Ajax Call
 		
+        $.ajax({
+            url: '{% url "createAccountPeriod" 0 %}'.replace('0', localStorage.getItem('userID')),
+            data: {
+                'bussines': $("#id_BussinesnSelect option:selected").val(),
+                'name': nameInput,
+                'state': stateInput,
+                'initialDate': initialDateInput[0] +"-"+ initialDateInput[1] +"-" +initialDateInput[2],
+                'finalDate': finalDateInput[0] +"-"+ finalDateInput[1] +"-" +finalDateInput[2],
+                'listDate':  JSON.stringify(listDates)
+            },
+            dataType: 'json',
+            success: function (data) {
+                if(data.CREATE == "TRUE"){
+
+					const $selectAC = document.querySelector("#id_accountPeriodSelect");
+        
+					for (let i = $selectAC.options.length; i >= 0; i--) {
+							$selectAC.remove(i);
 					}
-				});
+
+					$('#id_accountPeriodSelect').append(`<option value="-1" selected disabled hidden>Selecciona una opcion</option>`);
+					$('#id_accountPeriodSelect').append(`<option value="${data.ACID}">${data.ACName}</option>`)
+
+
+                    $('#myModalAP').modal('toggle');
+                }else{
+                    $('#myModalAP').modal('toggle');
+                }
+            }
+        });
+      } else {
+        alert("All fields must have a valid value.");
+    }
+    return false;
+};
+
+$("form#formStart").submit(function() {
+	var nameAC = $("#id_accountPeriodSelect option:selected").text();
+	var nameBussines = $("#id_BussinesnSelect option:selected").text();
+	console.log(nameBussines,'d')
+	$.ajax({
+			url: '{% url "getStartApp" %}',
+			data: {
+				'nameAC': nameAC,
+				'nameBussines': nameBussines,
+			},
+			dataType: 'json',
+			success: function (data) {
+				var id = data.idBussines;
+				localStorage.setItem('nameBussines', nameBussines);
+				localStorage.setItem('nameAC', nameAC);
+				localStorage.setItem('idAC', data.idAC);
+				localStorage.setItem('idBussines', id);
+				localStorage.setItem('patron', data.patron);
+				localStorage.setItem('userID', data.userID);
+				localStorage.setItem('patronAccount', data.patronAccount);
+				window.location.href = "http://localhost:8000/settings/"+id+"/"+ data.userID;
+
+			}
 		});
-		</script>
+});
+</script>
 <!--===============================================================================================-->
 	<script src="{% static 'login/js/main.js' %}"></script>
 	{% endblock %}
