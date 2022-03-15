@@ -1,4 +1,4 @@
-{% extends 'base' %}
+{% extends 'base/base.html' %}
 {% load bootstrap4 %}
 {% block main %}
 <style>
@@ -200,9 +200,9 @@
             </div>
                 <div class="modal-body">
 					
-						<form enctype="multipart/form-data">
-							<input id="upload" type=file  name="files[]">
-						</form>
+                        <form enctype="multipart/form-data">
+                            <input id="upload" type=file  name="files[]">
+                        </form>
 
 						<div  class="container-fluid col-12" >
 							<div class="card mb-12" >
@@ -355,7 +355,6 @@ function getListAccount(){
         success: function (data) {
             var tableRubro = $('#dataTableAccount').DataTable(); 
             var rowsRubro = tableRubro.rows().remove().draw();
-            console.log(data)
             for (var i=0; i<data.ac.length; i++){
                 tableRubro.row.add( [
                 data.ac[i].code,
@@ -498,9 +497,6 @@ $("form#addAccount").submit(function() {
                         if(data.CREATE == "TRUE"){
                             
                             $('#myModalAccount').modal('toggle');
-                            
-                            console.log(data)
-                            console.log("data")
                             $.ajax({
                                 url: '{% url "getListAccount"  0 %}'.replace('0', localStorage.getItem('userID')),
                                 data: {
@@ -710,7 +706,6 @@ function deleteAccount(id, code, description){
             },
             dataType: 'json',
             success: function (data) { 
-                console.log(data)
                 if (data.ELIMINADO=="TRUE"){
                     $.ajax({
                         url: '{% url "getListAccount"  0 %}'.replace('0', localStorage.getItem('userID')),
@@ -911,9 +906,6 @@ $("#id_code").keyup(function(){
                     $('#account_father').val(data.FATHER);
 
 				}
-				else{			
-					console.log("si");
-				}
 				searchRubro = $('#id_code').val();
 			},error: function(data){
                 getLevel($('#id_code').val())
@@ -962,78 +954,92 @@ function generateAccountPattern(){
 		patronArray.push(acumulatorImport)
 	}
 }
-document.getElementById('upload').addEventListener('change', handleFileSelect, false);
+
 var ExcelToJSON = function() {
 
     this.parseExcel = function(file) {
-    var tableimport = $('#dataTableImports').DataTable(); 
-    var table = tableimport.rows().remove().draw();
-    jsonImport = []
-    file.arrayBuffer().then((res)=>{
-        var data = new Uint8Array(res)
-        var workbook = XLSX.read(data, {type: "array"})
-        workbook.SheetNames.forEach(function(sheetName) {
-        // Here is your object
-        var XL_row_object = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
-        var corrient;
+        var reader = new FileReader();
+        var tableimport = $('#dataTableImports').DataTable(); 
+        var table = tableimport.rows().remove().draw();
 
-        JSON.parse(XL_row_objec).map(function(code) {
+        jsonImport = []
+        reader.onload = function(e) {
+            var data = e.target.result;
+            var workbook = XLSX.read(data, {
+            type: 'binary'
+            });
+            workbook.SheetNames.forEach(function(sheetName) {
+            // Here is your object
+                var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+                var json_object = JSON.stringify(XL_row_object);
+                var corrient;
+                var nature
+                JSON.parse(json_object).map(function(code) {
+                    if(code.codigo.substring(0,1)=='1'){
+                        if(code.codigo.substring(0,1)=='1'){
+                            nature = 'DEBITO';
+                            corrient="CO";               
+                        }
+                    }
+                    if(code.codigo.substring(0,1)=='3' || code.codigo.substring(0,1)=='4'||code.codigo.substring(0,1)=='5'||code.codigo.substring(0,1)=='6'||code.codigo.substring(0,1)=='7'||code.codigo.substring(0,1)=='8'||code.codigo.substring(0,1)=='9'){
+                        if(code.codigo.substring(0,1)=='4'|| code.codigo.substring(0,1)=='3'){
+                            nature = 'CREDITO';
+                        }else if(code.codigo.substring(0,1)=='9'){
+                            nature = 'CREDITO';
+                        }
+                        else{
+                            nature = 'DEBITO';
+                        }
+                        corrient = 'NCO';
+                    }
 
-            if(code.substring(0,1)=='1'){
-                if(code.substring(0,1)=='1'){
-                    nature = 'DEBITO';
-                    corrient="CO";               
-                }
-            }
-            if(code.substring(0,1)=='3' || code.substring(0,1)=='4'||code.substring(0,1)=='5'||code.substring(0,1)=='6'||code.substring(0,1)=='7'||code.substring(0,1)=='8'||code.substring(0,1)=='9'){
-                if(code.substring(0,1)=='4'|| code.substring(0,1)=='3'){
-                    nature = 'CREDITO';
-                }else if(code.substring(0,1)=='9'){
-                    nature = 'CREDITO';
-                }
-                else{
-                    nature = 'DEBITO';
-                }
-                corrient = 'NCO';
-            }
+                    if(code.codigo.substring(0,2)=='11' ||code.codigo.substring(0,2)=='12'|| code.codigo.substring(0,2)=='13'||code.codigo.substring(0,2)=='14'){
+                        
+                        corrient = 'CO';
+                    }
+                    if(code.codigo.substring(0,2)=='16' ||code.codigo.substring(0,2)=='17'||code.codigo.substring(0,2)=='18'||code.codigo.substring(0,2)=='19'||code.codigo.substring(0,2)=='22'||code.codigo.substring(0,2)=='23'){
+                        if(code.codigo.substring(0,1)=='2'){
+                            nature = 'CREDITO';
+                        }
+                        corrient = 'NCO';
+                    }
+                    
+                    jsonImport.push({
+                        "TC":code.tipocu,
+                        "CD":code.codigo,
+                        "DC":code.descri,
+                        "NT":nature,  
+                        "CO":corrient,
+                    })
 
-            if(code.substring(0,2)=='11' ||code.substring(0,2)=='12'|| code.substring(0,2)=='13'||code.substring(0,2)=='14'){
-                
-                corrient = 'CO';
-            }
-            if(code.substring(0,2)=='16' ||code.substring(0,2)=='17'||code.substring(0,2)=='18'||code.substring(0,2)=='19'||code.substring(0,2)=='22'||code.substring(0,2)=='23'){
-                if(code.substring(0,1)=='2'){
-                    nature = 'CREDITO';
-                }
-                corrient = 'NCO';
-            }
-             
-			jsonImport.push({
-				"TC":XL_row_object[i].tipocu,
-				"CD":XL_row_object[i].codigo,
-				"DC":XL_row_object[i].descri,
-                "NT":nature,  
-                "CO":corrient,
-			})
+                    table.row.add([
+                            code.tipocu,
+                            code.codigo,
+                            code.descri,
+                            nature,  
+                            corrient,
+                            "<label type='number' id=import"+ code. codigo+"></label>",			
+                    ])  
 
-            table.row.add([
-                    XL_row_object[i].tipocu,
-                    XL_row_object[i].codigo,
-                    XL_row_object[i].descri,
-                    nature,  
-                    corrient,
-                    "<label type='number' id=import"+ XL_row_object[i].codigo+"></label>",			
-            ])  
+                })
+                table.draw(false);
+                $('#contenedor_carga').hide();
+            })
+        }
 
-        })
-        table.draw(false);
-        })
-    })
+        reader.onerror = function(ex) {
+            console.log(ex);
+        };
+
+        reader.readAsBinaryString(file);
     }
 };
+
+document.getElementById('upload').addEventListener('change', handleFileSelect, false);
 function handleFileSelect(evt) {
 
     var files = evt.target.files; // FileList object
+    $('#contenedor_carga').show();
     var xl2json = new ExcelToJSON();
     xl2json.parseExcel(files[0]);
 }
@@ -1135,8 +1141,8 @@ function sendDataToBD(){
 					if(data.IMPORT=="TRUE"){
 						var table = $('#dataTableAccount').DataTable(); 
 						var rows = table.rows().remove().draw();
-                        $("#dataTableAccount").load(" #dataTableAccount");
 						$('#MyModalImport').modal('toggle');
+
 						swal("Importacion completa ","", "success");
 						var tableImport = $('#dataTableImports').DataTable(); 
 						var rowsImport = tableImport.rows().remove().draw();

@@ -762,7 +762,7 @@ class GetListAccountCCPET(LoginRequiredMixin, View):
     redirect_field_name = '/login/'
 
     def get(self, request, *args, **kwargs):
-        accounts = CCPET.objects.filter(accountPeriod_id=request.GET.get('accountId')).values('id', 'code', 'description','type')
+        accounts = CCPET.objects.filter(bussines_id=request.GET.get('bussinesId')).values('id', 'code', 'description','type')
         return JsonResponse({'ac':list(accounts)})
 
 
@@ -1128,18 +1128,18 @@ class importAccountsCCPETBD(LoginRequiredMixin,View):
    
         accountsArray = request.POST.get('accounts')
         accounts = json.loads(accountsArray)
-        accountPeriod = request.POST.get('accountPeriod')
+        businessID = request.POST.get('businessID')
         for x in range(0,len(accounts)):
             if  accounts[x]['TC'] == "A":
                 newAccount = CCPET.objects.create(
                     code = accounts[x]['RB'], 
                     type='M', 
                     description = accounts[x]['DC'],
-                    accountPeriod_id = accountPeriod,
+                    bussines_id = businessID,
                 )
             else:
                 newAccount = CCPET.objects.create(
-                    accountPeriod_id = accountPeriod,
+                    bussines_id = businessID,
                     code = accounts[x]['RB'], 
                     type='A', 
                     description = accounts[x]['DC']
@@ -1256,6 +1256,16 @@ class CCPETView(LoginRequiredMixin, ListView):
     model = CCPET
     queryset= model.objects.order_by('code')
     template_name = 'settings/CCPET.html'
+
+
+
+class Conciliation(LoginRequiredMixin, ListView):
+
+    login_url = '/login/'
+    redirect_field_name = '/login/'
+    template_name = 'settings/conciliation.html'
+    model = CCPET
+    queryset= model.objects.order_by('code')
 
 class getListDocument(LoginRequiredMixin, ListView):
 
@@ -1403,7 +1413,7 @@ class DeleteCCPETImported(LoginRequiredMixin,View):
 
     def  post(self, request, *args, **kwargs):
         
-        CCPETTable = CCPET.objects.filter(accountPeriod_id = request.POST.get('period')).values('id')
+        CCPETTable = CCPET.objects.filter(bussines_id = request.POST.get('businessID')).values('id')
         Rubros = Rubro.objects.all()
         print(len(list(Rubros)))
         if len(list(Rubros)) > 0:

@@ -34,7 +34,7 @@ urlpatterns = [
     url(r'ajax/changeWindowsOperation/(?P<pkUser>\d+)/', ChangeWindowsOperation.as_view(), name='changeWindowsOperation'),
     url(r'settings/listDiscount/(?P<pk>\d+)/(?P<pkUser>\d+)/$', ListDiscount.as_view() , name='listDiscount'),
     url(r'settings/typeDocument/(?P<pk>\d+)/(?P<pkUser>\d+)/$', typeDocumentView.as_view() , name='typeDocument'),
-     url(r'settings/CCPET/(?P<pk>\d+)/(?P<pkUser>\d+)/', CCPETView.as_view() , name='CCPETView'),
+    url(r'settings/CCPET/(?P<pk>\d+)/(?P<pkUser>\d+)/', CCPETView.as_view() , name='CCPETView'),
 
     url(r'ajax/createDiscount/(?P<pkUser>\d+)/$', CreateDiscount.as_view(), name='createDiscount'),
     url(r'ajax/getListInformsDetall/(?P<pkUser>\d+)/$', GetInformsDetall.as_view(), name='getListInformsDetall'),
@@ -42,7 +42,9 @@ urlpatterns = [
     url(r'ajax/updateCategoryDetall/(?P<pkUser>\d+)/$', UpdateCategoryDetall.as_view(), name='updateCategoryDetall'),
     url(r'ajax/deleteCategoryDetall/(?P<pkUser>\d+)/$', DeleteCategoryDetall.as_view(), name='deleteCategoryDetall'),
 
-     url(r'ajax/getCategoryInformsDetall/(?P<pkUser>\d+)/$', GetCategoryInformsDetall.as_view(), name='getCategoryInformsDetall'),
+    url(r'ajax/getCategoryInformsDetall/(?P<pkUser>\d+)/$', GetCategoryInformsDetall.as_view(), name='getCategoryInformsDetall'),
+
+    url(r'settings/conciliation/(?P<pk>\d+)/(?P<pkUser>\d+)/', Conciliation.as_view() , name='conciliation'),
 
 
 

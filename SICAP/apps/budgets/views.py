@@ -282,7 +282,8 @@ class GetOperationBudget(LoginRequiredMixin,View):
     def  get(self, request, *args, **kwargs):
         typeagreement = []
         nameOrigin = request.GET.get('nameOrigin')
-        accountPeriod = AccountPeriod.objects.get(name=request.GET.get('nameAC')) ###
+        print(request.GET.get('nameAC'))
+        accountPeriod = AccountPeriod.objects.get(name=request.GET.get('nameAC'), bussines_id=request.GET.get('idBussines')) ###
         origin = Origin.objects.get(nameOrigin=nameOrigin, accountPeriod=accountPeriod.id)
         operations = Operation.objects.filter(origin=origin.id).values('nameOp')
         rubro = Rubro.objects.filter(origin_id=origin.id, bussines_id=request.GET.get('idBussines')).values('id','rubro','rubroFather','typeRubro','description','dateCreation','initialBudget','realBudget','budgetEject').order_by('rubro')
@@ -1255,7 +1256,7 @@ class ImportRubrosBD(LoginRequiredMixin,View):
         origin = request.POST.get('origin')
         today = datetime.now()
 
-        ccpet = CCPET.objects.all();
+        ccpet = CCPET.objects.filter(bussines_id = bussines).values('id');
 
         if len(list(ccpet)) > 0:
             for x in range(0,len(rubros)):

@@ -534,7 +534,7 @@ class BudgetsCCPET(models.Model):
     code = models.CharField(max_length=100)
     type = models.CharField(max_length=100,null=True, blank=True)
     description = models.CharField(max_length=2000,null=True, blank=True)
-    accountPeriod_id = models.ForeignKey(BudgetsAccountperiod, models.DO_NOTHING, blank=True, null=True)
+    bussines = models.ForeignKey(BudgetsBussines, models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
         managed = False

@@ -40,7 +40,10 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
 
 
-
+	<!-- Include the default stylesheet -->
+	<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/wenzhixin/multiple-select/e14b36de/multiple-select.css">
+	<!-- Include plugin -->
+	<script src="https://cdn.rawgit.com/wenzhixin/multiple-select/e14b36de/multiple-select.js"></script>
 	{% endblock %}
 
 </head>
@@ -90,6 +93,7 @@
 								<li><a id="createAccount " href="#" style="color:rgb(0,0,0);" onclick="redirect(9);" >Cuenta</a></li>
 								<li><a id="createPC " href="#" style="color:rgb(0,0,0);" onclick="redirect(10)" >Parametrización Ppto Contable</a></li>	
 								<li><a id="createPC " href="#" style="color:rgb(0,0,0);" onclick="redirect(11)" >Informes bancarios</a></li>	
+								<li><a id="createPC " href="#" style="color:rgb(0,0,0);" onclick="redirect(15)" >Conciliación</a></li>	
 							</ul>
 						</li>
 						<li><a href="#" style="color:rgb(0,0,0);">Movimientos</a>
@@ -378,6 +382,10 @@
 			}
 			if(option==14){
 				window.location.href = "http://localhost:8000/settings/CCPET/"+localStorage.getItem('idBussines')+"/"+localStorage.getItem('userID');	
+			}
+
+			if(option==15){
+				window.location.href = "http://localhost:8000/settings/conciliation/"+localStorage.getItem('idBussines')+"/"+localStorage.getItem('userID');	
 			}
 			
 		}

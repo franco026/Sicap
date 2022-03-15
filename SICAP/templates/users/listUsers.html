@@ -132,7 +132,7 @@
                         <div class="form-row">
                             <div class="form-group col-md-12">
                                 <div class="form-group">
-                                    <select name="id_BussinesnSelect" class="form-control" title="" id="id_BussinesnSelect" multiple="">
+                                    <select name="id_BussinesnSelect" class="custom-select" title="" id="id_BussinesnSelect" multiple="multiple">
                                     </select>
                                 </div>
                                                             
@@ -235,6 +235,7 @@ $('#id_search').on('input', function() {
 });
 
 
+
 function AddUsers(){
     window.location.href = "http://localhost:8000/users/createUser/"
 }
@@ -249,6 +250,7 @@ function linkUser(id){
         },
         dataType: 'json',
         success: function (data) {
+                console.log(data.SL)
                 const $select = document.querySelector("#id_BussinesnSelect");
         
                 for (let i = $select.options.length; i >= 0; i--) {
@@ -260,12 +262,18 @@ function linkUser(id){
                 }	
                     
                 if (data.SL.length>0) {
-                    
-                    $('#id_BussinesnSelect').val(data.SL[0].bussines_id);
+                    for (var i=0; i<data.SL.length; i++){
+                        $("#id_BussinesnSelect option[value='" + data.SL[i].bussines_id + "']").prop("selected", true);
+                    }	
+                   
                 }
+
+                
             }  
         });
 }
+
+
 
 
 function SaveSelectbusiness() {
@@ -275,7 +283,7 @@ function SaveSelectbusiness() {
         url: '{% url "linkBussines" 0 %}'.replace('0', localStorage.getItem('userID')),
         data: {
             'userID': UserIDG,
-            'businessID': parseInt($('#id_BussinesnSelect').val())
+            'businessID':  JSON.stringify($('#id_BussinesnSelect').val())
         },
         dataType: 'json',
         success: function (data) {

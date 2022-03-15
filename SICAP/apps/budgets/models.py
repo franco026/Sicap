@@ -320,4 +320,4 @@ class CCPET(models.Model):
     code = models.CharField(max_length=100)
     type = models.CharField(max_length=100,null=True, blank=True)
     description = models.CharField(max_length=2000,null=True, blank=True)
-    accountPeriod = models.ForeignKey(AccountPeriod, null=True, blank=True, on_delete=models.CASCADE)
+    bussines = models.ForeignKey(Bussines, null=True, blank=True, on_delete=models.CASCADE)

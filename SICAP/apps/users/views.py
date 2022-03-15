@@ -1,4 +1,5 @@
 from copyreg import constructor
+import json
 from django.shortcuts import render
 from apps.users.models import *
 from apps.budgets.models import *
@@ -170,19 +171,30 @@ class LinkBussines(LoginRequiredMixin, ListView):
     redirect_field_name = '/login/'
 
     def  get(self, request, *args, **kwargs):
+        business = request.GET.get('businessID')
+        businessList = json.loads(business)
 
-        linkBussinesExist = BussinesUsers.objects.filter(user_id = request.GET.get('userID')).exists()
+        
 
-        if linkBussinesExist == True:
+        
 
-            linkBussines = BussinesUsers.objects.get(user_id = request.GET.get('userID'))
-            linkBussines.bussines_id = request.GET.get('businessID')
-            linkBussines.user_id = request.GET.get('userID')
-            linkBussines.save()
-        else:
-            linkBussines = BussinesUsers.objects.create(
-                user_id = request.GET.get('userID'),
-                bussines_id = request.GET.get('businessID')
-            )
+        for x in range(0,len(businessList)):
 
+            linkBussinesExist = BussinesUsers.objects.filter(user_id = request.GET.get('userID'), bussines_id = businessList[x]).exists()
+
+            if linkBussinesExist == False:
+
+                linkBussines = BussinesUsers.objects.create(
+                    user_id = request.GET.get('userID'),
+                    bussines_id = businessList[x]
+                )
+                
+        linkBussines = BussinesUsers.objects.filter(user_id = request.GET.get('userID')).values('bussines_id','id')
+        
+        for y in range(0,len(list(linkBussines))):
+            if str(linkBussines[y]['bussines_id']) not in businessList:
+                deleteLink  = BussinesUsers.objects.get(id = linkBussines[y]['id'])
+                deleteLink.delete()
+                
+                
         return JsonResponse({'SAVE':True})

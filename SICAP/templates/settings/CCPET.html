@@ -321,7 +321,7 @@ function confirmatePassword(){
 							headers: { "X-CSRFToken": token },
 							url: '{% url "deleteCCPETImported"  0 %}'.replace('0', localStorage.getItem('userID')),
 							data: {
-								'period':localStorage.getItem('idAC'),
+								'businessID':localStorage.getItem('idBussines'),
 							},	
 							type: 'POST',
 							dataType: 'json',
@@ -351,7 +351,7 @@ function getListAccount(){
     $.ajax({
         url: '{% url "getListAccountCCPET"  0 %}'.replace('0', localStorage.getItem('userID')),
         data: {
-            'accountId': localStorage.getItem('idAC'),
+            'bussinesId': localStorage.getItem('idBussines'),
         },
         dataType: 'json',
         success: function (data) {
@@ -396,126 +396,127 @@ function getAccount(id){
  
 }
 
-
 var ExcelToJSON = function() {
 
     this.parseExcel = function(file) {
-    var reader = new FileReader();
-    var table = $('#dataTableImports').DataTable(); 
-    var rows = table.rows().remove().draw();
-    jsonImport = []
-    arrayVa = []
-    reader.onload = function(e) {
-        var data = e.target.result;
-        var workbook = XLSX.read(data, {
-        type: 'binary'
-        });
-        workbook.SheetNames.forEach(function(sheetName) {
-        // Here is your object
-        var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
-        var json_object = JSON.stringify(XL_row_object);
+        var reader = new FileReader();
+        var table = $('#dataTableImports').DataTable(); 
+        var rows = table.rows().remove().draw();
         
-        switch($("input[type=checkbox]:checked").val()){
-            case "1":
-                
-                JSON.parse(json_object).map(function(num) {
-                    if (num.DPTO =='1'){
-                        jsonImport.push({
-                            
-                            "RB": num.rubro,
-                            "TC": num.tipocu,
-                            "DC": num.descrip,
-                        })
-        
-                        table.row.add( [
-                            num.rubro,
-                            num.tipocu,
-                            num.descrip,
-                        ])
-                    }
-                })
-                
-                break;
-            case "2":
-                JSON.parse(json_object).map(function(num) {
-                    if (num.MPIO =='1'){
-                        jsonImport.push({
-                            
-                            "RB": num.rubro,
-                            "TC": num.tipocu,
-                            "DC": num.descrip,
-                        })
-        
-                        table.row.add( [
-                            num.rubro,
-                            num.tipocu,
-                            num.descrip,
-                        ])
-                    }
-                })
-                break;
-            case "3":
+        jsonImport = []
+        arrayVa = []
 
-                JSON.parse(json_object).map(function(num) {
-                    if (num.Resguardos =='1'){
-                        jsonImport.push({
-                            
-                            "RB": num.rubro,
-                            "TC": num.tipocu,
-                            "DC": num.descrip,
-                        })
-        
-                        table.row.add( [
-                            num.rubro,
-                            num.tipocu,
-                            num.descrip,
-                        ])
-                    }
-                })
-                
-                break;
-            case "4":
-                JSON.parse(json_object).map(function(num) {
-                    if (num.IPS =='1'){
-                        jsonImport.push({
-                            
-                            "RB": num.rubro,
-                            "TC": num.tipocu,
-                            "DC": num.descrip,
-                        })
-        
-                        table.row.add( [
-                            num.rubro,
-                            num.tipocu,
-                            num.descrip,
-                        ])
-                    }
-                })
-                
-                break;
-            case "5":
-                JSON.parse(json_object).map(function(num) {
-                    if (num.PARTICU =='1'){
-                        jsonImport.push({
-                            
-                            "RB": num.rubro,
-                            "TC": num.tipocu,
-                            "DC": num.descrip,
-                        })
-        
-                        table.row.add( [
-                            num.rubro,
-                            num.tipocu,
-                            num.descrip,
-                        ])
-                    }
-                })
-                
-                break;
-        }
-        
-        table.draw(false);
-        $('#contenedor_carga').hide();
+        reader.onload = function(e) {
+            var data = e.target.result;
+            var workbook = XLSX.read(data, {
+            type: 'binary'
+            });
+            workbook.SheetNames.forEach(function(sheetName) {
+            // Here is your object
+            var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+            var json_object = JSON.stringify(XL_row_object);
+            
+            switch($("input[type=checkbox]:checked").val()){
+                case "1":
+                    
+                    JSON.parse(json_object).map(function(num) {
+                        if (num.DPTO =='1'){
+                            jsonImport.push({
+                                
+                                "RB": num.rubro,
+                                "TC": num.tipocu,
+                                "DC": num.descrip,
+                            })
+            
+                            table.row.add( [
+                                num.rubro,
+                                num.tipocu,
+                                num.descrip,
+                            ])
+                        }
+                    })
+                    
+                    break;
+                case "2":
+                    JSON.parse(json_object).map(function(num) {
+                        if (num.MPIO =='1'){
+                            jsonImport.push({
+                                
+                                "RB": num.rubro,
+                                "TC": num.tipocu,
+                                "DC": num.descrip,
+                            })
+            
+                            table.row.add( [
+                                num.rubro,
+                                num.tipocu,
+                                num.descrip,
+                            ])
+                        }
+                    })
+                    break;
+                case "3":
+
+                    JSON.parse(json_object).map(function(num) {
+                        if (num.Resguardos =='1'){
+                            jsonImport.push({
+                                
+                                "RB": num.rubro,
+                                "TC": num.tipocu,
+                                "DC": num.descrip,
+                            })
+            
+                            table.row.add( [
+                                num.rubro,
+                                num.tipocu,
+                                num.descrip,
+                            ])
+                        }
+                    })
+                    
+                    break;
+                case "4":
+                    JSON.parse(json_object).map(function(num) {
+                        if (num.IPS =='1'){
+                            jsonImport.push({
+                                
+                                "RB": num.rubro,
+                                "TC": num.tipocu,
+                                "DC": num.descrip,
+                            })
+            
+                            table.row.add( [
+                                num.rubro,
+                                num.tipocu,
+                                num.descrip,
+                            ])
+                        }
+                    })
+                    
+                    break;
+                case "5":
+                    JSON.parse(json_object).map(function(num) {
+                        if (num.PARTICU =='1'){
+                            jsonImport.push({
+                                
+                                "RB": num.rubro,
+                                "TC": num.tipocu,
+                                "DC": num.descrip,
+                            })
+            
+                            table.row.add( [
+                                num.rubro,
+                                num.tipocu,
+                                num.descrip,
+                            ])
+                        }
+                    })
+                    
+                    break;
+            }
+            
+            table.draw(false);
+            $('#contenedor_carga').hide();
         })
     };
 
@@ -546,7 +547,7 @@ function sendDataToBD(){
 				url: '{% url "importAccountsCCPETBD"  0 %}'.replace('0', localStorage.getItem('userID')),
 				data: {
 					'accounts': JSON.stringify(jsonImport),
-					'accountPeriod': localStorage.getItem('idAC'),
+					'businessID': localStorage.getItem('idBussines'),
 				},	
 				type: 'POST',
 				dataType: 'json',	
