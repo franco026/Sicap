@@ -391,6 +391,7 @@ class BudgetsValuesaccountobligation(models.Model):
     value = models.BigIntegerField(blank=True, null=True)
     account = models.ForeignKey(BudgetsAccounttyperubro, models.DO_NOTHING, blank=True, null=True)
     obligation = models.ForeignKey(BudgetsRubromovement, models.DO_NOTHING, blank=True, null=True)
+    payment_value = models.BooleanField(blank=True, null=True)
 
     class Meta:
         managed = False

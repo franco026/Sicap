@@ -1267,7 +1267,7 @@ class ImportRubrosBD(LoginRequiredMixin,View):
                         filaRubro=str(rubros[x]['RB'])
                         getRubro = Rubro.objects.get(rubro=filaRubro[:-request.session.get('num')],bussines_id=bussines,origin_id=origin)
 
-                        existccpet = CCPET.objects.filter(code=rubros[x]['RB'],accountPeriod_id=request.POST.get('period')).exists()
+                        existccpet = CCPET.objects.filter(code=rubros[x]['RB'],bussines_id = bussines).exists()
 
                         if existccpet == True:
                             if  rubros[x]['TC'] == "A":
@@ -1303,7 +1303,7 @@ class ImportRubrosBD(LoginRequiredMixin,View):
                                 movement = Movement.objects.create(bussines_id = bussines, nameRubro_id = newRubro.id, concept = 'CREACION', value = rubros[x]['PI'], balance = rubros[x]['PI'], date = today) 
 
                     else: 
-                        existccpet = CCPET.objects.filter(code=rubros[x]['RB'],accountPeriod_id=request.POST.get('period')).exists()
+                        existccpet = CCPET.objects.filter(code=rubros[x]['RB'],bussines_id = bussines).exists()
 
                         if existccpet == True:
                             if  rubros[x]['TC'] == "A":

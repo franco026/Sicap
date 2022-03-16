@@ -51,9 +51,14 @@ urlpatterns = [
     url(r'settings/listAccount/(?P<pk>\d+)/(?P<pkUser>\d+)/$', ListAccount.as_view() , name='listAccount'),
     url(r'ajax/createAccount/(?P<pkUser>\d+)/$', CreateAccount.as_view(), name='createAccount'),
     url(r'ajax/updateAccount/(?P<pkUser>\d+)/', UpdateAccount.as_view(), name='updateAccount'),
-
     url(r'settings/generateAccounting/(?P<pkUser>\d+)/', generateAccounting , name='generateAccounting'),
     url(r'ajax/getAccountSettings/(?P<pkUser>\d+)/', GetAccountSettings.as_view(), name='getAccountSettings'),
+
+
+    url(r'ajax/filterAccountSettings/(?P<pkUser>\d+)/', FilterAccountSettings.as_view(), name='filterAccountSettings'),
+
+    
+
     url(r'ajax/createAccountingOpTip/(?P<pkUser>\d+)/$', CreateAccountingOpTip.as_view(), name='createAccountingOpTip'),
     url(r'ajax/getBudget/(?P<pkUser>\d+)/', GetBudget.as_view(), name='getBudget'),
     url(r'ajax/createAccountRubro/(?P<pkUser>\d+)/', CreateAccountRubro.as_view(), name='createAccountRubro'),

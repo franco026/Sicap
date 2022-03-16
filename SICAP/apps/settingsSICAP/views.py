@@ -857,6 +857,16 @@ class GetAccountSettings(LoginRequiredMixin,  View):
         accounts = Account.objects.filter(accountPeriod_id=request.GET.get('idAC')).values('id', 'code', 'description')
         return JsonResponse({"ACC": list(accounts)})
 
+
+class FilterAccountSettings(LoginRequiredMixin,  View):
+
+    login_url = '/login/'
+    redirect_field_name = '/login/'
+
+    def  get(self, request, *args, **kwargs):
+        accounts = Account.objects.filter(code__startswith=request.GET.get('codeFilter'),accountPeriod_id=request.GET.get('idAC')).values('id', 'code', 'description')
+        return JsonResponse({"ACC": list(accounts)})
+
 class CreateAccountingOpTip(LoginRequiredMixin, View):
 
     login_url = '/login/'
@@ -886,10 +896,10 @@ class GetBudget(LoginRequiredMixin,View):
     redirect_field_name = '/login/'
 
     def  get(self, request, *args, **kwargs):
-        print('función para contar las cuentas agregadas a el rubro')
+        print(request.GET.get('nameAC'))
 
         nameOrigin = request.GET.get('nameOrigin')
-        accountPeriod = AccountPeriod.objects.get(name=request.GET.get('nameAC')[:-1])
+        accountPeriod = AccountPeriod.objects.get(id=request.GET.get('idAC'))
         origin = Origin.objects.get(nameOrigin=nameOrigin, accountPeriod=accountPeriod.id)
         rubro = Rubro.objects.filter(origin_id=origin.id, bussines_id=request.GET.get('idBussines')).values('id','rubro','rubroFather','typeRubro','description','dateCreation','initialBudget','realBudget','budgetEject').order_by('rubro')
         listRubroAccount = []

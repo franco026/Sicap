@@ -227,6 +227,7 @@ class ValuesAccountObligation(models.Model):
     obligation = models.ForeignKey(RubroMovement, null=True, blank=True, on_delete=models.CASCADE)
     typeAccount = models.CharField(max_length=100)
     value = models.BigIntegerField(null=True)
+    payment_value = models.BooleanField(blank=True, null=True)
 
 class InformationMovement(models.Model):
 

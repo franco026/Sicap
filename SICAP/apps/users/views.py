@@ -61,8 +61,7 @@ class GetAccountPeriod(View):
     
     def  get(self, request, *args, **kwargs):
 
-        bussines =  Bussines.objects.get(name=request.GET.get('nameBussines'))
-        accountPeriod =  AccountPeriod.objects.all().filter(bussines_id=bussines.id).values('name')
+        accountPeriod =  AccountPeriod.objects.all().filter(bussines_id=request.GET.get('idBussines')).values('name','id')
         return JsonResponse({"AC": list(accountPeriod)})
 
 def success(request):

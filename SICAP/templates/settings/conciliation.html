@@ -1,35 +1,122 @@
 {% extends 'base/base.html' %}
 {% load bootstrap4 %}
 {% block main %}
-<
-<div class="row d-flex justify-content-center mt-100">
-    <div class="col-md-6"> <select id="choices-multiple-remove-button" placeholder="Select upto 5 tags" multiple>
-            <option value="HTML">HTML</option>
-            <option value="Jquery">Jquery</option>
-            <option value="CSS">CSS</option>
-            <option value="Bootstrap 3">Bootstrap 3</option>
-            <option value="Bootstrap 4">Bootstrap 4</option>
-            <option value="Java">Java</option>
-            <option value="Javascript">Javascript</option>
-            <option value="Angular">Angular</option>
-            <option value="Python">Python</option>
-            <option value="Hybris">Hybris</option>
-            <option value="SQL">SQL</option>
-            <option value="NOSQL">NOSQL</option>
-            <option value="NodeJS">NodeJS</option>
-        </select> </div>
+<br>
+<br>
+<br>
+<div id=divCreateAccount class="container-fluid">
+	<div class="card mb-3" style="border: 0px;">
+		<div class="card-body">
+			<form>
+				<div class="form-row">
+					<div class="col-6">
+						<h2>Conciliaciones</h2>
+						<br>
+						<div id="separator">
+							<label for="DataListaccountSelect" class="form-label">Cuentas</label>
+				
+							<div style="display: flex;">
+								<input  autocomplete="off" class="form-control" style="width: 70%;" id="InputListaccountSelect" placeholder="Type to search..." datalist>
+								<button type="button" class="genric-btn primary small"  onclick="getAccount()"><i class="fa fa-search" aria-hidden="true"></i></button> 
+							</div>
+						</div>
+					</div>
+					<div class="col-6" >
+						<div id="accountsDivs" class="container-fluid" style="display: none;">
+							<h1 class="mt-4">Lista de cuentas</h1>
+							<div class="card mb-4">
+								<div class="card-header"><i class="fas fa-table mr-1"></i>Lista de cuentas
+								</div>
+								<div class="card-body" style="height: 191px;">
+									<div class="table-responsive" style="height: 150px;">
+										<table class="table table-bordered dataTable" id="dataTableAccount" width="94%" cellspacing="0"
+											  role="grid" aria-describedby="dataTable_Account" style="width: 94%">
+											
+											<thead>
+												<tr>     
+													<th>ID</th>      
+													<th>Código</th>
+													<th>Descripción</th>
+													<th>Acciones</th>
+												</tr>
+											</thead>
+											<tfoot>
+												<tr>
+													<th>ID</th>  
+													<th>Código</th>
+													<th>Descripción</th>
+													<th>Acciones</th>
+												</tr>
+											</tfoot>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
 </div>
+
+
 <script>
-    $(document).ready(function(){
+$(document).ready(function() {
+    $('#dataTableAccount').DataTable( {
+		"destroy":true,
+		"ordering": false,
+		"language": idioma_español,
+		"paging":   true,
+        "columns": [ 
+			null,
+			{ "type": "string" },
+			null,
+			null,
+		],
+        "columnDefs":[
+            {"type":"string", "targets": 0, "visible":false}
+        ],
+		dom: 'tp',
+			
+ });
+})
 
-    var multipleCancelButton = new Choices('#choices-multiple-remove-button', {
-    removeItemButton: true,
-    maxItemCount:5,
-    searchResultLimit:5,
-    renderChoiceLimit:5
-    });
+
+function getAccount(){
+	$.ajax({
+		url: '{% url "filterAccountSettings"  0 %}'.replace('0', localStorage.getItem('userID')),
+		data: {
+			'codeFilter': $('#InputListaccountSelect').val(),
+			'idAC': localStorage.getItem('idAC'),
+
+		},
+		dataType: 'json',
+		success: function (data) {
 
 
-});
+			var tableRubro = $('#dataTableAccount').DataTable(); 
+			var rowsRubro = tableRubro.rows().remove().draw();
+
+			for (var i=0; i<data.ACC.length; i++){
+				tableRubro.row.add( [
+				data.ACC[i].id,
+				data.ACC[i].code,
+				data.ACC[i].description,
+				"<a data-toggle='tooltip' href='#' id='deleteRubro'title='Hasta la fecha'><button class='btn btn-primary btn-sm'><i class='fa fa-calendar-minus-o' aria-hidden='true'></i></button></a>"+
+				"<a data-toggle='tooltip' href='#' id='deleteRubro'title='Desconciliar Mes'><button class='btn btn-primary btn-sm'><i class='fa fa-calendar-times-o' aria-hidden='true'></i></button></a>"+
+				"<a data-toggle='tooltip' href='#' id='deleteRubro'title='Desconciliar cheque'><button class='btn btn-primary btn-sm'><i class='fa fa-window-close-o' aria-hidden='true'></i></button></a>"
+				])
+			}
+			tableRubro
+			.order( [ 0, 'asc' ] )
+			.draw();
+			tableRubro.draw(false);
+			$('#accountsDivs').css('display','block')
+		}       
+	});
+}
+
+
 </script>
 {% endblock %}

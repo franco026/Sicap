@@ -111,12 +111,12 @@ class GetVoucher(LoginRequiredMixin,View):
             return JsonResponse({"VH": list(voucher)})
         elif request.GET.get('option') == '2':
             bussinesId= request.GET.get('idBussines')
-            accountPeriod =  AccountPeriod.objects.get(bussines_id=bussinesId, name=request.GET.get('nameAC')[:-1])
+            accountPeriod =  AccountPeriod.objects.get(bussines_id=bussinesId, name=request.GET.get('nameAC'))
             origin = Origin.objects.filter(accountPeriod_id=accountPeriod.id).exclude(nameOrigin='INGRESOS').values('nameOrigin')
             return JsonResponse({"OR": list(origin)})
         elif request.GET.get('option') == '3':
             bussinesId= request.GET.get('idBussines')
-            accountPeriod =  AccountPeriod.objects.get(bussines_id=bussinesId, name=request.GET.get('nameAC')[:-1])
+            accountPeriod =  AccountPeriod.objects.get(bussines_id=bussinesId, name=request.GET.get('nameAC'))
             origin = Origin.objects.get(accountPeriod_id=accountPeriod.id, nameOrigin=request.GET.get('origin'))
             return JsonResponse({"ID": origin.id})
         else:
@@ -716,7 +716,7 @@ class CreateObligation(LoginRequiredMixin,View):
                     registerOpe.balance = registerOpe.balance-obligations[x]['value']
                     registerOpe.save()
                     for y in range(accountsCount,accountsCount+2):
-                        valuesAccount = ValuesAccountObligation.objects.create(account_id=accounts[y]['obligationID'],obligation_id=rubroMov.id,typeAccount=accounts[y]['typeAccount'],value=accounts[y]['value'])      
+                        valuesAccount = ValuesAccountObligation.objects.create(account_id=accounts[y]['obligationID'],obligation_id=rubroMov.id,typeAccount=accounts[y]['typeAccount'],value=accounts[y]['value'],payment_value=False)      
                     accountsCount =  accountsCount+2  
 
                 
@@ -762,7 +762,7 @@ class CreateObligation(LoginRequiredMixin,View):
 
 
                     for y in range(accountsCount,2):
-                        valuesAccount = ValuesAccountObligation.objects.create(account_id=accounts[y]['obligationID'],obligation_id=rubroMov.id,typeAccount=accounts[y]['typeAccount'],value=accounts[y]['value'])      
+                        valuesAccount = ValuesAccountObligation.objects.create(account_id=accounts[y]['obligationID'],obligation_id=rubroMov.id,typeAccount=accounts[y]['typeAccount'],value=accounts[y]['value'],payment_value=False)      
                     accountsCount =  accountsCount+2  
             else:
                 for x in range(0,len(obligations)):
@@ -1524,27 +1524,25 @@ class Thirdfilter(LoginRequiredMixin,View):
             people = Third.objects.filter(name__contains=request.GET.get('filter').upper(),bussines_id=request.GET.get('idBussines')).values('id','name','identification','surnames','reason','typeIdentification')
 
             for x in range(0,len(people)):
-                listpeople = InformationMovement.objects.filter(third_id=people[x]['id']).values('id','movement_id','typeMovement')
+                infMovement = InformationMovement.objects.filter(third_id=people[x]['id']).values('id','movement_id','typeMovement')
 
-                for y in range(0,len(listpeople)):
-                    listpeople2 = RubroBalanceOperation.objects.filter(movement_id=listpeople[y]['movement_id'], movement__isnull = False).values('value','movement__register','movement__obligation','nameRubro_id','movement__balance','date','movement__observation','id', 'movement__origin__nameOrigin')
-       
-                    if list(listpeople)[y]['typeMovement'] == 'OBLIGACION':
+                for y in range(0,len(infMovement)):
+                    if infMovement[y]['typeMovement'] == 'OBLIGACION':
+                        rubroBO = RubroBalanceOperation.objects.filter(movement_id=infMovement[y]['movement_id'], movement__isnull = False).values('value','movement__register','movement__obligation','nameRubro_id','movement__balance','date','movement__observation','id', 'movement__origin__nameOrigin')
                         ##regiter = Movement.objects.filter(id = list(listpeople2)[y]['movement__register'], origin__isnull = False).values('register','origin__nameOrigin')
-                        print(list(listpeople2),"prueb")
+                        rubromove = RubroMovement.objects.filter(movement_id=infMovement[y]['movement_id']).values('valueP','id','value')
 
-                        rubromove = RubroMovement.objects.filter(movement_id=listpeople[y]['movement_id']).values('valueP','id','value')
-
-                        for g in range(0,len(rubromove)):
-                            accountobli = ValuesAccountObligation.objects.filter(obligation_id = rubromove[g]['id'] ).values('id','typeAccount','value','obligation_id','account__account__description','account__account__code','account__account__id','typeAccount','value','account__document','account__rubro__rubro')
-                        for g in range(0,len(listpeople2)):
-                            rubro = Rubro.objects.filter(id = list(listpeople2)[g]['nameRubro_id']).values('rubro','description','id')
-                            listpeople2[g]['nameRubro_id'] = list(rubro)[0]['rubro']
-                            listpeople2[g]['Rubro_id'] = list(rubro)[0]['id']
-                            listpeople2[g]['description'] = list(rubro)[0]['description']
-                            listpeople2[g]['rubromove'] = list(rubromove)[g]['value']
-                            listpeople2[g]['idobligation'] = list(rubromove)[g]['id']
-                            listpeople2[g]['typeMovement'] = list(listpeople)[x]['typeMovement']
+                        """ for g in range(0,len(rubromove)):
+                            accountobli = ValuesAccountObligation.objects.filter(obligation_id = rubromove[g]['id'] ).values('id','typeAccount','value','obligation_id','account__account__description','account__account__code','account__account__id','typeAccount','value','account__document','account__rubro__rubro') """
+                       
+                        for g in range(0,len(rubroBO)):
+                            rubro = Rubro.objects.filter(id = list(rubroBO)[g]['nameRubro_id']).values('rubro','description','id')
+                            rubroBO[g]['nameRubro_id'] = list(rubro)[0]['rubro']
+                            rubroBO[g]['Rubro_id'] = list(rubro)[0]['id']
+                            rubroBO[g]['description'] = list(rubro)[0]['description']
+                            rubroBO[g]['rubromove'] = list(rubromove)[g]['value']
+                            rubroBO[g]['idobligation'] = list(rubromove)[g]['id']
+                            rubroBO[g]['typeMovement'] = list(infMovement)[x]['typeMovement']
                             
 
 
@@ -1553,12 +1551,12 @@ class Thirdfilter(LoginRequiredMixin,View):
                             "name": people[x]['name'],
                             "surnames": people[x]["surnames"],
                             "identification": people[x]['identification'],
-                            "movement": list(listpeople)[y]['typeMovement'],
-                            "operation": list(listpeople2)
+                            "movement": list(infMovement)[y]['typeMovement'],
+                            "operation": list(rubroBO)
                         })
 
             
-            return JsonResponse({"TH": list(people),"LB": list(listpeopleOb), "MV": list(listpeople)})  
+            return JsonResponse({"TH": list(people),"LB": list(listpeopleOb), "MV": list(infMovement)})  
 
 
 

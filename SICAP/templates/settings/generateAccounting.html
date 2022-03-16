@@ -367,7 +367,7 @@ function generateButton(point){
 		url: '{% url "getBudget"  0 %}'.replace('0', localStorage.getItem('userID')),
 		data: {
 			'nameOrigin': nameOrigin,
-			'nameAC': localStorage.getItem('nameAC'),
+			'idAC': localStorage.getItem('idAC'),
 			'idBussines': localStorage.getItem('idBussines'),
 
 		},

@@ -216,22 +216,12 @@ $("form#formLogin").submit(function() {
 					for (var i=0; i<data.listB.length; i++){
 						$('#id_BussinesnSelect').append(`<option value="${data.listB[i].bussines__id}">${data.listB[i].bussines__name}</option>`);
 					}
+
+					if(data.listB.length == 1){
+						getPeriodOneBusiness(data.listB[0].bussines__id)
+					}
 					
-					const $selectA = document.querySelector("#id_accountPeriodSelect");
-        
-					for (let i = $selectA.options.length; i >= 0; i--) {
-							$selectA.remove(i);
-					}
-
-
-					if(data.listP.length>0){
-						for (var i=0; i<data.listP.length; i++){
-							$('#id_accountPeriodSelect').append(`<option value="${data.listP[i].id}">${data.listP[i].name}</option>`);
-						}
-					}else{
-						$('#id_accountPeriodSelect').append(`<option value="-1" selected disabled hidden>Selecciona una opcion</option>`);
-						$('#id_accountPeriodSelect').append(`<option value="0">Crear Periodo</option>`);
-					}
+					
 				}
 
 			},error: function(data){
@@ -321,6 +311,66 @@ function addAccout() {
     }
     return false;
 };
+
+$(document).on('change', '#id_BussinesnSelect', function(event) {
+	idBussines = $("#id_BussinesnSelect option:selected").val();
+	$.ajax({
+			url: '{% url "getAcccountPeriod" %}',
+			data: {
+				'idBussines': idBussines,
+			},
+			dataType: 'json',
+			success: function (data) {
+				console.log(data.AC);
+				const $selectA = document.querySelector("#id_accountPeriodSelect");
+        
+				for (let i = $selectA.options.length; i >= 0; i--) {
+						$selectA.remove(i);
+				}
+
+
+				if(data.AC.length>0){
+					for (var i=0; i<data.AC.length; i++){
+						$('#id_accountPeriodSelect').append(`<option value="${data.AC[i].id}">${data.AC[i].name}</option>`);
+					}
+				}else{
+					$('#id_accountPeriodSelect').append(`<option value="-1" selected disabled hidden>Selecciona una opcion</option>`);
+					$('#id_accountPeriodSelect').append(`<option value="0">Crear Periodo</option>`);
+				}
+										
+			}
+		});
+});
+
+function getPeriodOneBusiness(id) {
+	$.ajax({
+			url: '{% url "getAcccountPeriod" %}',
+			data: {
+				'idBussines': id,
+			},
+			dataType: 'json',
+			success: function (data) {
+				console.log(data.AC);
+				const $selectA = document.querySelector("#id_accountPeriodSelect");
+        
+				for (let i = $selectA.options.length; i >= 0; i--) {
+						$selectA.remove(i);
+				}
+
+
+				if(data.AC.length>0){
+					for (var i=0; i<data.AC.length; i++){
+						$('#id_accountPeriodSelect').append(`<option value="${data.AC[i].id}">${data.AC[i].name}</option>`);
+					}
+				}else{
+					$('#id_accountPeriodSelect').append(`<option value="-1" selected disabled hidden>Selecciona una opcion</option>`);
+					$('#id_accountPeriodSelect').append(`<option value="0">Crear Periodo</option>`);
+				}
+										
+			}
+		});
+}
+
 
 $("form#formStart").submit(function() {
 	var nameAC = $("#id_accountPeriodSelect option:selected").text();
